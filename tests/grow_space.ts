@@ -111,7 +111,7 @@ describe("grow_space_combined", () => {
                             program.programId
                         )
 
-                        const sig = await program.methods.appendData(uniqueId, repeatingHash)
+                        const sig = await program.methods.appendData(uniqueId, repeatingHash, keypair.publicKey)
                             .accountsPartial({
                                 pdaAccount: pda,
                                 payer: keypair.publicKey,
@@ -144,7 +144,7 @@ describe("grow_space_combined", () => {
                 try {
                     const keypair = keypairs[Math.floor(Math.random() * (KEYS + 1))];
 
-                    const sig = await program.methods.appendData(new BN(randomBlockId), uniqueHash)
+                    const sig = await program.methods.appendData(new BN(randomBlockId), uniqueHash, keypair.publicKey)
                         .accountsPartial({
                             pdaAccount: pda,
                             prevPdaAccount: prevPda || null,

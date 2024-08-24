@@ -6,7 +6,7 @@ use solana_program::program::invoke;
 use solana_program::program::set_return_data;
 use solana_program::system_instruction;
 
-declare_id!("DzDvqRGfLJkFxUB4sBCxS4EuXk2EK62PPpAFfPz6h6p5");
+declare_id!("DwVz6xtw4pQgMTnoRXftt3S11NgC3AFESfVcvxNscx2G");
 
 const PDA_ACCOUNT_SEED: &[u8; 11] = b"pda_account";
 const USER_ACCOUNT_PDA_SEED: &[u8; 16] = b"user_account_pda";
@@ -100,12 +100,18 @@ pub mod grow_space {
         Ok(())
     }
 
-    pub fn append_data(ctx: Context<AppendData>, block_id: u64, final_hash: String) -> Result<()> {
+    pub fn append_data(
+        ctx: Context<AppendData>,
+        block_id: u64,
+        final_hash: String,
+        pubkey: Pubkey,
+    ) -> Result<()> {
         let mut pda_account = &mut ctx.accounts.pda_account;
         let mut user_account_pda = &mut ctx.accounts.user_account_pda;
 
         if user_account_pda.user == Pubkey::default() {
-            user_account_pda.user = ctx.accounts.payer.key();
+            // user_account_pda.user = ctx.accounts.payer.key();
+            user_account_pda.user = pubkey;
         }
 
         msg!(
@@ -156,7 +162,8 @@ pub mod grow_space {
                                     UserAccountPda::try_deserialize(&mut &*buf)?;
 
                                 // prevent self-voting
-                                if voter_account.user != ctx.accounts.payer.key() {
+                                if voter_account.user != pubkey {
+                                    // if voter_account.user != ctx.accounts.payer.key() {
                                     // perform accounting on voter's PDA
                                     if voter_account.inblock < block_id {
                                         msg!(
@@ -212,14 +219,16 @@ pub mod grow_space {
 
         let mut found = false;
         let mut add_size: usize = 0;
+        // let user_pubkey = ctx.accounts.payer.key;
+        let user_pubkey = &pubkey;
         for block_entry in &mut pda_account.block_ids {
             if block_entry.block_id == block_id {
                 found = true;
                 let mut hash_found = false;
                 for hash_entry in &mut block_entry.final_hashes {
                     if hash_entry.final_hash == final_hash_bytes {
-                        if !hash_entry.pubkeys.contains(ctx.accounts.payer.key) {
-                            hash_entry.pubkeys.push(*ctx.accounts.payer.key);
+                        if !hash_entry.pubkeys.contains(user_pubkey) {
+                            hash_entry.pubkeys.push(*user_pubkey);
                             add_size += 32;
                         }
                         hash_found = true;
@@ -231,7 +240,7 @@ pub mod grow_space {
                     add_size += 32 + 8 + 8;
                     final_hashes.push(FinalHashEntry {
                         final_hash: final_hash_bytes,
-                        pubkeys: vec![*ctx.accounts.payer.key],
+                        pubkeys: vec![*user_pubkey],
                         // count: 1,
                     });
                 }
@@ -244,7 +253,7 @@ pub mod grow_space {
                 block_id,
                 final_hashes: vec![FinalHashEntry {
                     final_hash: final_hash_bytes,
-                    pubkeys: vec![ctx.accounts.payer.key.clone()],
+                    pubkeys: vec![*user_pubkey],
                     // count: 1,
                 }],
             });
@@ -373,7 +382,7 @@ pub struct PubkeyCount<'info> {
  */
 
 #[derive(Accounts)]
-#[instruction(block_id: u64, final_hash: String)]
+#[instruction(block_id: u64, final_hash: String, pubkey: Pubkey)]
 pub struct AppendData<'info> {
     #[account(mut)]
     pub pda_account: Account<'info, PDAAccount>,
@@ -383,7 +392,8 @@ pub struct AppendData<'info> {
         init_if_needed,
         seeds = [
             USER_ACCOUNT_PDA_SEED,
-            payer.key().as_ref()
+            pubkey.as_ref()
+            // payer.key().as_ref()
         ],
         bump,
         payer = payer,
