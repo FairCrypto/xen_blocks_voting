@@ -11,7 +11,7 @@ async function main() {
                 final_hash: '1',
                 pubkey: users[round]
             }
-            const res = await fetch('http://localhost:4444', {
+            const res = await fetch('http://localhost:5555', {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
