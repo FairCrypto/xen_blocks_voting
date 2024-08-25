@@ -41,9 +41,8 @@ const pdas = new Set()
 // Endpoint to append data and initialize PDA if needed
 app.post('/', async (req, res) => {
     const {first_block_id, final_hash, pubkey} = req.body;
-    console.log(req.body);
+    console.log('req', first_block_id, final_hash, pubkey);
     const block_id = first_block_id;
-    console.log(block_id + " " + pubkey + "\n");
 
     const uniqueId = new BN(block_id);
     const pubkeyObj = new PublicKey(pubkey);
@@ -84,7 +83,7 @@ app.post('/', async (req, res) => {
             isSigner: false,
             isWritable: true
         }))
-        console.log('remaining', remaining.slice(-5).map(p => p.pubkey.toString()))
+        console.log('keys', keys.size)
         // Append the data
         const sig = await program.methods
             .appendData(uniqueId, final_hash, pubkeyObj)
@@ -167,7 +166,7 @@ app.get('/fetch_user/:pubkey', async (req, res) => {
         */
         res.status(200).json(account);
     } catch (err) {
-        res.status(500).json({error: "Failed to fetch data", details: err.toString()});
+        res.status(500).json({error: "Failed to fetch user data", details: err.toString()});
     }
 });
 
