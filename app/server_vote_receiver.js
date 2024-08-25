@@ -79,7 +79,9 @@ app.post('/', async (req, res) => {
         }
 
         console.log('keys', keys.size)
-        keys = new Set(keys.slice(-5))
+        if (keys.size > 5) {
+            keys = new Set([...keys].slice(-5))
+        }
 
         const remaining = [...keys].map(k => ({
             pubkey: getUserPda(k),
