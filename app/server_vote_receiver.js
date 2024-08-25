@@ -31,12 +31,12 @@ const getUserPda = (pubkey) => {
     return userPda;
 }
 
-let prevPda = null;
 const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000
 });
-const keys = new Set()
-const pdas = new Set()
+
+let prevPda = null;
+let keys = new Set()
 
 // Endpoint to append data and initialize PDA if needed
 app.post('/', async (req, res) => {
@@ -78,12 +78,14 @@ app.post('/', async (req, res) => {
             console.log("PDA already initialized, proceeding to append data.");
         }
 
+        console.log('keys', keys.size)
+        keys = new Set(keys.slice(-5))
+
         const remaining = [...keys].map(k => ({
             pubkey: getUserPda(k),
             isSigner: false,
             isWritable: true
         }))
-        console.log('keys', keys.size)
         // Append the data
         const sig = await program.methods
             .appendData(uniqueId, final_hash, pubkeyObj)
@@ -95,7 +97,7 @@ app.post('/', async (req, res) => {
                 payer: provider.wallet.publicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             })
-            .remainingAccounts(remaining.slice(-5))
+            .remainingAccounts(remaining)
             .preInstructions([modifyComputeUnits])
             // .signers([provider.wallet])
             .rpc({commitment: "confirmed", skipPreflight: true});
