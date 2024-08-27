@@ -106,7 +106,6 @@ app.post('/', async (req, res) => {
                 userAccountPda: userPda,
                 payer: provider.wallet.publicKey,
                 prevPdaAccount: prevPda || null, // [...pdas].slice(-1)[0] || null,
-                payer: provider.wallet.publicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
             })
             .remainingAccounts(remaining)
@@ -117,8 +116,7 @@ app.post('/', async (req, res) => {
         const transaction = new web3.Transaction({
             feePayer: provider.wallet.publicKey,
             recentBlockhash: recentBlockhash.blockhash
-        })
-            .add({...instruction, programId: program.programId});
+        }).add(instruction);
 
         transaction.partialSign(provider.wallet);
 
