@@ -108,10 +108,10 @@ app.post('/', async (req, res) => {
                 prevPdaAccount: prevPda || null, // [...pdas].slice(-1)[0] || null,
                 payer: provider.wallet.publicKey,
                 systemProgram: anchor.web3.SystemProgram.programId,
-                program: program.programId
             })
             .remainingAccounts(remaining)
-            .preInstructions([modifyComputeUnits]);
+            .preInstructions([modifyComputeUnits])
+            .instruction();
 
         const recentBlockhash = await provider.connection.getLatestBlockhash();
         const transaction = new web3.Transaction({
