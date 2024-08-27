@@ -78,7 +78,7 @@ app.post('/', async (req, res) => {
             // console.log("PDA already initialized, proceeding to append data.");
         }
 
-        console.log('keys', keys.size)
+        // console.log('keys', keys.size)
         if (keys.size > 5) {
             keys = new Set([...keys].slice(-5))
         }
@@ -103,13 +103,13 @@ app.post('/', async (req, res) => {
             .preInstructions([modifyComputeUnits])
             // .signers([provider.wallet])
             .rpc({commitment: "confirmed", skipPreflight: true});
-        console.log('processed', first_block_id, final_hash, pubkey, pda.toString(), sig);
+        console.log('processed', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), sig);
         res.status(200).json({message: "Appended data", pda: pda.toString(), sig, user: pubkeyObj.toString()});
         // pdas.add(pda);
         prevPda = pda
         keys.add(pubkeyObj)
     } catch (err) {
-        console.log('error', first_block_id, final_hash, pubkey, pda.toString(), err.toString());
+        console.log('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err.toString());
         res.status(500).json({error: "Failed to append data", details: err.toString(), sig});
     }
 });
