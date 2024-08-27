@@ -108,14 +108,14 @@ app.post('/', async (req, res) => {
             .remainingAccounts(remaining)
             .preInstructions([modifyComputeUnits])
             // .signers([provider.wallet])
-            .rpc({commitment: "confirmed", skipPreflight: true});
+            .rpc({commitment: "confirmed", skipPreflight: false});
         console.log('processed', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), sig);
         res.status(200).json({message: "Appended data", pda: pda.toString(), sig, user: pubkeyObj.toString()});
         // pdas.add(pda);
         keys.add(pubkeyObj)
     } catch (err) {
-        console.log('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err.toString());
-        res.status(500).json({error: "Failed to append data", details: err.toString(), sig});
+        console.error('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err);
+        res.status(500).json({error: "Failed to append data", details: err.toString()});
     }
 });
 

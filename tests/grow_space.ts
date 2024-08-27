@@ -132,7 +132,7 @@ describe("grow_space_combined", () => {
                             }))])
                             .preInstructions([modifyComputeUnits])
                             .signers([keypair])
-                            .rpc({commitment: "confirmed", skipPreflight: true});
+                            .rpc({commitment: "confirmed", skipPreflight: false});
                         console.log("  Hash:", repeatingHash, "payer:", keypair.publicKey.toString(), "sig:", sig);
                     } catch (err) {
                         console.error(`Failed to append data for Block ID ${randomBlockId}:`, err);
@@ -166,7 +166,7 @@ describe("grow_space_combined", () => {
                             isWritable: true
                         }))])
                         .preInstructions([modifyComputeUnits])
-                        .rpc({commitment: "confirmed", skipPreflight: true});
+                        .rpc({commitment: "confirmed", skipPreflight: false});
 
                     console.log("  Hash:", uniqueHash, "payer:", keypair.publicKey.toString(), "sig:" + sig);
 
