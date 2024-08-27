@@ -115,6 +115,7 @@ app.post('/', async (req, res) => {
             .instruction();
 
         const recentBlockhash = await provider.connection.getLatestBlockhash();
+        console.log(recentBlockhash)
         const transaction = new web3.Transaction({
             feePayer: provider.wallet.publicKey,
             recentBlockhash: recentBlockhash.blockhash
