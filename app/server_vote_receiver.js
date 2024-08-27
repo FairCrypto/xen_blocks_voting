@@ -99,7 +99,7 @@ app.post('/', async (req, res) => {
             isWritable: true
         }))
         // Append the data
-        const sig = await program.methods
+        const instruction = program.methods
             .appendData(uniqueId, final_hash, pubkeyObj)
             .accountsPartial({
                 pdaAccount: pda,
@@ -110,9 +110,23 @@ app.post('/', async (req, res) => {
                 systemProgram: anchor.web3.SystemProgram.programId,
             })
             .remainingAccounts(remaining)
-            .preInstructions([modifyComputeUnits])
-            // .signers([provider.wallet])
-            .rpc({commitment: "confirmed", skipPreflight: false});
+            .preInstructions([modifyComputeUnits]);
+
+        const recentBlockhash = await provider.connection.getLatestBlockhash();
+        const transaction = new web3.Transaction({
+            feePayer: provider.wallet.publicKey,
+            recentBlockhash: recentBlockhash.blockhash
+        })
+            .add(instruction);
+
+        transaction.partialSign(provider.wallet);
+
+        const sig = await provider.connection.sendRawTransaction(transaction.serialize(), {
+            preflightCommitment: 'confirmed',
+            maxRetries: 1
+        });
+        // .signers([provider.wallet])
+        // .rpc({commitment: "confirmed", skipPreflight: false});
         console.log('processed', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), sig);
         res.status(200).json({message: "Appended data", pda: pda.toString(), sig, user: pubkeyObj.toString()});
         // pdas.add(pda);
