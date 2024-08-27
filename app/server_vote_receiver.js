@@ -114,15 +114,13 @@ app.post('/', async (req, res) => {
             .preInstructions([modifyComputeUnits])
             .instruction();
 
-        console.log(instruction)
-
         const recentBlockhash = await provider.connection.getLatestBlockhash();
         const transaction = new web3.Transaction({
             feePayer: provider.wallet.publicKey,
             recentBlockhash: recentBlockhash.blockhash
         }).add(instruction);
 
-        transaction.partialSign(provider.wallet);
+        transaction.partialSign(provider.wallet.payer);
 
         const sig = await provider.connection.sendRawTransaction(transaction.serialize(), {
             preflightCommitment: 'confirmed',
