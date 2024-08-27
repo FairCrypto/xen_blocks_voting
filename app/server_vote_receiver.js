@@ -4,6 +4,7 @@ const anchor = require('@coral-xyz/anchor');
 const {PublicKey, ComputeBudgetProgram, Keypair} = require('@solana/web3.js');
 const {Program, web3} = require('@coral-xyz/anchor');
 const {BN} = require('bn.js');
+require("dotenv").config();
 
 // const GrowSpace = require("../target/types/grow_space");
 
@@ -99,7 +100,7 @@ app.post('/', async (req, res) => {
             isWritable: true
         }))
         // Append the data
-        const instruction = program.methods
+        const instruction = await program.methods
             .appendData(uniqueId, final_hash, pubkeyObj)
             .accountsPartial({
                 pdaAccount: pda,
@@ -112,6 +113,8 @@ app.post('/', async (req, res) => {
             .remainingAccounts(remaining)
             .preInstructions([modifyComputeUnits])
             .instruction();
+
+        console.log(instruction)
 
         const recentBlockhash = await provider.connection.getLatestBlockhash();
         const transaction = new web3.Transaction({
