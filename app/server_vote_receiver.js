@@ -125,6 +125,7 @@ app.post('/', async (req, res) => {
 
         const sig = await provider.connection.sendRawTransaction(transaction.serialize(), {
             preflightCommitment: 'confirmed',
+            skipPreflight: true,
             maxRetries: 1
         });
         // .signers([provider.wallet])
