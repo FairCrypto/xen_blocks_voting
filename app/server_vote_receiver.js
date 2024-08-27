@@ -142,7 +142,7 @@ app.get('/fetch_data/:block_id', async (req, res) => {
                 blockId: entry.blockId.toString(),
                 finalHashes: entry.finalHashes.map(hashEntry => ({
                     finalHash: Buffer.from(hashEntry.finalHash).toString('utf8'),  // Convert finalHash bytes to string
-                    count: parseInt(hashEntry.count, 10),
+                    count: parseInt(hashEntry.count, 10) || hashEntry.pubkeys.length,
                     pubkeys: hashEntry.pubkeys.map(pubkey => pubkey.toString())
                 }))
             }))
