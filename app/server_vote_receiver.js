@@ -19,8 +19,12 @@ console.log('payer', provider.wallet.payer.publicKey.toString())
 
 // Function to check if a PDA account already exists
 async function pdaExists(pda) {
-    const accountInfo = await provider.connection.getAccountInfo(pda);
-    return accountInfo !== null;
+    try {
+        const accountInfo = await provider.connection.getAccountInfo(pda);
+        return accountInfo !== null;
+    } catch (_) {
+        return false
+    }
 }
 
 const getUserPda = (pubkey) => {
