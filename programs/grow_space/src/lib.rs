@@ -6,7 +6,7 @@ use solana_program::program::invoke;
 use solana_program::program::set_return_data;
 use solana_program::system_instruction;
 
-declare_id!("DwVz6xtw4pQgMTnoRXftt3S11NgC3AFESfVcvxNscx2G");
+declare_id!("GMZwfjUSRH9RZu8krupno3tMAbm2oRuMJFoFVBGh5vvt");
 
 const PDA_ACCOUNT_SEED: &[u8; 11] = b"pda_account";
 const USER_ACCOUNT_PDA_SEED: &[u8; 16] = b"user_account_pda";

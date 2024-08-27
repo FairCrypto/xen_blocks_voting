@@ -41,7 +41,7 @@ let keys = new Set()
 // Endpoint to append data and initialize PDA if needed
 app.post('/', async (req, res) => {
     const {first_block_id, final_hash, pubkey} = req.body;
-    console.log('req', first_block_id, final_hash, pubkey);
+    // console.log('req', first_block_id, final_hash, pubkey);
     const block_id = first_block_id;
 
     const uniqueId = new BN(block_id);
@@ -69,13 +69,13 @@ app.post('/', async (req, res) => {
                     systemProgram: anchor.web3.SystemProgram.programId,
                 })
                     .signers([provider.wallet.payer])
-                    .rpc();
-                console.log("Initialized PDA account public key:", pda.toString(), "with bump:", bump);
+                    .rpc({commitment: "confirmed", skipPreflight: true});
+                // console.log("Initialized PDA account public key:", pda.toString(), "with bump:", bump);
             } catch (err) {
                 throw new Error(`Failed to initialize PDA: ${err.message}`);
             }
         } else {
-            console.log("PDA already initialized, proceeding to append data.");
+            // console.log("PDA already initialized, proceeding to append data.");
         }
 
         console.log('keys', keys.size)
@@ -103,11 +103,13 @@ app.post('/', async (req, res) => {
             .preInstructions([modifyComputeUnits])
             // .signers([provider.wallet])
             .rpc({commitment: "confirmed", skipPreflight: true});
+        console.log('processed', first_block_id, final_hash, pubkey, pda.toString(), sig);
         res.status(200).json({message: "Appended data", pda: pda.toString(), sig, user: pubkeyObj.toString()});
         // pdas.add(pda);
         prevPda = pda
         keys.add(pubkeyObj)
     } catch (err) {
+        console.log('error', first_block_id, final_hash, pubkey, pda.toString(), err.toString());
         res.status(500).json({error: "Failed to append data", details: err.toString(), sig});
     }
 });
@@ -127,7 +129,7 @@ app.get('/fetch_data/:block_id', async (req, res) => {
     );
 
     try {
-        console.log(`Fetching data for block_id: ${block_id}, PDA: ${pda.toString()}`);
+        // console.log(`Fetching data for block_id: ${block_id}, PDA: ${pda.toString()}`);
         const account = await program.account.pdaAccount.fetch(pda);
         const blockInfo = {
             blockId: block_id,
@@ -153,7 +155,7 @@ app.get('/fetch_user/:pubkey', async (req, res) => {
     const userPda = getUserPda(pubkeyObj)
 
     try {
-        console.log(`Fetching user data for pubkey: ${pubkeyObj.toString()}, PDA: ${userPda.toString()}`);
+        // console.log(`Fetching user data for pubkey: ${pubkeyObj.toString()}, PDA: ${userPda.toString()}`);
         const account = await program.account.userAccountPda.fetch(userPda);
         /*
         const blockInfo = {

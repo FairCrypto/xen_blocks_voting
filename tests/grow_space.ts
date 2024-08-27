@@ -20,7 +20,7 @@ describe("grow_space_combined", () => {
     const program = workspace.GrowSpace as Program<GrowSpace>;
 
     const keypairs: Keypair[] = []
-    const KEYS = 3;
+    const KEYS = 20;
 
     const getUserPda = (keypair: Keypair) => {
         const [userPda] = web3.PublicKey.findProgramAddressSync(
@@ -65,10 +65,13 @@ describe("grow_space_combined", () => {
             units: 1_400_000
         });
 
+        process.stdout.write(`generating ${KEYS} keypairs `)
         for await (const i of Array.from({length: KEYS + 1}, (_, i) => i)) {
             const keypair = await createAndFundAccount();
+            process.stdout.write('.')
             keypairs.push(keypair)
         }
+        process.stdout.write('\n')
 
         let randomBlockId = Math.floor(Math.random() * 10_000);
 
@@ -101,7 +104,7 @@ describe("grow_space_combined", () => {
 
             // Append repeating final hashes with repeated pubkeys
             const repeatingHashes = [`hash_${randomBlockId}_r1`, `hash_${randomBlockId}_r1`, `hash_${randomBlockId}_r1`];
-            for await (const j of Array(3).fill(0).map((_, i) => i)) { // Reduced to 3 for testing purposes
+            for await (const j of Array(KEYS).fill(0).map((_, i) => i)) { // Reduced to 3 for testing purposes
                 for await (const repeatingHash of repeatingHashes) {
                     try {
                         const keypair = keypairs[Math.floor(Math.random() * (KEYS + 1))];
