@@ -112,25 +112,32 @@ app.post('/', async (req, res) => {
             })
             .remainingAccounts(remaining)
             .preInstructions([modifyComputeUnits])
-            .instruction();
+            // .instruction();
 
-        const recentBlockhash = await provider.connection.getLatestBlockhash();
-        const transaction = new web3.Transaction({
-            feePayer: provider.wallet.publicKey,
-            recentBlockhash: recentBlockhash.blockhash
-        }).add(instruction);
+            /*
+            const recentBlockhash = await provider.connection.getLatestBlockhash();
+            const transaction = new web3.Transaction({
+                feePayer: provider.wallet.publicKey,
+                recentBlockhash: recentBlockhash.blockhash
+            }).add(instruction);
 
-        transaction.partialSign(provider.wallet.payer);
+            transaction.partialSign(provider.wallet.payer);
 
-        const sig = await provider.connection.sendRawTransaction(transaction.serialize(), {
-            preflightCommitment: 'processed',
-            skipPreflight: false,
-            maxRetries: 1
+            const sig = await provider.connection.sendRawTransaction(transaction.serialize(), {
+                preflightCommitment: 'processed',
+                skipPreflight: false,
+                maxRetries: 1
+            })
+             */
+            .signers([provider.wallet.payer])
+            .rpc({commitment: "processed", skipPreflight: false});
+        console.log('processed', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), instruction);
+        res.status(200).json({
+            message: "Appended data",
+            pda: pda.toString(),
+            sig: instruction,
+            user: pubkeyObj.toString()
         });
-        // .signers([provider.wallet])
-        // .rpc({commitment: "confirmed", skipPreflight: false});
-        console.log('processed', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), sig);
-        res.status(200).json({message: "Appended data", pda: pda.toString(), sig, user: pubkeyObj.toString()});
         // pdas.add(pda);
         keys.add(pubkeyObj)
     } catch (err) {
