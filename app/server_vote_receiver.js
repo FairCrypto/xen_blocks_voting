@@ -123,8 +123,8 @@ app.post('/', async (req, res) => {
         transaction.partialSign(provider.wallet.payer);
 
         const sig = await provider.connection.sendRawTransaction(transaction.serialize(), {
-            preflightCommitment: 'confirmed',
-            skipPreflight: true,
+            preflightCommitment: 'processed',
+            skipPreflight: false,
             maxRetries: 1
         });
         // .signers([provider.wallet])
