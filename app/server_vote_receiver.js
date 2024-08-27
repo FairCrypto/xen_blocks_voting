@@ -35,7 +35,7 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000
 });
 
-let prevPda = null;
+// let prevPda = null;
 let keys = new Set()
 
 // Endpoint to append data and initialize PDA if needed
@@ -43,12 +43,18 @@ app.post('/', async (req, res) => {
     const {first_block_id, final_hash, pubkey} = req.body;
     // console.log('req', first_block_id, final_hash, pubkey);
     const block_id = first_block_id;
+    const prev_block_id = Number(block_id) - 100;
 
     const uniqueId = new BN(block_id);
+    const prevUniqueId = new BN(prev_block_id);
     const pubkeyObj = new PublicKey(pubkey);
 
-    const [pda, bump] = await PublicKey.findProgramAddress(
+    const [pda] = await PublicKey.findProgramAddress(
         [Buffer.from("pda_account"), uniqueId.toArrayLike(Buffer, "le", 8)],
+        program.programId
+    );
+    const [prevPda] = await PublicKey.findProgramAddress(
+        [Buffer.from("pda_account"), prevUniqueId.toArrayLike(Buffer, "le", 8)],
         program.programId
     );
     const [userPda] = web3.PublicKey.findProgramAddressSync(
@@ -106,7 +112,6 @@ app.post('/', async (req, res) => {
         console.log('processed', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), sig);
         res.status(200).json({message: "Appended data", pda: pda.toString(), sig, user: pubkeyObj.toString()});
         // pdas.add(pda);
-        prevPda = pda
         keys.add(pubkeyObj)
     } catch (err) {
         console.log('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err.toString());

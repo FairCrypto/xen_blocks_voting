@@ -20,7 +20,7 @@ describe("grow_space_combined", () => {
     const program = workspace.GrowSpace as Program<GrowSpace>;
 
     const keypairs: Keypair[] = []
-    const KEYS = 20;
+    const KEYS = 100;
 
     const getUserPda = (keypair: Keypair) => {
         const [userPda] = web3.PublicKey.findProgramAddressSync(
@@ -75,7 +75,7 @@ describe("grow_space_combined", () => {
 
         let randomBlockId = Math.floor(Math.random() * 10_000);
 
-        for await (const i of [0, 1, 2]) { // Limiting to 3 for testing purposes
+        for await (const i of [0, 1]) { // Limiting to N for testing purposes
             randomBlockId += Math.floor(Math.random() * 100_000);
             blockIds.add(randomBlockId.toString())
             const uniqueId = new BN(randomBlockId); // Use the block ID as the unique ID
@@ -103,8 +103,8 @@ describe("grow_space_combined", () => {
             }
 
             // Append repeating final hashes with repeated pubkeys
-            const repeatingHashes = [`hash_${randomBlockId}_r1`, `hash_${randomBlockId}_r1`, `hash_${randomBlockId}_r1`];
-            for await (const j of Array(KEYS).fill(0).map((_, i) => i)) { // Reduced to 3 for testing purposes
+            const repeatingHashes = [`${randomBlockId}_r1`, `${randomBlockId}_r1`, `${randomBlockId}_r1`];
+            for await (const _ of Array(KEYS).fill(0).map((_, i) => i)) { // Reduced to 3 for testing purposes
                 for await (const repeatingHash of repeatingHashes) {
                     try {
                         const keypair = keypairs[Math.floor(Math.random() * (KEYS + 1))];
@@ -113,6 +113,8 @@ describe("grow_space_combined", () => {
                             [Buffer.from("user_account_pda"), keypair.publicKey.toBytes()],
                             program.programId
                         )
+
+                        const shuffled = keypairs.sort(() => 0.5 - Math.random());
 
                         const sig = await program.methods.appendData(uniqueId, repeatingHash, keypair.publicKey)
                             .accountsPartial({
@@ -123,7 +125,7 @@ describe("grow_space_combined", () => {
                                 prevPdaAccount: prevPda || null,
                                 // systemProgram: web3.SystemProgram.programId,
                             })
-                            .remainingAccounts([...keypairs.map(k => ({
+                            .remainingAccounts([...shuffled.slice(-5).map(k => ({
                                 pubkey: getUserPda(k),
                                 isSigner: false,
                                 isWritable: true
@@ -131,7 +133,7 @@ describe("grow_space_combined", () => {
                             .preInstructions([modifyComputeUnits])
                             .signers([keypair])
                             .rpc({commitment: "confirmed", skipPreflight: true});
-                        console.log("  Appending Repeating Final Hash:", repeatingHash, "payer:", keypair.publicKey.toString(), "sig:", sig);
+                        console.log("  Hash:", repeatingHash, "payer:", keypair.publicKey.toString(), "sig:", sig);
                     } catch (err) {
                         console.error(`Failed to append data for Block ID ${randomBlockId}:`, err);
                     }
@@ -147,6 +149,8 @@ describe("grow_space_combined", () => {
                 try {
                     const keypair = keypairs[Math.floor(Math.random() * (KEYS + 1))];
 
+                    const shuffled = keypairs.sort(() => 0.5 - Math.random());
+
                     const sig = await program.methods.appendData(new BN(randomBlockId), uniqueHash, keypair.publicKey)
                         .accountsPartial({
                             pdaAccount: pda,
@@ -156,7 +160,7 @@ describe("grow_space_combined", () => {
                             //systemProgram: web3.SystemProgram.programId,
                         })
                         .signers([keypair])
-                        .remainingAccounts([...keypairs.map(k => ({
+                        .remainingAccounts([...shuffled.slice(-5).map(k => ({
                             pubkey: getUserPda(k),
                             isSigner: false,
                             isWritable: true
@@ -164,7 +168,7 @@ describe("grow_space_combined", () => {
                         .preInstructions([modifyComputeUnits])
                         .rpc({commitment: "confirmed", skipPreflight: true});
 
-                    console.log("  Appending Unique Final Hash:", uniqueHash, "payer:", keypair.publicKey.toString(), "sig:" + sig);
+                    console.log("  Hash:", uniqueHash, "payer:", keypair.publicKey.toString(), "sig:" + sig);
 
                 } catch (err) {
                     console.error(`Failed to append data for Block ID ${randomBlockId}:`, err);
