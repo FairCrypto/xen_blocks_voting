@@ -107,6 +107,7 @@ app.post('/', async (req, res) => {
                 payer: provider.wallet.publicKey,
                 prevPdaAccount: prevPda || null, // [...pdas].slice(-1)[0] || null,
                 systemProgram: anchor.web3.SystemProgram.programId,
+                programId: program.programId
             })
             .remainingAccounts(remaining)
             .preInstructions([modifyComputeUnits])
