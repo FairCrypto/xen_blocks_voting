@@ -97,6 +97,7 @@ app.post('/', async (req, res) => {
         const prevPDAData = prevPda
             ? await program.account.pdaAccount.fetch(prevPda)
             : null;
+        console.log(prevPDAData)
         const shuffled = (prevPDAData ? prevPDAData.blockIds[0].finalHashes[0].pubkeys : [])
             .map((k, i) => ({i, k}))
             .sort(() => 0.5 - Math.random());
