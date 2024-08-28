@@ -214,7 +214,10 @@ app.get('/fetch_user/:pubkey', async (req, res) => {
             }))
         };
         */
-        res.status(200).json(account);
+        res.status(200).json({
+            ...account,
+            inblock: Number(`0x${account.inblock}`)
+        });
     } catch (err) {
         res.status(500).json({error: "Failed to fetch user data", details: err.toString()});
     }
