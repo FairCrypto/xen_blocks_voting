@@ -105,7 +105,7 @@ app.post('/', async (req, res) => {
         const remaining = shuffled
             .filter(({k}) => !!k)
             .slice(0, 5)
-            .map(k => ({
+            .map(({k}) => ({
                 pubkey: getUserPda(k),
                 isSigner: false,
                 isWritable: true
