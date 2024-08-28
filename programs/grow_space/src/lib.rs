@@ -2,11 +2,12 @@ mod bpf_writer;
 
 use anchor_lang::prelude::*;
 use bpf_writer::BpfWriter;
+use solana_program::hash::hash;
 use solana_program::program::invoke;
 use solana_program::program::set_return_data;
 use solana_program::system_instruction;
 
-declare_id!("GMZwfjUSRH9RZu8krupno3tMAbm2oRuMJFoFVBGh5vvt");
+declare_id!("EDhFft2p7XzFSPVDPVnn1VkHz3NiDzabUnnvZ8UhhEMf");
 
 const PDA_ACCOUNT_SEED: &[u8; 11] = b"pda_account";
 const USER_ACCOUNT_PDA_SEED: &[u8; 16] = b"user_account_pda";
@@ -105,6 +106,7 @@ pub mod grow_space {
         block_id: u64,
         final_hash: String,
         pubkey: Pubkey,
+        voters: Vec<u64>,
     ) -> Result<()> {
         let mut pda_account = &mut ctx.accounts.pda_account;
         let mut user_account_pda = &mut ctx.accounts.user_account_pda;
@@ -115,10 +117,11 @@ pub mod grow_space {
         }
 
         msg!(
-            "block_id: {} for pda: {:?} len: {}",
+            "block_id: {} for pda: {:?} len: {} rem: {}",
             block_id,
             pda_account.key(),
-            pda_account.to_account_info().data_len()
+            pda_account.to_account_info().data_len(),
+            ctx.remaining_accounts.len(),
         );
 
         // Ensure there is at least one BlockEntry and one FinalHashEntry in the first BlockEntry
@@ -140,16 +143,21 @@ pub mod grow_space {
                     .map(|h| h.pubkeys.len() as u64)
                     .sum();
                 // sort hashes by votes count in reverse order
-                let mut hashes_sorted = entry.final_hashes.clone();
-                hashes_sorted.sort_by_key(|h| std::cmp::Reverse(h.pubkeys.len()));
+                // let mut hashes_sorted = entry.final_hashes.clone();
+                // hashes_sorted.sort_by_key(|h| std::cmp::Reverse(h.pubkeys.len()));
 
                 // check if the highest score gets over 50% of total votes
-                if hashes_sorted[0].pubkeys.len() as u64 > total_count / 2 {
+                if entry.final_hashes[0].pubkeys.len() as u64 > total_count / 2 {
                     // for each voter in the voting vector
-                    for voter in hashes_sorted[0].pubkeys.iter() {
+                    for idx in voters.iter() {
+                        if *idx as usize >= entry.final_hashes[0].pubkeys.len() {
+                            break;
+                        }
+                        let voter = entry.final_hashes[0].pubkeys[*idx as usize];
+                        // for voter in hashes_sorted[0].pubkeys.iter() {
                         // find voter's PDA
                         let (voter_pda, _) = Pubkey::find_program_address(
-                            &[USER_ACCOUNT_PDA_SEED, (*voter).as_ref()],
+                            &[USER_ACCOUNT_PDA_SEED, voter.as_ref()],
                             ctx.program_id,
                         );
                         // find account info
@@ -259,7 +267,7 @@ pub mod grow_space {
             });
             add_size += 64;
         }
-        msg!("PDA account: {:?}", pda_account.block_ids);
+        // msg!("PDA account: {:?}", pda_account.block_ids);
 
         // Log the new data size after modification
         // let current_data_after = calculate_data_size(&pda_account.block_ids);
@@ -335,6 +343,24 @@ pub mod grow_space {
     }
 }
 
+pub fn generate_pseudo_random_number(max: usize) -> usize {
+    // Generate a hash from the seed
+    let hash_result = hash(Clock::get().unwrap().unix_timestamp.to_le_bytes().as_ref());
+    // Convert the first 8 bytes of the hash into a u64
+    let mut random_number = u64::from_le_bytes(hash_result.to_bytes()[..8].try_into().unwrap());
+    // Take the modulus to get a number between 0 and max
+    random_number = random_number % max as u64;
+    random_number as usize
+}
+
+fn get_random_indices(len: usize) -> Vec<usize> {
+    let mut indices = Vec::new();
+    for _ in 0..10 {
+        indices.push(generate_pseudo_random_number(len))
+    }
+    indices
+}
+
 /*
 fn calculate_data_size(entries: &Vec<BlockEntry>) -> usize {
     let mut total_size = 0;
@@ -400,7 +426,7 @@ pub struct AppendData<'info> {
         space = 8 + UserAccountPda::INIT_SPACE,
         // constraint = user_account_pda.user == payer.key()
     )]
-    pub user_account_pda: Box<Account<'info, UserAccountPda>>,
+    pub user_account_pda: Account<'info, UserAccountPda>,
     #[account(mut)]
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,

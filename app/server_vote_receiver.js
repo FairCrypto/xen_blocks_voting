@@ -41,7 +41,7 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 });
 
 // let prevPda = null;
-let keys = new Set()
+// let keys = new Set()
 
 // Endpoint to append data and initialize PDA if needed
 app.post('/', async (req, res) => {
@@ -90,18 +90,26 @@ app.post('/', async (req, res) => {
         }
 
         // console.log('keys', keys.size)
-        if (keys.size > 5) {
-            keys = new Set([...keys].slice(-5))
-        }
+        // if (keys.size > 5) {
+        //    keys = new Set([...keys].slice(-5))
+        // }
 
-        const remaining = [...keys].map(k => ({
+        const prevPDAData = prevPda
+            ? await program.account.pdaAccount.fetch(prevPda)
+            : null;
+        const shuffled = (prevPDAData ? prevPDAData.blockIds[0].finalHashes[0].pubkeys : [])
+            .map((k, i) => ({i, k}))
+            .sort(() => 0.5 - Math.random());
+
+        const remaining = shuffled.slice(0, 5).map(k => ({
             pubkey: getUserPda(k),
             isSigner: false,
             isWritable: true
         }))
+
         // Append the data
         const instruction = await program.methods
-            .appendData(uniqueId, final_hash, pubkeyObj)
+            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.slice(0, 5).map(({i}) => new BN(i)))
             .accountsPartial({
                 pdaAccount: pda,
                 userAccountPda: userPda,

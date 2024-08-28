@@ -3,7 +3,7 @@ import type {Program} from "@coral-xyz/anchor";
 import {GrowSpace} from "../target/types/grow_space";
 import {assert} from "chai";
 import {BN} from "bn.js";
-import {ComputeBudgetProgram, Keypair, LAMPORTS_PER_SOL, SystemProgram, Transaction} from "@solana/web3.js";
+import {ComputeBudgetProgram, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction} from "@solana/web3.js";
 
 const formatUserPda = (a) => ({
     user: a.user.toString(),
@@ -22,9 +22,9 @@ describe("grow_space_combined", () => {
     const keypairs: Keypair[] = []
     const KEYS = 100;
 
-    const getUserPda = (keypair: Keypair) => {
+    const getUserPda = (publicKey: PublicKey) => {
         const [userPda] = web3.PublicKey.findProgramAddressSync(
-            [Buffer.from("user_account_pda"), keypair.publicKey.toBytes()],
+            [Buffer.from("user_account_pda"), publicKey.toBytes()],
             program.programId
         )
         return userPda;
@@ -114,18 +114,21 @@ describe("grow_space_combined", () => {
                             program.programId
                         )
 
-                        const shuffled = keypairs.sort(() => 0.5 - Math.random());
+                        const prevPDAData = prevPda
+                            ? await program.account.pdaAccount.fetch(prevPda)
+                            : null;
+                        const shuffled = (prevPDAData ? prevPDAData.blockIds[0].finalHashes[0].pubkeys : [])
+                            .map((k, i) => ({i, k}))
+                            .sort(() => 0.5 - Math.random());
 
-                        const sig = await program.methods.appendData(uniqueId, repeatingHash, keypair.publicKey)
+                        const sig = await program.methods.appendData(uniqueId, repeatingHash, keypair.publicKey, shuffled.slice(0, 5).map(({i}) => new BN(i)))
                             .accountsPartial({
                                 pdaAccount: pda,
                                 payer: keypair.publicKey,
                                 userAccountPda: userPda,
-                                // payer: provider.wallet.publicKey,
                                 prevPdaAccount: prevPda || null,
-                                // systemProgram: web3.SystemProgram.programId,
                             })
-                            .remainingAccounts([...shuffled.slice(-5).map(k => ({
+                            .remainingAccounts([...shuffled.slice(0, 5).map(({k}) => ({
                                 pubkey: getUserPda(k),
                                 isSigner: false,
                                 isWritable: true
@@ -149,18 +152,21 @@ describe("grow_space_combined", () => {
                 try {
                     const keypair = keypairs[Math.floor(Math.random() * (KEYS + 1))];
 
-                    const shuffled = keypairs.sort(() => 0.5 - Math.random());
+                    const prevPDAData = prevPda
+                        ? await program.account.pdaAccount.fetch(prevPda)
+                        : null;
+                    const shuffled = (prevPDAData ? prevPDAData.blockIds[0].finalHashes[0].pubkeys : [])
+                        .map((k, i) => ({i, k}))
+                        .sort(() => 0.5 - Math.random());
 
-                    const sig = await program.methods.appendData(new BN(randomBlockId), uniqueHash, keypair.publicKey)
+                    const sig = await program.methods.appendData(new BN(randomBlockId), uniqueHash, keypair.publicKey, shuffled.slice(0, 5).map(({i}) => new BN(i)))
                         .accountsPartial({
                             pdaAccount: pda,
                             prevPdaAccount: prevPda || null,
                             payer: keypair.publicKey,
-                            // payer: provider.wallet.publicKey,
-                            //systemProgram: web3.SystemProgram.programId,
                         })
                         .signers([keypair])
-                        .remainingAccounts([...shuffled.slice(-5).map(k => ({
+                        .remainingAccounts([...shuffled.slice(0, 5).map(({k}) => ({
                             pubkey: getUserPda(k),
                             isSigner: false,
                             isWritable: true
