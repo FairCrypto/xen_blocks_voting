@@ -42,10 +42,14 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 
 // let prevPda = null;
 // let keys = new Set()
+let current_block = 0;
 
 // Endpoint to append data and initialize PDA if needed
 app.post('/', async (req, res) => {
     const {first_block_id, final_hash, pubkey} = req.body;
+    if (first_block_id > current_block) {
+        current_block = first_block_id
+    }
     // console.log('req', first_block_id, final_hash, pubkey);
     const block_id = first_block_id;
     const prev_block_id = Number(block_id) - 100;
@@ -216,7 +220,8 @@ app.get('/fetch_user/:pubkey', async (req, res) => {
         */
         res.status(200).json({
             ...account,
-            inblock: Number(`0x${account.inblock}`)
+            inblock_num: Number(`0x${account.inblock}`)
+            current_block,
         });
     } catch (err) {
         res.status(500).json({error: "Failed to fetch user data", details: err.toString()});
