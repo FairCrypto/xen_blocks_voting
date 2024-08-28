@@ -220,7 +220,7 @@ app.get('/fetch_user/:pubkey', async (req, res) => {
         */
         res.status(200).json({
             ...account,
-            inblock_num: Number(`0x${account.inblock}`)
+            inblock_num: Number(`0x${account.inblock}`),
             current_block,
         });
     } catch (err) {
