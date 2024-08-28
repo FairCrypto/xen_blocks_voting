@@ -94,7 +94,8 @@ app.post('/', async (req, res) => {
         //    keys = new Set([...keys].slice(-5))
         // }
 
-        const prevPDAData = prevPda
+        const prevExists = await pdaExists(prevPda);
+        const prevPDAData = prevExists
             ? await program.account.pdaAccount.fetch(prevPda)
             : null;
         console.log(prevPDAData)
@@ -115,7 +116,7 @@ app.post('/', async (req, res) => {
                 pdaAccount: pda,
                 userAccountPda: userPda,
                 payer: provider.wallet.publicKey,
-                prevPdaAccount: prevPda || null, // [...pdas].slice(-1)[0] || null,
+                prevPdaAccount: prevExists ? prevPda : null, // [...pdas].slice(-1)[0] || null,
                 systemProgram: anchor.web3.SystemProgram.programId,
                 programId: program.programId
             })
