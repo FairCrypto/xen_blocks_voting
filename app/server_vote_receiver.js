@@ -102,15 +102,18 @@ app.post('/', async (req, res) => {
             .map((k, i) => ({i, k}))
             .sort(() => 0.5 - Math.random());
 
-        const remaining = shuffled.slice(0, 5).map(k => ({
-            pubkey: getUserPda(k),
-            isSigner: false,
-            isWritable: true
-        }))
+        const remaining = shuffled
+            .filter(Boolean)
+            .slice(0, 5)
+            .map(k => ({
+                pubkey: getUserPda(k),
+                isSigner: false,
+                isWritable: true
+            }))
 
         // Append the data
         const instruction = await program.methods
-            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.slice(0, 5).map(({i}) => new BN(i)))
+            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.filter(Boolean).slice(0, 5).map(({i}) => new BN(i)))
             .accountsPartial({
                 pdaAccount: pda,
                 userAccountPda: userPda,
