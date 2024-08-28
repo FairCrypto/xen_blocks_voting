@@ -94,11 +94,10 @@ app.post('/', async (req, res) => {
         //    keys = new Set([...keys].slice(-5))
         // }
 
-        const prevExists = await pdaExists(prevPda);
+        const prevExists = prevPda && await pdaExists(prevPda);
         const prevPDAData = prevExists
             ? await program.account.pdaAccount.fetch(prevPda)
             : null;
-        console.log(prevPDAData)
         const shuffled = (prevPDAData ? prevPDAData.blockIds[0].finalHashes[0].pubkeys : [])
             .map((k, i) => ({i, k}))
             .sort(() => 0.5 - Math.random());
@@ -151,7 +150,7 @@ app.post('/', async (req, res) => {
         // pdas.add(pda);
         // keys.add(pubkeyObj)
     } catch (err) {
-        console.error('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err);
+        console.error('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err.message);
         res.status(500).json({error: "Failed to append data", details: err.toString()});
     }
 });
