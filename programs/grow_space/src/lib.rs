@@ -30,7 +30,7 @@ pub mod grow_space {
             &[PDA_ACCOUNT_SEED, &start_block_id.to_le_bytes()],
             ctx.program_id,
         );
-        msg!("PDA Account for block ID {}: {}", start_block_id, pda);
+        msg!("Block: {} Pda: {}", start_block_id, pda);
 
         // Load the PDA account, this is coming from client
         let pda_account = &ctx.accounts.pda_account;
@@ -116,23 +116,13 @@ pub mod grow_space {
             user_account_pda.user = pubkey;
         }
 
-        msg!(
-            "block_id: {} for pda: {:?} len: {} rem: {}",
-            block_id,
-            pda_account.key(),
-            pda_account.to_account_info().data_len(),
-            ctx.remaining_accounts.len(),
-        );
+        msg!("Block Id: {} PDA: {}", block_id, pda_account.key(),);
 
         // Ensure there is at least one BlockEntry and one FinalHashEntry in the first BlockEntry
         if ctx.accounts.prev_pda_account.is_some() {
             let prev_pda_account = ctx.accounts.prev_pda_account.clone().unwrap();
             // Log some details about the previous PDA account for debugging
-            msg!(
-                "Previous PDA Account Block ID for pda: {:?} Length: {}",
-                prev_pda_account.key(),
-                prev_pda_account.block_ids.len()
-            );
+            msg!("Previous PDA: {}", prev_pda_account.key(),);
 
             // for each BlockEntry of previous block
             for entry in prev_pda_account.block_ids.iter() {
@@ -174,15 +164,18 @@ pub mod grow_space {
                                     // if voter_account.user != ctx.accounts.payer.key() {
                                     // perform accounting on voter's PDA
                                     if voter_account.inblock < block_id {
-                                        msg!(
-                                            "Eligible voter: {} in-block: {} block: {}",
-                                            voter.key(),
-                                            voter_account.inblock,
-                                            block_id,
-                                        );
+                                        let prev_block = voter_account.inblock;
                                         voter_account.credit += 1;
                                         voter_account.inblock = block_id;
-                                        msg!("Voter's new credit: {}", voter_account.credit);
+                                        emit!(VoterCredited {
+                                            user: pubkey,
+                                            voter,
+                                            pda: pda_account.key(),
+                                            block_id,
+                                            prev_block_id: prev_block,
+                                            credit: voter_account.credit,
+                                            final_hash: entry.final_hashes[0].final_hash
+                                        });
                                         let mut writer = BpfWriter::new(&mut *buf);
                                         voter_account.try_serialize(&mut writer)?;
                                     }
@@ -195,7 +188,7 @@ pub mod grow_space {
         }
 
         msg!(
-            "Dump user_account_pda: {} {} {} {}",
+            "User PDA: {} {} {} {}",
             user_account_pda.user,
             user_account_pda.credit,
             user_account_pda.debit,
@@ -203,27 +196,27 @@ pub mod grow_space {
         );
 
         // Log the current data size before modification
-        msg!(
-            "Current data length allocation: {}",
-            pda_account.to_account_info().data_len()
-        );
+        // msg!(
+        //    "Current data length allocation: {}",
+        //    pda_account.to_account_info().data_len()
+        // );
 
         // Convert the final_hash string to bytes and truncate to 64 bits (8 bytes)
         let final_hash_bytes: [u8; 8] = {
             let mut bytes = final_hash.as_bytes().to_vec();
             bytes.resize(8, 0); // Ensure it has at least 8 bytes
-            bytes[..8].try_into().expect("slice with incorrect length")
+            bytes[..8].try_into().expect("Err: slice bad length")
         };
 
         // Convert truncated bytes back to string for logging
-        let final_hash_truncated_str = String::from_utf8_lossy(&final_hash_bytes);
+        // let final_hash_truncated_str = String::from_utf8_lossy(&final_hash_bytes);
 
         // Log the incoming final_hash string and its truncated byte representation
-        msg!("Incoming final_hash string: {}", final_hash);
-        msg!(
-            "Truncated final_hash bytes as string: {}",
-            final_hash_truncated_str
-        );
+        // msg!("Incoming final_hash string: {}", final_hash);
+        // msg!(
+        //    "Truncated final_hash bytes as string: {}",
+        //    final_hash_truncated_str
+        // );
 
         let mut found = false;
         let mut add_size: usize = 0;
@@ -271,13 +264,13 @@ pub mod grow_space {
 
         // Log the new data size after modification
         // let current_data_after = calculate_data_size(&pda_account.block_ids);
-        msg!(
-            "New length of pda_account.entries: {}",
-            pda_account.block_ids.len()
-        );
+        // msg!(
+        //    "New length of pda_account.entries: {}",
+        //    pda_account.block_ids.len()
+        // );
         // msg!("Data size after in bytes: {}", current_data_after);
         msg!(
-            "Current data length allocation: {} new: {}",
+            "PDA size: {} +delta: {}",
             pda_account.to_account_info().data_len(),
             add_size
         );
@@ -304,18 +297,15 @@ pub mod grow_space {
                     ctx.accounts.system_program.to_account_info(),
                 ],
             )
-            .expect("Rent payment failed");
+            .expect("Err: Rent pmt failed");
         }
 
         pda_account
             .to_account_info()
             .realloc(new_size as usize, false)
-            .expect("Reallocation failed");
+            .expect("Err: Realloc failed");
 
-        msg!(
-            "Reallocated PDA account to new size: {}",
-            pda_account.to_account_info().data_len()
-        );
+        msg!("PDA new size: {}", pda_account.to_account_info().data_len());
 
         Ok(())
     }
@@ -523,6 +513,17 @@ pub struct PDAAccount {
     #[max_len(0)]
     pub block_ids: Vec<BlockEntry>,
     // pub data_size: u32,
+}
+
+#[event]
+pub struct VoterCredited {
+    pub user: Pubkey,
+    pub voter: Pubkey,
+    pub pda: Pubkey,
+    pub block_id: u64,
+    pub prev_block_id: u64,
+    pub final_hash: [u8; 8],
+    pub credit: u64,
 }
 
 #[error_code]
