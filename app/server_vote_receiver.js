@@ -47,11 +47,11 @@ let votes = new Map()
 program.addEventListener(
     'voterCredited',
     (e) => {
-        if (votes.has(e.prevBlockId)) {
-            const voters = votes.get(e.prevBlockId) || [];
-            votes = votes.set(e.prevBlockId, [...voters, e.voter.toString()])
+        if (votes.has(e.prevBlockId.toNumber())) {
+            const voters = votes.get(e.prevBlockId.toNumber()) || [];
+            votes = votes.set(e.prevBlockId.toNumber(), [...voters, e.voter.toString()])
         } else {
-            votes = votes.set(e.prevBlockId, [e.voter.toString()])
+            votes = votes.set(e.prevBlockId.toNumber(), [e.voter.toString()])
         }
         console.log(votes)
         console.log('credit: b=', e.prevBlockId.toNumber(), 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
@@ -209,7 +209,7 @@ app.get('/fetch_data/:block_id', async (req, res) => {
                     pubkeys: hashEntry.pubkeys.map(pubkey => pubkey.toString())
                 }))
             })),
-            creditedVoters: votes.get(uniqueId)
+            creditedVoters: votes.get(uniqueId.toNumber())
         };
         res.status(200).json(blockInfo);
     } catch (err) {
