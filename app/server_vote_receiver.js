@@ -162,7 +162,7 @@ app.post('/', async (req, res) => {
         // pdas.add(pda);
         // keys.add(pubkeyObj)
     } catch (err) {
-        console.error('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err);
+        console.error('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err.message);
         res.status(500).json({error: "Failed to append data", details: err.toString()});
     }
 });
