@@ -58,7 +58,7 @@ const getVoters = (prevUniqueId) => {
 
 const getVoterCredit = (blockId, pubkey) => {
     if (votes.has(blockId)) {
-        return votes.get(blockId)[pubkey.toString()]?.credit
+        return votes.get(blockId)[pubkey.toBase58()]?.credit
     } else {
         return null
     }
@@ -271,7 +271,7 @@ app.get('/fetch_data/:block_id', async (req, res) => {
                     finalHash: Buffer.from(hashEntry.finalHash).toString('utf8'),  // Convert finalHash bytes to string
                     count: parseInt(hashEntry.count, 10) || hashEntry.pubkeys?.length,
                     pubkeys: (hashEntry.pubkeys || []).reduce((acc, pubkey) => {
-                        acc[pubkey.toBase58()] = getVoterCredit(block_id - 100, pubkey)
+                        acc[pubkey.toBase58()] = getVoterCredit(block_id, pubkey)
                         return acc;
                     }, {}),
                     creditedVoters: (votes.get(uniqueId.toNumber()) || []).length
