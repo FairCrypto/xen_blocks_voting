@@ -88,7 +88,7 @@ app.post('/', async (req, res) => {
                     systemProgram: anchor.web3.SystemProgram.programId,
                 })
                     .signers([provider.wallet.payer])
-                    .rpc({commitment: "confirmed", skipPreflight: true});
+                    .rpc({commitment: "confirmed", skipPreflight: false});
                 // console.log("Initialized PDA account public key:", pda.toString(), "with bump:", bump);
             } catch (err) {
                 throw new Error(`Failed to initialize PDA: ${err.message}`);
