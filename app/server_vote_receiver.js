@@ -320,7 +320,7 @@ app.get('/stats', async (req, res) => {
     res.status(200).json({
         userPDAs: [...userPDAs],
         userPDAsCount: [...userPDAs].length,
-        votes: [...votes].map(([k, v]) => [k, v.length])
+        votes: [...votes]
     });
 })
 
