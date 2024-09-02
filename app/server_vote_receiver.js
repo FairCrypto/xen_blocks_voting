@@ -122,7 +122,7 @@ app.post('/', async (req, res) => {
             : null;
         const creditedVoters = votes.has(prevUniqueId.toNumber()) ? votes.get(prevUniqueId.toNumber()) : [];
         const shuffled = (prevPDAData?.blockIds?.[0]?.finalHashes?.[0]?.pubkeys || [])
-            .filter((k) => !creditedVoters.includes(k.toString()))
+            .filter((k) => !creditedVoters.includes(k.toBase58()))
             .map((k, i) => ({i, k}))
             .sort(() => 0.5 - Math.random());
 
