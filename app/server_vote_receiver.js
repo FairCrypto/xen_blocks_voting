@@ -41,7 +41,7 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000
 });
 
-const votes = new Map()
+let votes = new Map()
 
 // const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
 program.addEventListener(
@@ -49,9 +49,9 @@ program.addEventListener(
     (e) => {
         if (votes.has(e.prevBlockId.toNumber())) {
             const voters = votes.get(e.prevBlockId.toNumber()) || [];
-            votes.set(e.prevBlockId.toNumber(), [...voters, e.voter.toString()])
+            votes = votes.set(e.prevBlockId.toNumber(), [...voters, e.voter.toString()])
         } else {
-            votes.set(e.prevBlockId.toNumber(), [e.voter.toString()])
+            votes = votes.set(e.prevBlockId.toNumber(), [e.voter.toString()])
         }
         // console.log(votes)
         console.log('credit: b=', e.prevBlockId.toNumber(), 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
