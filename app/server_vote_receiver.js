@@ -120,7 +120,7 @@ app.post('/', async (req, res) => {
         const prevPDAData = prevExists
             ? await program.account.pdaAccount.fetch(prevPda)
             : null;
-        const creditedVoters = votes.has(prevUniqueId) ? votes.get(prevUniqueId) : [];
+        const creditedVoters = votes.has(prevUniqueId.toNumber()) ? votes.get(prevUniqueId.toNumber()) : [];
         const shuffled = (prevPDAData?.blockIds?.[0]?.finalHashes?.[0]?.pubkeys || [])
             .filter((k) => !creditedVoters.includes(k.toString()))
             .map((k, i) => ({i, k}))
