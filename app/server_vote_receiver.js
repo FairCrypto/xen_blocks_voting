@@ -271,7 +271,7 @@ app.get('/fetch_data/:block_id', async (req, res) => {
                     finalHash: Buffer.from(hashEntry.finalHash).toString('utf8'),  // Convert finalHash bytes to string
                     count: parseInt(hashEntry.count, 10) || hashEntry.pubkeys?.length,
                     pubkeys: (hashEntry.pubkeys || []).reduce((acc, pubkey) => {
-                        acc[pubkey.toBase58()] = getVoterCredit(block_id, pubkey)
+                        acc[pubkey.toBase58()] = getVoterCredit(block_id - 100, pubkey)
                         return acc;
                     }, {}),
                     creditedVoters: (votes.get(uniqueId.toNumber()) || []).length
