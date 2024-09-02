@@ -49,11 +49,11 @@ program.addEventListener(
     (e) => {
         if (votes.has(e.prevBlockId)) {
             const voters = votes.get(e.prevBlockId) || [];
-            console.log(voters)
             votes.set(e.prevBlockId, [...voters, e.voter.toString()])
         } else {
             votes.set(e.prevBlockId, [e.voter.toString()])
         }
+        console.log(votes)
         console.log('credit: b=', e.prevBlockId.toNumber(), 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
     }
 )
