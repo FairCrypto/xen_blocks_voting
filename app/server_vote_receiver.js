@@ -54,14 +54,15 @@ const votes = new Map()
 program.addEventListener(
     'voterCredited',
     (e) => {
-        if (votes.has(e.prevBlockId.toNumber())) {
-            const voters = votes.get(e.prevBlockId.toNumber()) || [];
-            votes.set(e.prevBlockId.toNumber(), [...voters, e.voter.toString()])
+        const prevBlockId = e.blockId.toNumber - 100;
+        if (votes.has(prevBlockId)) {
+            const voters = votes.get(prevBlockId) || [];
+            votes.set(prevBlockId, [...voters, e.voter.toString()])
         } else {
-            votes.set(e.prevBlockId.toNumber(), [e.voter.toString()])
+            votes.set(prevBlockId, [e.voter.toString()])
         }
         // console.log(votes)
-        console.log('credit: b=', e.prevBlockId.toNumber(), 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
+        console.log('credit: b=', prevBlockId, 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
     }
 )
 
@@ -294,8 +295,8 @@ app.get('/fetch_user/:pubkey', async (req, res) => {
 
 app.get('/stats', async (req, res) => {
     res.status(200).json({
-        userPDAs,
-        votes
+        userPDAs: [...userPDAs],
+        votes: [...votes]
     });
 })
 
