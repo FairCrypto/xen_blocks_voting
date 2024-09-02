@@ -47,13 +47,13 @@ const votes = new Map()
 program.addEventListener(
     'voterCredited',
     (e) => {
-        if (votes.has(e.blockId)) {
-            const voters = votes.get(e.blockId) || [];
-            votes.set(e.blockId, [...voters, e.voter.toString()])
+        if (votes.has(e.prevBlockId)) {
+            const voters = votes.get(e.prevBlockId) || [];
+            votes.set(e.prevBlockId, [...voters, e.voter.toString()])
         } else {
-            votes.set(e.blockId, [e.voter.toString()])
+            votes.set(e.prevBlockId, [e.voter.toString()])
         }
-        console.log('credit: b=', e.blockId.toNumber(), 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
+        console.log('credit: b=', e.prevBlockId.toNumber(), 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
     }
 )
 
