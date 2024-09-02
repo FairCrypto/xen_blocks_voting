@@ -6,7 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-grow_space = "7KvbAAK7kP72zcdC24vDn9L51TDV8v9he4hNJ3S7ZU51"
+grow_space = "3VYEHzb5Yi2rYZMUUZjwvX5KsgpguEaGEd6wp4p5jMaj"
 
 [registry]
 url = "https://api.apr.dev"
