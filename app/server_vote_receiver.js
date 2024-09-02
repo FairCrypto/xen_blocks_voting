@@ -41,7 +41,7 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000
 });
 
-let votes = new Map()
+const votes = new Map()
 
 // const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
 program.addEventListener(
@@ -49,9 +49,9 @@ program.addEventListener(
     (e) => {
         if (votes.has(e.prevBlockId.toNumber())) {
             const voters = votes.get(e.prevBlockId.toNumber()) || [];
-            votes = votes.set(e.prevBlockId.toNumber(), [...voters, e.voter.toString()])
+            votes.set(e.prevBlockId.toNumber(), [...voters, e.voter.toString()])
         } else {
-            votes = votes.set(e.prevBlockId.toNumber(), [e.voter.toString()])
+            votes.set(e.prevBlockId.toNumber(), [e.voter.toString()])
         }
         // console.log(votes)
         console.log('credit: b=', e.prevBlockId.toNumber(), 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
@@ -126,7 +126,7 @@ app.post('/', async (req, res) => {
         console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
         const shuffled = filteredKeys
             .map((k, i) => ({i, k}))
-            .sort(() => 0.5 - Math.random());
+        // .sort(() => 0.5 - Math.random());
 
         const remaining = shuffled
             .filter(({k}) => !!k)
