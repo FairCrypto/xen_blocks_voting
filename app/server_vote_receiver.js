@@ -53,7 +53,7 @@ program.addEventListener(
         } else {
             votes = votes.set(e.prevBlockId.toNumber(), [e.voter.toString()])
         }
-        console.log(votes)
+        // console.log(votes)
         console.log('credit: b=', e.prevBlockId.toNumber(), 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
     }
 )
@@ -206,10 +206,10 @@ app.get('/fetch_data/:block_id', async (req, res) => {
                 finalHashes: entry.finalHashes.map(hashEntry => ({
                     finalHash: Buffer.from(hashEntry.finalHash).toString('utf8'),  // Convert finalHash bytes to string
                     count: parseInt(hashEntry.count, 10) || hashEntry.pubkeys.length,
-                    pubkeys: hashEntry.pubkeys.map(pubkey => pubkey.toString())
+                    pubkeys: hashEntry.pubkeys.map(pubkey => pubkey.toString()),
+                    creditedVoters: (votes.get(uniqueId.toNumber()) || []).length
                 }))
             })),
-            creditedVoters: votes.get(uniqueId.toNumber())
         };
         res.status(200).json(blockInfo);
     } catch (err) {
