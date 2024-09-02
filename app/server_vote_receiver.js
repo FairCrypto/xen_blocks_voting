@@ -273,8 +273,7 @@ app.get('/fetch_data/:block_id', async (req, res) => {
                     pubkeys: (hashEntry.pubkeys || []).reduce((acc, pubkey) => {
                         acc[pubkey.toBase58()] = getVoterCredit(block_id, pubkey)
                         return acc;
-                    }, {})
-                        .map(pubkey => pubkey.toString()),
+                    }, {}),
                     creditedVoters: (votes.get(uniqueId.toNumber()) || []).length
                 }))
             })),
