@@ -121,14 +121,16 @@ app.post('/', async (req, res) => {
             ? await program.account.pdaAccount.fetch(prevPda)
             : null;
         const creditedVoters = votes.has(prevUniqueId.toNumber()) ? votes.get(prevUniqueId.toNumber()) : [];
-        const shuffled = (prevPDAData?.blockIds?.[0]?.finalHashes?.[0]?.pubkeys || [])
-            .filter((k) => !creditedVoters.includes(k.toBase58()))
+        const allKeys = (prevPDAData?.blockIds?.[0]?.finalHashes?.[0]?.pubkeys || []);
+        const filteredKeys = allKeys.filter((k) => !creditedVoters.includes(k.toBase58()));
+        console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
+        const shuffled = filteredKeys
             .map((k, i) => ({i, k}))
             .sort(() => 0.5 - Math.random());
 
         const remaining = shuffled
             .filter(({k}) => !!k)
-            .slice(0, 10)
+            .slice(0, 5)
             .map(({k}) => ({
                 pubkey: getUserPda(k),
                 isSigner: false,
@@ -137,7 +139,7 @@ app.post('/', async (req, res) => {
 
         // Append the data
         const instruction = await program.methods
-            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.filter(({k}) => !!k).slice(0, 10).map(({i}) => new BN(i)))
+            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.filter(({k}) => !!k).slice(0, 5).map(({i}) => new BN(i)))
             .accountsPartial({
                 pdaAccount: pda,
                 userAccountPda: userPda,
@@ -183,6 +185,40 @@ app.post('/', async (req, res) => {
 });
 
 // Endpoint to fetch and display data
+app.get('/fetch_data_short/:block_id', async (req, res) => {
+    const block_id = parseInt(req.params.block_id);
+    if (isNaN(block_id)) {
+        return res.status(400).json({error: "Invalid block_id"});
+    }
+
+    const uniqueId = new BN(block_id);
+
+    const [pda] = await PublicKey.findProgramAddress(
+        [Buffer.from("pda_account"), uniqueId.toArrayLike(Buffer, "le", 8)],
+        program.programId
+    );
+
+    try {
+        // console.log(`Fetching data for block_id: ${block_id}, PDA: ${pda.toString()}`);
+        const account = await program.account.pdaAccount.fetch(pda);
+        const blockInfo = {
+            blockId: block_id,
+            entries: account.blockIds.map(entry => ({
+                blockId: entry.blockId.toString(),
+                finalHashes: entry.finalHashes.map(hashEntry => ({
+                    finalHash: Buffer.from(hashEntry.finalHash).toString('utf8'),  // Convert finalHash bytes to string
+                    count: parseInt(hashEntry.count, 10) || hashEntry.pubkeys.length,
+                    pubkeys: hashEntry.pubkeys.length,
+                    creditedVoters: (votes.get(uniqueId.toNumber()) || []).length
+                }))
+            })),
+        };
+        res.status(200).json(blockInfo);
+    } catch (err) {
+        res.status(500).json({error: "Failed to fetch data", details: err.toString()});
+    }
+});
+
 app.get('/fetch_data/:block_id', async (req, res) => {
     const block_id = parseInt(req.params.block_id);
     if (isNaN(block_id)) {
