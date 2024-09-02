@@ -48,7 +48,11 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000
 });
 
-const votes = new Map()
+const votes = new Map();
+
+const getVoters = (prevUniqueId) => {
+    return votes.has(prevUniqueId.toNumber()) ? votes.get(prevUniqueId.toNumber()) : []
+}
 
 // const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
 program.addEventListener(
@@ -128,7 +132,7 @@ app.post('/', async (req, res) => {
         const prevPDAData = prevExists
             ? await program.account.pdaAccount.fetch(prevPda)
             : null;
-        const creditedVoters = votes.has(prevUniqueId.toNumber()) ? votes.get(prevUniqueId.toNumber()) : [];
+        const creditedVoters = getVoters(prevUniqueId);
         const allKeys = (prevPDAData?.blockIds?.[0]?.finalHashes?.[0]?.pubkeys || []);
         const filteredKeys = allKeys.filter((k) => !creditedVoters.includes(k.toBase58()));
         console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
