@@ -40,6 +40,10 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000
 });
 
+
+const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
+program.on('VoterCredited', onVoterCredited)
+
 // let prevPda = null;
 // let keys = new Set()
 let current_block = 0;
@@ -58,11 +62,11 @@ app.post('/', async (req, res) => {
     const prevUniqueId = new BN(prev_block_id);
     const pubkeyObj = new PublicKey(pubkey);
 
-    const [pda] = await PublicKey.findProgramAddress(
+    const [pda] = PublicKey.findProgramAddressSync(
         [Buffer.from("pda_account"), uniqueId.toArrayLike(Buffer, "le", 8)],
         program.programId
     );
-    const [prevPda] = await PublicKey.findProgramAddress(
+    const [prevPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("pda_account"), prevUniqueId.toArrayLike(Buffer, "le", 8)],
         program.programId
     );
@@ -128,9 +132,9 @@ app.post('/', async (req, res) => {
             })
             .remainingAccounts(remaining)
             .preInstructions([modifyComputeUnits])
-            // .instruction();
-
             /*
+            .instruction();
+
             const recentBlockhash = await provider.connection.getLatestBlockhash();
             const transaction = new web3.Transaction({
                 feePayer: provider.wallet.publicKey,

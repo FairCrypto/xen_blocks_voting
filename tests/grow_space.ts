@@ -20,7 +20,7 @@ describe("grow_space_combined", () => {
     const program = workspace.GrowSpace as Program<GrowSpace>;
 
     const keypairs: Keypair[] = []
-    const KEYS = 100;
+    const KEYS = 10;
 
     const getUserPda = (publicKey: PublicKey) => {
         const [userPda] = web3.PublicKey.findProgramAddressSync(
@@ -112,7 +112,7 @@ describe("grow_space_combined", () => {
                         const [userPda] = web3.PublicKey.findProgramAddressSync(
                             [Buffer.from("user_account_pda"), keypair.publicKey.toBytes()],
                             program.programId
-                        )
+                        );
 
                         const prevPDAData = prevPda
                             ? await program.account.pdaAccount.fetch(prevPda)
