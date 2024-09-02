@@ -17,6 +17,7 @@ const program = anchor.workspace.GrowSpace;
 
 console.log('program ID', program.programId.toString())
 console.log('payer', provider.wallet.payer.publicKey.toString())
+console.log('connection', provider.connection)
 
 // Function to check if a PDA account already exists
 async function pdaExists(pda) {
