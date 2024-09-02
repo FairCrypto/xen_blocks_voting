@@ -133,13 +133,13 @@ app.post('/', async (req, res) => {
         const filteredKeys = allKeys.filter((k) => !creditedVoters.includes(k.toBase58()));
         console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
         const shuffled = filteredKeys
-                .map((k, i) => ({i, k}))
-            //.sort(() => 0.5 - Math.random())
+            .map((k, i) => ({i, k}))
+            .sort(() => 0.5 - Math.random())
         ;
 
         const remaining = shuffled
             .filter(({k}) => !!k)
-            .slice(0, 5)
+            .slice(0, 10)
             .map(({k}) => ({
                 pubkey: getUserPda(k),
                 isSigner: false,
@@ -148,7 +148,7 @@ app.post('/', async (req, res) => {
 
         // Append the data
         const instruction = await program.methods
-            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.filter(({k}) => !!k).slice(0, 5).map(({i}) => new BN(i)))
+            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.filter(({k}) => !!k).slice(0, 10).map(({i}) => new BN(i)))
             .accountsPartial({
                 pdaAccount: pda,
                 userAccountPda: userPda,
