@@ -52,7 +52,16 @@ const MAX_VOTES_BLOCKS = 10; // keep data on last 10 blocks
 let votes = new Map();
 
 const getVoters = (prevUniqueId) => {
-    return votes.has(prevUniqueId.toNumber()) ? votes.get(prevUniqueId.toNumber()) : []
+    return (votes.has(prevUniqueId.toNumber()) ? votes.get(prevUniqueId.toNumber()) : [])
+        .map(v => v.pubkey)
+}
+
+const getVoterCredit = (blockId, pubkey) => {
+    if (votes.has(blockId)) {
+        return votes.get(blockId)[pubkey.toString()].credit
+    } else {
+        return null
+    }
 }
 
 // const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
@@ -62,9 +71,9 @@ program.addEventListener(
         const prevBlockId = e.blockId.toNumber() - 100;
         if (votes.has(prevBlockId)) {
             const voters = votes.get(prevBlockId) || [];
-            votes.set(prevBlockId, [...voters, e.voter.toString()])
+            votes.set(prevBlockId, [...voters, {pubkey: e.voter.toString(), credit: e.credit.toNumber()}])
         } else {
-            votes.set(prevBlockId, [e.voter.toString()])
+            votes.set(prevBlockId, [{pubkey: e.voter.toString(), credit: e.credit.toNumber()}])
         }
         // Step 1: Extract keys and sort them in descending order
         const sortedKeys = Array.from(votes.keys()).sort((a, b) => b - a);
@@ -261,7 +270,11 @@ app.get('/fetch_data/:block_id', async (req, res) => {
                 finalHashes: entry.finalHashes.map(hashEntry => ({
                     finalHash: Buffer.from(hashEntry.finalHash).toString('utf8'),  // Convert finalHash bytes to string
                     count: parseInt(hashEntry.count, 10) || hashEntry.pubkeys.length,
-                    pubkeys: hashEntry.pubkeys.map(pubkey => pubkey.toString()),
+                    pubkeys: hashEntry.pubkeys.reduce((acc, pubkey) => {
+                        acc[pubkey.toBase58()] = getVoterCredit(block_id, pubkey)
+                        return acc;
+                    }, {})
+                        .map(pubkey => pubkey.toString()),
                     creditedVoters: (votes.get(uniqueId.toNumber()) || []).length
                 }))
             })),
