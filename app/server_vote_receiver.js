@@ -17,7 +17,7 @@ const program = anchor.workspace.GrowSpace;
 
 console.log('program ID', program.programId.toString())
 console.log('payer', provider.wallet.payer.publicKey.toString())
-console.log('connection', provider.connection)
+// console.log('connection', provider.connection)
 
 // Function to check if a PDA account already exists
 async function pdaExists(pda) {
@@ -92,7 +92,7 @@ app.post('/', async (req, res) => {
                     .rpc({commitment: "confirmed", skipPreflight: false});
                 // console.log("Initialized PDA account public key:", pda.toString(), "with bump:", bump);
             } catch (err) {
-                throw new Error(`Failed to initialize PDA: ${err.message}`);
+                // throw new Error(`Failed to initialize PDA: ${err.message}`);
             }
         } else {
             // console.log("PDA already initialized, proceeding to append data.");
