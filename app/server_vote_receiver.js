@@ -49,6 +49,7 @@ program.addEventListener(
     (e) => {
         if (votes.has(e.prevBlockId)) {
             const voters = votes.get(e.prevBlockId) || [];
+            console.log(voters)
             votes.set(e.prevBlockId, [...voters, e.voter.toString()])
         } else {
             votes.set(e.prevBlockId, [e.voter.toString()])
