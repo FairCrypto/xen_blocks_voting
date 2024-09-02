@@ -41,16 +41,20 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000
 });
 
+const votes = new Map()
 
 // const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
 program.addEventListener(
     'voterCredited',
-    (e) => console.log(
-        'credit: b=', e.blockId.toNumber(),
-        'u=', e.user.toString(),
-        'v=', e.voter.toString(),
-        'c=', e.credit.toNumber()
-    )
+    (e) => {
+        if (votes.has(e.blockId)) {
+            const voters = votes.get(e.blockId) || [];
+            votes.set(e.blockId, [...voters, e.voter.toString()])
+        } else {
+            votes.set(e.blockId, [e.voter.toString()])
+        }
+        console.log('credit: b=', e.blockId.toNumber(), 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
+    }
 )
 
 // let prevPda = null;
@@ -115,7 +119,9 @@ app.post('/', async (req, res) => {
         const prevPDAData = prevExists
             ? await program.account.pdaAccount.fetch(prevPda)
             : null;
+        const creditedVoters = votes.has(prevUniqueId) ? votes.get(prevUniqueId) : [];
         const shuffled = (prevPDAData?.blockIds?.[0]?.finalHashes?.[0]?.pubkeys || [])
+            .filter((k) => !creditedVoters.includes(k.toString()))
             .map((k, i) => ({i, k}))
             .sort(() => 0.5 - Math.random());
 
@@ -201,7 +207,8 @@ app.get('/fetch_data/:block_id', async (req, res) => {
                     count: parseInt(hashEntry.count, 10) || hashEntry.pubkeys.length,
                     pubkeys: hashEntry.pubkeys.map(pubkey => pubkey.toString())
                 }))
-            }))
+            })),
+            creditedVoters: votes.get(uniqueId)
         };
         res.status(200).json(blockInfo);
     } catch (err) {
