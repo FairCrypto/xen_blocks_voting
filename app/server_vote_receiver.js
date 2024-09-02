@@ -58,7 +58,7 @@ const getVoters = (prevUniqueId) => {
 
 const getVoterCredit = (blockId, pubkey) => {
     if (votes.has(blockId)) {
-        return votes.get(blockId)[pubkey.toString()].credit
+        return votes.get(blockId)[pubkey.toString()]?.credit
     } else {
         return null
     }
