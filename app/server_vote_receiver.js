@@ -48,7 +48,8 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000
 });
 
-const votes = new Map();
+const MAX_VOTES_BLOCKS = 10; // keep data on last 10 blocks
+let votes = new Map();
 
 const getVoters = (prevUniqueId) => {
     return votes.has(prevUniqueId.toNumber()) ? votes.get(prevUniqueId.toNumber()) : []
@@ -64,6 +65,13 @@ program.addEventListener(
             votes.set(prevBlockId, [...voters, e.voter.toString()])
         } else {
             votes.set(prevBlockId, [e.voter.toString()])
+        }
+        // Step 1: Extract keys and sort them in descending order
+        const sortedKeys = Array.from(votes.keys()).sort((a, b) => b - a);
+
+        // Step 2: Iterate through the keys and delete the ones we don't need
+        for (let i = MAX_VOTES_BLOCKS; i < sortedKeys.length; i++) {
+            votes.delete(sortedKeys[i]);
         }
         // console.log(votes)
         console.log('credit: b=', prevBlockId, 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
@@ -136,7 +144,7 @@ app.post('/', async (req, res) => {
         const allKeys = (prevPDAData?.blockIds?.[0]?.finalHashes?.[0]?.pubkeys || [])
             .map((k, i) => ({i, k}));
         const filteredKeys = allKeys.filter(({k}) => !creditedVoters.includes(k.toBase58()));
-        console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
+        // console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
         const shuffled = filteredKeys.sort(() => 0.5 - Math.random());
 
         const remaining = shuffled
@@ -299,7 +307,8 @@ app.get('/fetch_user/:pubkey', async (req, res) => {
 app.get('/stats', async (req, res) => {
     res.status(200).json({
         userPDAs: [...userPDAs],
-        votes: [...votes]
+        userPDAsCount: [...userPDAs].length,
+        votes: [...votes].map(([k, v]) => [k, v.length])
     });
 })
 
