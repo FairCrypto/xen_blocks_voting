@@ -133,8 +133,9 @@ app.post('/', async (req, res) => {
         const filteredKeys = allKeys.filter((k) => !creditedVoters.includes(k.toBase58()));
         console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
         const shuffled = filteredKeys
-            .map((k, i) => ({i, k}))
-            .sort(() => 0.5 - Math.random());
+                .map((k, i) => ({i, k}))
+            //.sort(() => 0.5 - Math.random())
+        ;
 
         const remaining = shuffled
             .filter(({k}) => !!k)
