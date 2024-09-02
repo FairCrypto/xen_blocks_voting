@@ -43,7 +43,15 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 
 
 // const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
-program.addEventListener('voterCredited', console.log)
+program.addEventListener(
+    'voterCredited',
+    (e) => console.log(
+        'credit: b=', e.blockId.toNumber(),
+        'u=', e.user.toString(),
+        'v=', e.voter.toString(),
+        'c=', e.credit.toNumber()
+    )
+)
 
 // let prevPda = null;
 // let keys = new Set()
