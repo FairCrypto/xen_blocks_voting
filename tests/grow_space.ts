@@ -18,6 +18,7 @@ describe("grow_space_combined", () => {
     setProvider(provider);
 
     const program = workspace.GrowSpace as Program<GrowSpace>;
+    program.addEventListener('voterCredited', console.log)
 
     const keypairs: Keypair[] = []
     const KEYS = 10;

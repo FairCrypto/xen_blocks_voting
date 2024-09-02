@@ -42,8 +42,8 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 });
 
 
-const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
-program.addEventListener('VoterCredited', onVoterCredited)
+// const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
+program.addEventListener('voterCredited', console.log)
 
 // let prevPda = null;
 // let keys = new Set()
@@ -113,7 +113,7 @@ app.post('/', async (req, res) => {
 
         const remaining = shuffled
             .filter(({k}) => !!k)
-            .slice(0, 5)
+            .slice(0, 10)
             .map(({k}) => ({
                 pubkey: getUserPda(k),
                 isSigner: false,
@@ -122,7 +122,7 @@ app.post('/', async (req, res) => {
 
         // Append the data
         const instruction = await program.methods
-            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.filter(({k}) => !!k).slice(0, 5).map(({i}) => new BN(i)))
+            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.filter(({k}) => !!k).slice(0, 10).map(({i}) => new BN(i)))
             .accountsPartial({
                 pdaAccount: pda,
                 userAccountPda: userPda,
