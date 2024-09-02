@@ -54,7 +54,7 @@ const votes = new Map()
 program.addEventListener(
     'voterCredited',
     (e) => {
-        const prevBlockId = e.blockId.toNumber - 100;
+        const prevBlockId = e.blockId.toNumber() - 100;
         if (votes.has(prevBlockId)) {
             const voters = votes.get(prevBlockId) || [];
             votes.set(prevBlockId, [...voters, e.voter.toString()])
