@@ -1,4 +1,4 @@
-import {workspace, web3, AnchorProvider, setProvider,} from "@coral-xyz/anchor";
+import {workspace, web3, AnchorProvider, setProvider, AnchorError,} from "@coral-xyz/anchor";
 import type {Program} from "@coral-xyz/anchor";
 import {GrowSpace} from "../target/types/grow_space";
 import {assert} from "chai";
@@ -6,10 +6,18 @@ import {BN} from "bn.js";
 import {ComputeBudgetProgram, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction} from "@solana/web3.js";
 
 const formatUserPda = (a) => ({
-    user: a.user.toString(),
+    // user: a.user.toString(),
     credit: a.credit.toNumber(),
     debit: a.debit.toNumber(),
+    redeemed: a.redeemed.toNumber(),
     inblock: a.inblock.toNumber()
+});
+
+const formatPeriodStats = (a) => ({
+    // user: a.user.toString(),
+    credit: a.credit.toNumber(),
+    debit: a.debit.toNumber(),
+    redeemed: a.redeemed.toNumber(),
 });
 
 describe("grow_space_combined", () => {
@@ -18,14 +26,28 @@ describe("grow_space_combined", () => {
     setProvider(provider);
 
     const program = workspace.GrowSpace as Program<GrowSpace>;
-    program.addEventListener('voterCredited', console.log)
+    // program.addEventListener('voterCredited', console.log)
 
+    // test state vars
     const keypairs: Keypair[] = []
-    const KEYS = 10;
+    const KEYS = 3;
+    let treasury, periodCounter, currentPeriod = new BN(0);
+    // @ts-ignore
+    const userAccounts = new Map<number, Set<string>>();
+    let newPeriodListener;
+    const blockIds = new Set<string>();
 
-    const getUserPda = (publicKey: PublicKey) => {
+    // @ts-ignore
+    const getUserPda = (publicKey: PublicKey, period: BN) => {
+        if (!userAccounts.has(period.toNumber()) ||
+            !userAccounts.get(period.toNumber()).has(publicKey.toBase58())
+        ) return null;
         const [userPda] = web3.PublicKey.findProgramAddressSync(
-            [Buffer.from("user_account_pda"), publicKey.toBytes()],
+            [
+                Buffer.from("user_account_pda"),
+                publicKey.toBytes(),
+                period.toArrayLike(Buffer, "le", 8)
+            ],
             program.programId
         )
         return userPda;
@@ -37,34 +59,18 @@ describe("grow_space_combined", () => {
             SystemProgram.transfer({
                 fromPubkey: provider.wallet.publicKey,
                 toPubkey: keypair.publicKey,
-                lamports: 0.005 * LAMPORTS_PER_SOL,
+                lamports: 0.02 * LAMPORTS_PER_SOL,
             })
         );
         await provider.sendAndConfirm(fundTx, []);
         return keypair;
     }
 
-    const printPdaAccountInfo = async (blockId: string) => {
-        const uniqueId = new BN(parseInt(blockId));
-        const [pda] = web3.PublicKey.findProgramAddressSync(
-            [Buffer.from("pda_account"), uniqueId.toArrayLike(Buffer, "le", 8)],
-            program.programId
-        );
-
-        const account = await program.account.pdaAccount.fetch(pda);
-
-        console.log(`Block ID ${blockId} stored in PDA`)
-        console.log(account);
-    }
-
-    it("Appends multiple final hashes, including repeats, to random block IDs in the PDA with repeated pubkeys", async () => {
-        const blockIds = new Set<string>();
-        let pda: web3.PublicKey;
-        let prevPda: web3.PublicKey;
-
-        const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
-            units: 1_400_000
-        });
+    before(async () => {
+        newPeriodListener = program.addEventListener('newPeriod', ({newPeriod}) => {
+            console.log('New Period', newPeriod.toNumber());
+            // currentPeriod = newPeriod;
+        })
 
         process.stdout.write(`generating ${KEYS} keypairs `)
         for await (const i of Array.from({length: KEYS + 1}, (_, i) => i)) {
@@ -72,11 +78,54 @@ describe("grow_space_combined", () => {
             process.stdout.write('.')
             keypairs.push(keypair)
         }
-        process.stdout.write('\n')
+        process.stdout.write('\n');
+
+        [treasury] = web3.PublicKey.findProgramAddressSync(
+            [Buffer.from("blocks_treasury")],
+            program.programId
+        )
+        assert.ok(treasury);
+    });
+
+    it("Should initialize Treasury account", async () => {
+        const [treasury] = web3.PublicKey.findProgramAddressSync(
+            [Buffer.from("blocks_treasury")],
+            program.programId
+        )
+        console.log('Treasury PDA', treasury.toBase58())
+
+        try {
+            const sig = await program.methods.initializeTreasury(new BN(0.2 * LAMPORTS_PER_SOL))
+                .accounts({
+                    admin: provider.wallet.publicKey,
+                })
+                .signers([])
+                .rpc({commitment: "confirmed", skipPreflight: false});
+            console.log("Initialized treasury account", 'sig:', sig);
+
+
+        } catch (err) {
+            console.error("Failed to initialize treasury -- already initialized", err.message);
+        } finally {
+            const balance = await provider.connection.getBalance(treasury)
+            console.log("Treasury balance", balance);
+        }
+
+    });
+
+    it("Appends multiple final hashes, including repeats, to random block IDs in the PDA with repeated pubkeys", async () => {
+        let pda: web3.PublicKey;
+        let prevPda: web3.PublicKey;
+
+        const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
+            units: 1_400_000
+        });
 
         let randomBlockId = Math.floor(Math.random() * 10_000);
+        const treasuryState = await program.account.treasuryAccount.fetch(treasury);
+        currentPeriod = treasuryState.currentPeriod;
 
-        for await (const i of [0, 1]) { // Limiting to N for testing purposes
+        for await (const i of [0, 1, 2]) { // Limiting to N for testing purposes
             randomBlockId += Math.floor(Math.random() * 100_000);
             blockIds.add(randomBlockId.toString())
             const uniqueId = new BN(randomBlockId); // Use the block ID as the unique ID
@@ -86,7 +135,10 @@ describe("grow_space_combined", () => {
 
             // Initialize a new PDA for each block ID
             [pda, bump] = web3.PublicKey.findProgramAddressSync(
-                [Buffer.from("pda_account"), uniqueId.toArrayLike(Buffer, "le", 8)],
+                [
+                    Buffer.from("pda_account"),
+                    uniqueId.toArrayLike(Buffer, "le", 8)]
+                ,
                 program.programId
             )
             console.log('PDA', pda.toString(), 'prev', prevPda?.toString())
@@ -100,7 +152,7 @@ describe("grow_space_combined", () => {
                     .rpc({commitment: "confirmed", skipPreflight: true});
                 console.log("Initialized PDA account public key:", pda.toString(), "with bump:", bump, 'sig:', sig);
             } catch (err) {
-                console.error("Failed to initialize PDA:", err);
+                console.error("Failed to initialize PDA:", err.message);
             }
 
             // Append repeating final hashes with repeated pubkeys
@@ -109,9 +161,24 @@ describe("grow_space_combined", () => {
                 for await (const repeatingHash of repeatingHashes) {
                     try {
                         const keypair = keypairs[Math.floor(Math.random() * (KEYS + 1))];
+                        const treasuryState = await program.account.treasuryAccount.fetch(treasury);
+                        currentPeriod = treasuryState.currentPeriod;
+
+                        [periodCounter] = web3.PublicKey.findProgramAddressSync(
+                            [
+                                Buffer.from("period_counter"),
+                                currentPeriod.toArrayLike(Buffer, "le", 8)
+                            ],
+                            program.programId
+                        )
+                        assert.ok(periodCounter);
 
                         const [userPda] = web3.PublicKey.findProgramAddressSync(
-                            [Buffer.from("user_account_pda"), keypair.publicKey.toBytes()],
+                            [
+                                Buffer.from("user_account_pda"),
+                                keypair.publicKey.toBytes(),
+                                currentPeriod.toArrayLike(Buffer, "le", 8)
+                            ],
                             program.programId
                         );
 
@@ -122,24 +189,35 @@ describe("grow_space_combined", () => {
                             .map((k, i) => ({i, k}))
                             .sort(() => 0.5 - Math.random());
 
-                        const sig = await program.methods.appendData(uniqueId, repeatingHash, keypair.publicKey, shuffled.slice(0, 5).map(({i}) => new BN(i)))
+                        const sig = await program.methods.appendData(uniqueId, repeatingHash, keypair.publicKey, currentPeriod, shuffled.slice(0, 5).map(({i}) => new BN(i)))
                             .accountsPartial({
+                                treasury,
+                                periodCounter,
                                 pdaAccount: pda,
                                 payer: keypair.publicKey,
                                 userAccountPda: userPda,
                                 prevPdaAccount: prevPda || null,
                             })
-                            .remainingAccounts([...shuffled.slice(0, 5).map(({k}) => ({
-                                pubkey: getUserPda(k),
-                                isSigner: false,
-                                isWritable: true
-                            }))])
+                            .remainingAccounts([...shuffled.slice(0, 5)
+                                .map(({k}) => ({
+                                    pubkey: getUserPda(k, currentPeriod),
+                                    isSigner: false,
+                                    isWritable: true
+                                }))].filter(({pubkey}) => !!pubkey)
+                            )
                             .preInstructions([modifyComputeUnits])
                             .signers([keypair])
                             .rpc({commitment: "confirmed", skipPreflight: false});
-                        console.log("  Hash:", repeatingHash, "payer:", keypair.publicKey.toString(), "sig:", sig);
+
+                        if (!userAccounts.has(currentPeriod.toNumber())) {
+                            userAccounts.set(currentPeriod.toNumber(), new Set<string>())
+                        }
+                        const newSet = userAccounts.get(currentPeriod.toNumber()).add(keypair.publicKey.toBase58())
+                        userAccounts.set(currentPeriod.toNumber(), newSet);
+
+                        console.log("  Hash:", repeatingHash, "period:", currentPeriod.toNumber(), "payer:", keypair.publicKey.toString(), "sig:", sig);
                     } catch (err) {
-                        console.error(`Failed to append data for Block ID ${randomBlockId}:`, err);
+                        console.error(`Failed to append data for Block ID ${randomBlockId}:`, err.message);
                     }
                 }
             }
@@ -152,6 +230,18 @@ describe("grow_space_combined", () => {
 
                 try {
                     const keypair = keypairs[Math.floor(Math.random() * (KEYS + 1))];
+                    const treasuryState = await program.account.treasuryAccount.fetch(treasury);
+                    currentPeriod = treasuryState.currentPeriod;
+
+                    [periodCounter] = web3.PublicKey.findProgramAddressSync(
+                        [
+                            Buffer.from("period_counter"),
+                            currentPeriod.toArrayLike(Buffer, "le", 8)
+                        ],
+                        program.programId
+                    )
+                    assert.ok(periodCounter);
+                    console.log('Period Counter PDA, p=', currentPeriod.toNumber(), periodCounter.toBase58())
 
                     const prevPDAData = prevPda
                         ? await program.account.pdaAccount.fetch(prevPda)
@@ -160,34 +250,49 @@ describe("grow_space_combined", () => {
                         .map((k, i) => ({i, k}))
                         .sort(() => 0.5 - Math.random());
 
-                    const sig = await program.methods.appendData(new BN(randomBlockId), uniqueHash, keypair.publicKey, shuffled.slice(0, 5).map(({i}) => new BN(i)))
+                    const sig = await program.methods.appendData(new BN(randomBlockId), uniqueHash, keypair.publicKey, currentPeriod, shuffled.slice(0, 5).map(({i}) => new BN(i)))
                         .accountsPartial({
+                            treasury,
+                            periodCounter,
                             pdaAccount: pda,
                             prevPdaAccount: prevPda || null,
                             payer: keypair.publicKey,
                         })
                         .signers([keypair])
-                        .remainingAccounts([...shuffled.slice(0, 5).map(({k}) => ({
-                            pubkey: getUserPda(k),
-                            isSigner: false,
-                            isWritable: true
-                        }))])
+                        .remainingAccounts([...shuffled.slice(0, 5)
+                            .map(({k}) => ({
+                                pubkey: getUserPda(k, currentPeriod),
+                                isSigner: false,
+                                isWritable: true
+                            }))].filter(({pubkey}) => !!pubkey)
+                        )
                         .preInstructions([modifyComputeUnits])
                         .rpc({commitment: "confirmed", skipPreflight: false});
 
-                    console.log("  Hash:", uniqueHash, "payer:", keypair.publicKey.toString(), "sig:" + sig);
+                    if (!userAccounts.has(currentPeriod.toNumber())) {
+                        userAccounts.set(currentPeriod.toNumber(), new Set<string>())
+                    }
+                    const newSet = userAccounts.get(currentPeriod.toNumber()).add(keypair.publicKey.toBase58())
+                    userAccounts.set(currentPeriod.toNumber(), newSet);
 
+                    console.log("  Hash:", uniqueHash, "period:", currentPeriod.toNumber(), "payer:", keypair.publicKey.toString(), "sig:", sig);
                 } catch (err) {
-                    console.error(`Failed to append data for Block ID ${randomBlockId}:`, err);
+                    console.error(`Failed to append data for Block ID ${randomBlockId}:`, err.message);
                 }
             }
 
             await new Promise(resolve => setTimeout(resolve, 5_000));
 
             prevPda = pda;
-
         }
 
+        // Verify that the values are unique Block IDs
+        const blockIdsSet = new Set(Array.from(blockIds));
+        assert.equal(blockIdsSet.size, blockIds.size, "Block IDs should be unique");
+        console.log("Total unique block IDs added: ", blockIds.size);
+    });
+
+    it("Should print blocks info", async () => {
         console.log('\n\nBlocks', [...blockIds].join(", "), '\n\n');
         // Fetch the PDA and print the stored data
         for await (const blockId of [...blockIds]) {
@@ -217,26 +322,160 @@ describe("grow_space_combined", () => {
                 // console.log(e.message)
             }
         }
+    })
 
+    it("Should print period and users accounts", async () => {
         console.log('\n\n');
-        for await (const keypair of keypairs) {
-            const [userPda] = web3.PublicKey.findProgramAddressSync(
-                [Buffer.from("user_account_pda"), keypair.publicKey.toBytes()],
+        // const treasuryState = await program.account.treasuryAccount.fetch(treasury);
+        // console.log(userAccounts)
+        for await (const period of [...userAccounts.keys()]) {
+            const [periodCounter] = web3.PublicKey.findProgramAddressSync(
+                [
+                    Buffer.from("period_counter"),
+                    new BN(period).toArrayLike(Buffer, "le", 8)
+                ],
                 program.programId
             )
-            try {
-                const userAccount = await program.account.userAccountPda.fetch(userPda);
-                console.log('user pda', keypair.publicKey.toString(), formatUserPda(userAccount))
-            } catch (e) {
-                console.log(e.message)
+            const periodStats = await program.account.periodCounter.fetch(periodCounter);
+            console.log(
+                'period: p',
+                period,
+                formatPeriodStats(periodStats),
+            );
+
+            for await (const pubkey of [...userAccounts.get(period)]) {
+                const keypair = keypairs
+                    .find((keypair) => keypair.publicKey.toBase58() === pubkey);
+                if (!keypair) continue;
+
+                const [userPda] = web3.PublicKey.findProgramAddressSync(
+                    [
+                        Buffer.from("user_account_pda"),
+                        keypair.publicKey.toBytes(),
+                        new BN(period).toArrayLike(Buffer, "le", 8)
+                    ],
+                    program.programId
+                )
+                try {
+                    const userAccount = await program.account.userPeriodCounter.fetch(userPda);
+                    console.log(
+                        '  user: p',
+                        period,
+                        formatUserPda(userAccount),
+                        keypair.publicKey.toString(),
+                    )
+                } catch (e) {
+                    console.log(e.message)
+                }
+            }
+        }
+    })
+
+    it("Should allow withdraw from Treasury account", async () => {
+        // wait for next period
+        // console.log('With treasury PDA', treasury.toBase58())
+
+        for await (const period of [...userAccounts.keys()].slice(0, -1)) {
+            const [periodCounter] = web3.PublicKey.findProgramAddressSync(
+                [
+                    Buffer.from("period_counter"),
+                    new BN(period).toArrayLike(Buffer, "le", 8)
+                ],
+                program.programId
+            )
+
+            for await (const pubkey of [...userAccounts.get(period)]) {
+                const keypair = keypairs
+                    .find((keypair) => keypair.publicKey.toBase58() === pubkey);
+                if (!keypair) continue;
+                // const balance = await provider.connection.getBalance(keypair.publicKey)
+                // console.log(`User ${keypair.publicKey.toBase58()} pre balance ${balance}`);
+
+                const userAccountPda = getUserPda(keypair.publicKey, new BN(period));
+                if (!userAccountPda) continue;
+
+                const userAccount = await program.account.userPeriodCounter.fetch(userAccountPda);
+                if (userAccount.credit.toNumber() === 0) continue;
+
+                try {
+                    // const treasuryState = await program.account.treasuryAccount.fetch(treasury);
+                    const sig = await program.methods.claimReward(new BN(period))
+                        .accounts({
+                            treasury,
+                            periodCounter,
+                            userAccountPda,
+                            user: keypair.publicKey,
+                        })
+                        .signers([keypair])
+                        .rpc({commitment: "confirmed", skipPreflight: false});
+
+                    console.log("Claimed reward: p=", period, 'u=', keypair.publicKey.toBase58(), 'sig:', sig);
+
+                } catch (err) {
+                    console.error("Failed to claim reward", err.message);
+                } finally {
+                    // const balance = await provider.connection.getBalance(keypair.publicKey)
+                    // console.log("User post balance", balance);
+                }
             }
         }
 
-        // Verify that the values are unique Block IDs
-        const blockIdsSet = new Set(Array.from(blockIds));
-        assert.equal(blockIdsSet.size, blockIds.size, "Block IDs should be unique");
-
-        console.log("Total unique block IDs added: ", blockIds.size);
     });
+
+    it("Should NOT allow double withdraw from Treasury account", async () => {
+        for await (const period of [...userAccounts.keys()].slice(0, -1)) {
+            const [periodCounter] = web3.PublicKey.findProgramAddressSync(
+                [
+                    Buffer.from("period_counter"),
+                    new BN(period).toArrayLike(Buffer, "le", 8)
+                ],
+                program.programId
+            )
+
+            for await (const pubkey of [...userAccounts.get(period)]) {
+                const keypair = keypairs
+                    .find((keypair) => keypair.publicKey.toBase58() === pubkey);
+                if (!keypair) continue;
+                // const balance = await provider.connection.getBalance(keypair.publicKey)
+                // console.log(`User ${keypair.publicKey.toBase58()} pre balance ${balance}`);
+                const userAccountPda = getUserPda(keypair.publicKey, new BN(period));
+                if (!userAccountPda) continue;
+
+                const userAccount = await program.account.userPeriodCounter.fetch(userAccountPda);
+                if (userAccount.credit.toNumber() === userAccount.redeemed.toNumber()) continue;
+
+                try {
+                    // const treasuryState = await program.account.treasuryAccount.fetch(treasury);
+                    const sig = await program.methods.claimReward(new BN(period))
+                        .accounts({
+                            treasury,
+                            periodCounter,
+                            userAccountPda,
+                            user: keypair.publicKey,
+                        })
+                        .signers([keypair])
+                        .rpc({commitment: "confirmed", skipPreflight: false});
+
+                    console.log("Claimed reward: p=", period, 'u=', keypair.publicKey.toBase58(), 'sig:', sig);
+                    assert.ok(false);
+                } catch (err) {
+                    assert.isTrue(err instanceof AnchorError);
+                    assert.strictEqual(err.error.errorCode.code, 'NoRedeemableCredit');
+                } finally {
+                    const balance = await provider.connection.getBalance(keypair.publicKey)
+                    // console.log("User post balance", balance);
+                }
+            }
+        }
+    });
+
+    it("Should show data on Treasury and Period Counters", async () => {
+        console.log(await program.account.treasuryAccount.fetch(treasury))
+    });
+
+    after(async () => {
+        await program.removeEventListener(newPeriodListener);
+    })
+
 });
 

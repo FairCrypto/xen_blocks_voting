@@ -4,6 +4,7 @@ const anchor = require('@coral-xyz/anchor');
 const {PublicKey, ComputeBudgetProgram, Keypair} = require('@solana/web3.js');
 const {Program, web3} = require('@coral-xyz/anchor');
 const {BN} = require('bn.js');
+const {assert} = require("chai");
 require("dotenv").config();
 
 // const GrowSpace = require("../target/types/grow_space");
@@ -30,17 +31,23 @@ async function pdaExists(pda) {
 }
 
 // caching of user PDAs
-const userPDAs = new Map()
+const userPDAs = new Map();
 
-const getUserPda = (pubkey) => {
-    if (userPDAs.has(pubkey.toBase58())) {
-        return userPDAs.get(pubkey.toBase58());
+const getUserPda = (pubkey, period) => {
+    if (userPDAs.has(period) && userPDAs.get(period).has(pubkey.toBase58())) {
+        return userPDAs.get(period).get(pubkey.toBase58());
     }
+    const pdas = userPDAs.has(period) ? userPDAs.get(period) : new Set();
     const [userPda] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("user_account_pda"), pubkey.toBytes()],
+        [
+            Buffer.from("user_account_pda"),
+            pubkey.toBytes(),
+            period.toArrayLike(Buffer, "le", 8)
+        ],
         program.programId
     )
-    userPDAs.set(pubkey.toBase58(), userPda)
+    pdas.add(userPda.toBase58())
+    userPDAs.set(period, pdas)
     return userPda;
 }
 
@@ -106,6 +113,10 @@ app.post('/', async (req, res) => {
     const prevUniqueId = new BN(prev_block_id);
     const pubkeyObj = new PublicKey(pubkey);
 
+    const [treasury] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("blocks_treasury")],
+        program.programId
+    );
     const [pda] = PublicKey.findProgramAddressSync(
         [Buffer.from("pda_account"), uniqueId.toArrayLike(Buffer, "le", 8)],
         program.programId
@@ -114,10 +125,24 @@ app.post('/', async (req, res) => {
         [Buffer.from("pda_account"), prevUniqueId.toArrayLike(Buffer, "le", 8)],
         program.programId
     );
-    const [userPda] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("user_account_pda"), pubkeyObj.toBytes()],
+    const treasuryState = await program.account.treasuryAccount.fetch(treasury);
+    const currentPeriod = treasuryState.currentPeriod;
+
+    const [periodCounter] = web3.PublicKey.findProgramAddressSync(
+        [
+            Buffer.from("period_counter"),
+            currentPeriod.toArrayLike(Buffer, "le", 8)
+        ],
         program.programId
     )
+    const [userPda] = web3.PublicKey.findProgramAddressSync(
+        [
+            Buffer.from("user_account_pda"),
+            pubkeyObj.toBytes(),
+            currentPeriod.toArrayLike(Buffer, "le", 8)
+        ],
+        program.programId
+    );
 
     let sig;
     try {
@@ -141,10 +166,6 @@ app.post('/', async (req, res) => {
             // console.log("PDA already initialized, proceeding to append data.");
         }
 
-        // console.log('keys', keys.size)
-        // if (keys.size > 5) {
-        //    keys = new Set([...keys].slice(-5))
-        // }
 
         const prevExists = prevPda && await pdaExists(prevPda);
         const prevPDAData = prevExists
@@ -161,16 +182,24 @@ app.post('/', async (req, res) => {
             .filter(({k}) => !!k)
             .slice(0, 5)
             .map(({k}) => ({
-                pubkey: getUserPda(k),
+                pubkey: getUserPda(k, currentPeriod),
                 isSigner: false,
                 isWritable: true
             }))
 
         // Append the data
         const instruction = await program.methods
-            .appendData(uniqueId, final_hash, pubkeyObj, shuffled.filter(({k}) => !!k).slice(0, 5).map(({i}) => new BN(i)))
+            .appendData(
+                uniqueId,
+                final_hash,
+                pubkeyObj,
+                new BN(currentPeriod),
+                shuffled.filter(({k}) => !!k).slice(0, 5).map(({i}) => new BN(i))
+            )
             .accountsPartial({
+                treasury,
                 pdaAccount: pda,
+                periodCounter,
                 userAccountPda: userPda,
                 payer: provider.wallet.publicKey,
                 prevPdaAccount: prevExists ? prevPda : null, // [...pdas].slice(-1)[0] || null,
@@ -203,12 +232,13 @@ app.post('/', async (req, res) => {
             message: "Appended data",
             pda: pda.toString(),
             sig: instruction,
-            user: pubkeyObj.toString()
+            user: pubkeyObj.toString(),
+            period: currentPeriod.toNumber()
         });
         // pdas.add(pda);
         // keys.add(pubkeyObj)
     } catch (err) {
-        console.error('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err.message);
+        console.error('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err);
         res.status(500).json({error: "Failed to append data", details: err.toString()});
     }
 });
@@ -285,15 +315,18 @@ app.get('/fetch_data/:block_id', async (req, res) => {
     }
 });
 
-app.get('/fetch_user/:pubkey', async (req, res) => {
+app.get('/fetch_user/:pubkey/:period', async (req, res) => {
 
     const pubkeyObj = new PublicKey(req.params.pubkey);
 
-    const userPda = getUserPda(pubkeyObj)
+    const userPda = getUserPda(pubkeyObj, new BN(req.params.period || 0))
+    if (!userPda) {
+        return res.status(404)
+    }
 
     try {
         // console.log(`Fetching user data for pubkey: ${pubkeyObj.toString()}, PDA: ${userPda.toString()}`);
-        const account = await program.account.userAccountPda.fetch(userPda);
+        const account = await program.account.userPeriodCounter.fetch(userPda);
         /*
         const blockInfo = {
             blockId: block_id,
@@ -313,14 +346,18 @@ app.get('/fetch_user/:pubkey', async (req, res) => {
             current_block,
         });
     } catch (err) {
+        console.log(err)
         res.status(500).json({error: "Failed to fetch user data", details: err.toString()});
     }
 });
 
-app.get('/stats', async (req, res) => {
+app.get('/stats/:period', async (req, res) => {
+    if (!userPDAs.has(req.params?.period?.toString())) {
+        return res.status(404)
+    }
     res.status(200).json({
-        userPDAs: [...userPDAs],
-        userPDAsCount: [...userPDAs].length,
+        userPDAs: [...userPDAs.get(req.params?.period?.toString())],
+        userPDAsCount: [...userPDAs.get(req.params?.period?.toString())].length,
         votes: [...votes]
     });
 })
