@@ -185,7 +185,7 @@ app.post('/', async (req, res) => {
                 pubkey: getUserPda(k, currentPeriod),
                 isSigner: false,
                 isWritable: true
-            }))
+            })).filter(({pubkey}) => !!pubkey)
 
         // Append the data
         const instruction = await program.methods
