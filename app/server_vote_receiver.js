@@ -102,6 +102,13 @@ let current_block = 0;
 // Endpoint to append data and initialize PDA if needed
 app.post('/', async (req, res) => {
     const {first_block_id, final_hash, pubkey} = req.body;
+    if (!first_block_id || !final_hash || !pubkey) {
+        return res.status(400).json({
+            error: "Bad request",
+            details: "One or more of required params were not supplied"
+        });
+        ;
+    }
     if (first_block_id > current_block) {
         current_block = first_block_id
     }
@@ -109,9 +116,14 @@ app.post('/', async (req, res) => {
     const block_id = first_block_id;
     const prev_block_id = Number(block_id) - 100;
 
-    const uniqueId = new BN(block_id);
-    const prevUniqueId = new BN(prev_block_id);
-    const pubkeyObj = new PublicKey(pubkey);
+    let uniqueId, prevUniqueId, pubkeyObj;
+    try {
+        uniqueId = new BN(block_id);
+        prevUniqueId = new BN(prev_block_id);
+        pubkeyObj = new PublicKey(pubkey);
+    } catch (err) {
+        return res.status(400).json({error: "Bad request", details: err.toString()});
+    }
 
     const [treasury] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from("blocks_treasury")],
