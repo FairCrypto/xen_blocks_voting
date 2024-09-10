@@ -59,7 +59,7 @@ describe("grow_space_combined", () => {
             SystemProgram.transfer({
                 fromPubkey: provider.wallet.publicKey,
                 toPubkey: keypair.publicKey,
-                lamports: 0.02 * LAMPORTS_PER_SOL,
+                lamports: 1 * LAMPORTS_PER_SOL, // TODO: refactor to separate instance !!!
             })
         );
         await provider.sendAndConfirm(fundTx, []);

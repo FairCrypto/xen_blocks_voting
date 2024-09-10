@@ -5,16 +5,16 @@ use bpf_writer::BpfWriter;
 use solana_program::program::invoke;
 use solana_program::system_instruction;
 
-declare_id!("HiibPQGL8ShZKsz2s7gDHahRk7R1Y8LhhF4HVpx7AZyQ");
+declare_id!("CfJMxKKBLGtCqixXcSjRTYfv4RvH3v9EG8Sb1nht3gv3");
 
 const TREASURY_SEED: &[u8; 15] = b"blocks_treasury";
 const PDA_ACCOUNT_SEED: &[u8; 11] = b"pda_account";
 const PERIOD_COUNTER_SEED: &[u8; 14] = b"period_counter";
 const USER_ACCOUNT_PDA_SEED: &[u8; 16] = b"user_account_pda";
 // TODO: change for production !!!
-const REWARD_PERIOD_DURATION: u64 = 10; // 3_600 * 24; // 1 day in seconds
-                                        // TODO: change for production !!!
-const REWARD_PER_PERIOD: u64 = 1_000_000; // lamports
+const REWARD_PERIOD_DURATION: u64 = 36_000; // 3_600 * 24; // 1 day in seconds
+                                            // TODO: change for production !!!
+const REWARD_PER_PERIOD: u64 = 10_000_000; // lamports
 
 /*
    Rewards:
