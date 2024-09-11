@@ -1,10 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import {AnchorProvider, Program, workspace, web3} from '@coral-xyz/anchor';
+import {AnchorProvider, Program, workspace, web3, Wallet} from '@coral-xyz/anchor';
 import {PublicKey, ComputeBudgetProgram} from '@solana/web3.js';
 import BN from 'bn.js';
 import type {GrowSpace} from '../target/types/grow_space';
 import dotenv from 'dotenv';
+import fs from "node:fs";
+import path from "node:path";
 
 dotenv.config();
 
@@ -14,9 +16,13 @@ app.use(bodyParser.json());
 const provider = AnchorProvider.env();
 const program = workspace.GrowSpace as Program<GrowSpace>;
 
-console.log('program ID', program.programId.toString())
-console.log('payer', provider.wallet.publicKey.toString())
-// console.log('connection', provider.connection)
+const keyPairFileName = process.env.ANCHOR_WALLET || '';
+const keyPairString = fs.readFileSync(path.resolve(keyPairFileName), 'utf-8');
+const keyPair = web3.Keypair.fromSecretKey(new Uint8Array(JSON.parse(keyPairString)));
+console.log('Using wallet', keyPair.publicKey.toBase58());
+const wallet = new Wallet(keyPair);
+console.log('Program ID', program.programId.toString())
+console.log('Payer', provider.wallet.publicKey.toString())
 
 // Function to check if a PDA account already exists
 async function pdaExists(pda: PublicKey) {
@@ -162,11 +168,11 @@ app.post('/', async (req, res) => {
             // Initialize the PDA if it does not exist
             try {
                 await program.methods.initializePda(uniqueId).accounts({
-                    pdaAccount: pda,
+                    // pdaAccount: pda,
                     payer: provider.wallet.publicKey,
-                    systemProgram: web3.SystemProgram.programId,
+                    // systemProgram: web3.SystemProgram.programId,
                 })
-                    .signers([provider.wallet])
+                    .signers([wallet.payer])
                     .rpc({commitment: "confirmed", skipPreflight: false});
                 // console.log("Initialized PDA account public key:", pda.toString(), "with bump:", bump);
             } catch (err) {
@@ -239,7 +245,7 @@ app.post('/', async (req, res) => {
                 maxRetries: 1
             })
              */
-            .signers([provider.wallet])
+            .signers([wallet.payer])
             .rpc({commitment: "processed", skipPreflight: false});
 
         console.log(
