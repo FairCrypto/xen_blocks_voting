@@ -1,10 +1,10 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const anchor = require('@coral-xyz/anchor');
-const {PublicKey, ComputeBudgetProgram, Keypair} = require('@solana/web3.js');
-const {Program, web3} = require('@coral-xyz/anchor');
-const {BN} = require('bn.js');
-const {assert} = require("chai");
+import express from 'express';
+import bodyParser from 'body-parser';
+import anchor from '@coral-xyz/anchor';
+import {PublicKey, ComputeBudgetProgram} from '@solana/web3.js';
+import {web3} from '@coral-xyz/anchor';
+import BN from 'bn.js';
+
 require("dotenv").config();
 
 // const GrowSpace = require("../target/types/grow_space");
@@ -17,11 +17,11 @@ anchor.setProvider(provider);
 const program = anchor.workspace.GrowSpace;
 
 console.log('program ID', program.programId.toString())
-console.log('payer', provider.wallet.payer.publicKey.toString())
+console.log('payer', provider.wallet.publicKey.toString())
 // console.log('connection', provider.connection)
 
 // Function to check if a PDA account already exists
-async function pdaExists(pda) {
+async function pdaExists(pda: PublicKey) {
     try {
         const accountInfo = await provider.connection.getAccountInfo(pda);
         return accountInfo !== null;
@@ -31,14 +31,14 @@ async function pdaExists(pda) {
 }
 
 // caching of user PDAs
-const userPDAs = new Map();
-const blacklist = new Set();
+const userPDAs = new Map<number, Map<string, string>>();
+// const blacklist = new Set<string>();
 
-const getUserPda = (pubkey, period) => {
+const getUserPda = (pubkey: PublicKey, period: BN) => {
     if (userPDAs.has(period.toNumber()) && userPDAs.get(period.toNumber()).has(pubkey.toBase58())) {
         return new PublicKey(userPDAs.get(period.toNumber()).get(pubkey.toBase58()));
     }
-    const pdas = userPDAs.has(period.toNumber()) ? userPDAs.get(period.toNumber()) : new Map();
+    const pdas = userPDAs.has(period.toNumber()) ? userPDAs.get(period.toNumber()) : new Map<string, string>();
     const [userPda] = web3.PublicKey.findProgramAddressSync(
         [
             Buffer.from("user_account_pda"),
@@ -57,14 +57,14 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 });
 
 const MAX_VOTES_BLOCKS = 10; // keep data on last 10 blocks
-let votes = new Map();
+let votes = new Map<number, Array<{ pubkey: string, credit: number }>>();
 
-const getVoters = (prevUniqueId) => {
+const getVoters = (prevUniqueId: BN) => {
     return (votes.has(prevUniqueId.toNumber()) ? votes.get(prevUniqueId.toNumber()) : [])
         .map(v => v.pubkey)
 }
 
-const getVoterCredit = (blockId, pubkey) => {
+const getVoterCredit = (blockId: number, pubkey: PublicKey) => {
     if (votes.has(blockId)) {
         const data = votes.get(blockId).find((v) => v.pubkey === pubkey.toBase58());
         return data?.credit
@@ -168,7 +168,7 @@ app.post('/', async (req, res) => {
                     payer: provider.wallet.publicKey,
                     systemProgram: anchor.web3.SystemProgram.programId,
                 })
-                    .signers([provider.wallet.payer])
+                    .signers([provider.wallet])
                     .rpc({commitment: "confirmed", skipPreflight: false});
                 // console.log("Initialized PDA account public key:", pda.toString(), "with bump:", bump);
             } catch (err) {
@@ -241,7 +241,7 @@ app.post('/', async (req, res) => {
                 maxRetries: 1
             })
              */
-            .signers([provider.wallet.payer])
+            .signers([provider.wallet])
             .rpc({commitment: "processed", skipPreflight: false});
 
         console.log(
@@ -375,6 +375,31 @@ app.get('/fetch_user/:pubkey/:period', async (req, res) => {
     }
 });
 
+app.get('/votes/last_block', async (req, res) => {
+    res.status(200).json({
+        votes: [...votes].slice(-1)[0]
+    });
+})
+app.get('/votes/:block_id', async (req, res) => {
+    if (Number(req.params.block_id) < 0) {
+        const lastBlock = [...votes].slice(-1)[0][0];
+        return res.status(200).json({
+            votes: votes[lastBlock + Number(req.params.block_id)]
+        });
+    }
+    res.status(200).json({
+        votes: votes[Number(req.params.block_id)]
+    });
+})
+app.get('/votes/:period', async (req, res) => {
+    if (!userPDAs.has(Number(req.params?.period))) {
+        return res.status(404)
+    }
+    res.status(200).json({
+        votes: [...votes]
+    });
+})
+
 app.get('/stats/:period', async (req, res) => {
     if (!userPDAs.has(Number(req.params?.period))) {
         return res.status(404)
@@ -382,9 +407,9 @@ app.get('/stats/:period', async (req, res) => {
     res.status(200).json({
         userPDAs: [...userPDAs.get(Number(req.params?.period))],
         userPDAsCount: [...userPDAs.get(Number(req.params?.period))].length,
-        votes: [...votes]
     });
 })
+
 
 const PORT = 5555;
 app.listen(PORT, () => {
