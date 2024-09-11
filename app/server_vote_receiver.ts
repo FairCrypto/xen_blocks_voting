@@ -387,8 +387,7 @@ app.get('/votes/last_block', async (req, res) => {
     });
 
     res.status(200).json({
-        block: Object.keys(sortedVotes)[-1][0],
-        votes: Object.values(sortedVotes)[-1][0]
+        [Object.keys(sortedVotes).slice(-1)[0]]: Object.values(sortedVotes).slice(-1)[0]
     });
 })
 app.get('/votes/:block_id', async (req, res) => {
