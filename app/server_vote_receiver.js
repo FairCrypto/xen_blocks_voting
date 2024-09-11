@@ -257,7 +257,7 @@ app.post('/', async (req, res) => {
     } catch (err) {
         console.error(
             'error', currentPeriod.toNumber(), first_block_id, '-',
-            final_hash?.slice(0, 8), pubkey, pda?.toString(), err
+            final_hash?.slice(0, 8), pubkey, pda?.toString(), err.message || '?'
         );
         res.status(500).json({error: "Failed to append data", details: err.toString()});
     }
