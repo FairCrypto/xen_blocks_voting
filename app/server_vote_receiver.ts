@@ -1,20 +1,19 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import anchor from '@coral-xyz/anchor';
+import {AnchorProvider, Program} from '@coral-xyz/anchor';
 import {PublicKey, ComputeBudgetProgram} from '@solana/web3.js';
 import {web3} from '@coral-xyz/anchor';
 import BN from 'bn.js';
+import type {GrowSpace} from '../target/types/grow_space';
+import dotenv from 'dotenv';
 
-require("dotenv").config();
-
-// const GrowSpace = require("../target/types/grow_space");
+dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
 
-const provider = anchor.AnchorProvider.env();
-anchor.setProvider(provider);
-const program = anchor.workspace.GrowSpace;
+const provider = AnchorProvider.env();
+const program = anchor.workspace.GrowSpace as Program<GrowSpace>;
 
 console.log('program ID', program.programId.toString())
 console.log('payer', provider.wallet.publicKey.toString())
@@ -220,7 +219,7 @@ app.post('/', async (req, res) => {
                 payer: provider.wallet.publicKey,
                 prevPdaAccount: prevExists ? prevPda : null, // [...pdas].slice(-1)[0] || null,
                 systemProgram: anchor.web3.SystemProgram.programId,
-                programId: program.programId
+                // programId: program.programId
             })
             .remainingAccounts(remaining.map(({i, ...rest}) => ({...rest})))
             .preInstructions([modifyComputeUnits])
@@ -290,7 +289,7 @@ app.get('/fetch_data_short/:block_id', async (req, res) => {
                 blockId: entry.blockId.toString(),
                 finalHashes: entry.finalHashes.map(hashEntry => ({
                     finalHash: Buffer.from(hashEntry.finalHash).toString('utf8'),  // Convert finalHash bytes to string
-                    count: parseInt(hashEntry.count, 10) || hashEntry.pubkeys.length,
+                    count: hashEntry.pubkeys.length,
                     pubkeys: hashEntry.pubkeys.length,
                     creditedVoters: (votes.get(uniqueId.toNumber()) || []).length
                 }))
@@ -324,7 +323,7 @@ app.get('/fetch_data/:block_id', async (req, res) => {
                 blockId: entry.blockId.toString(),
                 finalHashes: entry.finalHashes.map(hashEntry => ({
                     finalHash: Buffer.from(hashEntry.finalHash).toString('utf8'),  // Convert finalHash bytes to string
-                    count: parseInt(hashEntry.count, 10) || hashEntry.pubkeys?.length,
+                    count: hashEntry.pubkeys?.length,
                     pubkeys: (hashEntry.pubkeys || []).reduce((acc, pubkey) => {
                         acc[pubkey.toBase58()] = getVoterCredit(block_id, pubkey)
                         return acc;
@@ -366,7 +365,7 @@ app.get('/fetch_user/:pubkey/:period', async (req, res) => {
         */
         res.status(200).json({
             ...account,
-            inblock: parseInt(account.inblock, 10),
+            inblock: parseInt(account.inblock.toString(), 10),
             current_block,
         });
     } catch (err) {
