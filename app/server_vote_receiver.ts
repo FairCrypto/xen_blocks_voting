@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import {AnchorProvider, Program} from '@coral-xyz/anchor';
+import {AnchorProvider, Program, workspace} from '@coral-xyz/anchor';
 import {PublicKey, ComputeBudgetProgram} from '@solana/web3.js';
 import {web3} from '@coral-xyz/anchor';
 import BN from 'bn.js';
@@ -13,7 +13,7 @@ const app = express();
 app.use(bodyParser.json());
 
 const provider = AnchorProvider.env();
-const program = anchor.workspace.GrowSpace as Program<GrowSpace>;
+const program = workspace.GrowSpace as Program<GrowSpace>;
 
 console.log('program ID', program.programId.toString())
 console.log('payer', provider.wallet.publicKey.toString())
