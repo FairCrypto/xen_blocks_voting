@@ -46,7 +46,7 @@ const getUserPda = (pubkey, period) => {
         ],
         program.programId
     )
-    pdas.add(pubkey.toBase58(), userPda.toBase58())
+    pdas.set(pubkey.toBase58(), userPda.toBase58())
     userPDAs.set(period, pdas)
     return userPda;
 }
