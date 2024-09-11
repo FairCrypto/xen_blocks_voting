@@ -243,7 +243,7 @@ app.post('/', async (req, res) => {
             .rpc({commitment: "processed", skipPreflight: false});
 
         console.log(
-            'processed', currentPeriod.toNumber(), first_block_id, remaining.length,
+            'processed', currentPeriod.toNumber(), first_block_id, remaining?.length || '-',
             final_hash?.slice(0, 8), pubkey, pda?.toString(), instruction
         );
         res.status(200).json({
@@ -257,7 +257,7 @@ app.post('/', async (req, res) => {
         // keys.add(pubkeyObj)
     } catch (err) {
         console.error(
-            'error', currentPeriod.toNumber(), first_block_id, remaining.length,
+            'error', currentPeriod.toNumber(), first_block_id, '-',
             final_hash?.slice(0, 8), pubkey, pda?.toString(), err
         );
         res.status(500).json({error: "Failed to append data", details: err.toString()});
