@@ -102,25 +102,29 @@ program.addEventListener(
 
 // let prevPda = null;
 // let keys = new Set()
-let current_block = 0;
+let currentBlock = 0;
 
 // Endpoint to append data and initialize PDA if needed
 app.post('/', async (req, res) => {
-    const {first_block_id, final_hash, pubkey} = req.body;
+    const {first_block_id, final_hash, pubkey}: {
+        first_block_id: string,
+        final_hash: string,
+        pubkey: string
+    } = req.body;
     if (!first_block_id || !final_hash || !pubkey) {
         return res.status(400).json({
             error: "Bad request",
             details: "One or more of required params were not supplied"
         });
     }
-    if (first_block_id > current_block) {
-        current_block = first_block_id
+    if (Number(first_block_id) > currentBlock) {
+        currentBlock = Number(first_block_id)
     }
     // console.log('req', first_block_id, final_hash, pubkey);
-    const block_id = first_block_id;
+    const block_id = Number(first_block_id);
     const prev_block_id = Number(block_id) - 100;
 
-    let uniqueId, prevUniqueId, pubkeyObj;
+    let uniqueId: BN, prevUniqueId: BN, pubkeyObj: PublicKey;
     try {
         uniqueId = new BN(block_id);
         prevUniqueId = new BN(prev_block_id);
@@ -160,7 +164,7 @@ app.post('/', async (req, res) => {
         program.programId
     );
 
-    let sig;
+    // let sig;
     try {
         // Check if the PDA already exists
         const exists = await pdaExists(pda);
@@ -280,7 +284,7 @@ app.get('/fetch_data_short/:block_id', async (req, res) => {
 
     const uniqueId = new BN(block_id);
 
-    const [pda] = await PublicKey.findProgramAddress(
+    const [pda] = PublicKey.findProgramAddressSync(
         [Buffer.from("pda_account"), uniqueId.toArrayLike(Buffer, "le", 8)],
         program.programId
     );
@@ -314,7 +318,7 @@ app.get('/fetch_data/:block_id', async (req, res) => {
 
     const uniqueId = new BN(block_id);
 
-    const [pda] = await PublicKey.findProgramAddress(
+    const [pda] = PublicKey.findProgramAddressSync(
         [Buffer.from("pda_account"), uniqueId.toArrayLike(Buffer, "le", 8)],
         program.programId
     );
@@ -371,7 +375,7 @@ app.get('/fetch_user/:pubkey/:period', async (req, res) => {
         res.status(200).json({
             ...account,
             inblock: parseInt(account.inblock.toString(), 10),
-            current_block,
+            currentBlock: currentBlock,
         });
     } catch (err) {
         console.log(err)
@@ -379,7 +383,7 @@ app.get('/fetch_user/:pubkey/:period', async (req, res) => {
     }
 });
 
-app.get('/votes/last_block', async (req, res) => {
+app.get('/votes/last_block', async (_req, res) => {
     const sortedKeys = Object.keys(Object.fromEntries(votes)).sort();
     const sortedVotes = {};
     sortedKeys.forEach(key => {
@@ -395,7 +399,7 @@ app.get('/votes/:block_id', async (req, res) => {
         votes: Object.fromEntries(votes)[Number(req.params.block_id)]
     });
 })
-app.get('/votes', async (req, res) => {
+app.get('/votes', async (_req, res) => {
     const sortedKeys = Object.keys(Object.fromEntries(votes)).sort();
     const sortedVotes = {};
     sortedKeys.forEach(key => {
@@ -417,8 +421,7 @@ app.get('/stats/:period', async (req, res) => {
     });
 })
 
-
-const PORT = 5555;
+const PORT = Number(process.env.SERVER_PORT || '') || 5555;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
