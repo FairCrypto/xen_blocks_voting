@@ -258,7 +258,7 @@ app.post('/', async (req, res) => {
         // pdas.add(pda);
         // keys.add(pubkeyObj)
     } catch (err) {
-        blacklist.add(pubkey.toBase58());
+        blacklist.add(pubkey);
         console.error(
             'error', currentPeriod.toNumber(), first_block_id, blacklist.size,
             final_hash?.slice(0, 8), pubkey, pda?.toString(), err.message || '?'
