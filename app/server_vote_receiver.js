@@ -35,7 +35,7 @@ const userPDAs = new Map();
 
 const getUserPda = (pubkey, period) => {
     if (userPDAs.has(period.toNumber()) && userPDAs.get(period.toNumber()).has(pubkey.toBase58())) {
-        return userPDAs.get(period.toNumber()).get(pubkey.toBase58());
+        return new PublicKey(userPDAs.get(period.toNumber()).get(pubkey.toBase58()));
     }
     const pdas = userPDAs.has(period.toNumber()) ? userPDAs.get(period.toNumber()) : new Map();
     const [userPda] = web3.PublicKey.findProgramAddressSync(
