@@ -37,7 +37,7 @@ const getUserPda = (pubkey, period) => {
     if (userPDAs.has(period) && userPDAs.get(period).has(pubkey.toBase58())) {
         return userPDAs.get(period).get(pubkey.toBase58());
     }
-    const pdas = userPDAs.has(period) ? userPDAs.get(period) : new Set();
+    const pdas = userPDAs.has(period) ? userPDAs.get(period) : new Map();
     const [userPda] = web3.PublicKey.findProgramAddressSync(
         [
             Buffer.from("user_account_pda"),
@@ -46,7 +46,7 @@ const getUserPda = (pubkey, period) => {
         ],
         program.programId
     )
-    pdas.add(userPda.toBase58())
+    pdas.add(pubkey.toBase58(), userPda.toBase58())
     userPDAs.set(period, pdas)
     return userPda;
 }
@@ -210,8 +210,8 @@ app.post('/', async (req, res) => {
             )
             .accountsPartial({
                 treasury,
-                pdaAccount: pda,
                 periodCounter,
+                pdaAccount: pda,
                 userAccountPda: userPda,
                 payer: provider.wallet.publicKey,
                 prevPdaAccount: prevExists ? prevPda : null, // [...pdas].slice(-1)[0] || null,
@@ -239,6 +239,7 @@ app.post('/', async (req, res) => {
              */
             .signers([provider.wallet.payer])
             .rpc({commitment: "processed", skipPreflight: false});
+
         console.log('processed', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), instruction);
         res.status(200).json({
             message: "Appended data",
