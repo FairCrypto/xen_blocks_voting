@@ -121,13 +121,13 @@ app.post('/', async (req, res) => {
         currentBlock = Number(first_block_id)
     }
     // console.log('req', first_block_id, final_hash, pubkey);
-    const block_id = Number(first_block_id);
-    const prev_block_id = Number(block_id) - 100;
+    const blockId = Number(first_block_id);
+    const prevBlockId = Number(blockId) - 100;
 
     let uniqueId: BN, prevUniqueId: BN, pubkeyObj: PublicKey;
     try {
-        uniqueId = new BN(block_id);
-        prevUniqueId = new BN(prev_block_id);
+        uniqueId = new BN(blockId);
+        prevUniqueId = new BN(prevBlockId);
         pubkeyObj = new PublicKey(pubkey);
     } catch (err) {
         return res.status(400).json({error: "Bad request", details: err.toString()});
@@ -197,7 +197,7 @@ app.post('/', async (req, res) => {
         const filteredKeys = allKeys
             // .filter(({k}) => !blacklist.has(k.toBase58()))
             .filter(({k}) => !creditedVoters.includes(k.toBase58()));
-        // console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
+        // console.log(prevBlockId, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
         const shuffled = filteredKeys.sort(() => 0.5 - Math.random());
 
         const remaining = shuffled
@@ -268,7 +268,7 @@ app.post('/', async (req, res) => {
     } catch (err) {
         // blacklist.add(pubkey);
         console.error(
-            'error', currentPeriod.toNumber(), first_block_id,
+            'error', currentPeriod.toNumber(), currentBlock - blockId,
             final_hash?.slice(0, 8), pubkey, pda?.toString(), err.message || '?'
         );
         res.status(500).json({error: "Failed to append data", details: err.toString()});
