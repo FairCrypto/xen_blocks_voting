@@ -32,6 +32,7 @@ async function pdaExists(pda) {
 
 // caching of user PDAs
 const userPDAs = new Map();
+const blacklist = new Set();
 
 const getUserPda = (pubkey, period) => {
     if (userPDAs.has(period.toNumber()) && userPDAs.get(period.toNumber()).has(pubkey.toBase58())) {
@@ -185,7 +186,9 @@ app.post('/', async (req, res) => {
         const creditedVoters = getVoters(prevUniqueId);
         const allKeys = (prevPDAData?.blockIds?.[0]?.finalHashes?.[0]?.pubkeys || [])
             .map((k, i) => ({i, k}));
-        const filteredKeys = allKeys.filter(({k}) => !creditedVoters.includes(k.toBase58()));
+        const filteredKeys = allKeys
+            .filter(({k}) => !blacklist.has(k.toBase58()))
+            .filter(({k}) => !creditedVoters.includes(k.toBase58()));
         // console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
         const shuffled = filteredKeys.sort(() => 0.5 - Math.random());
 
@@ -255,8 +258,9 @@ app.post('/', async (req, res) => {
         // pdas.add(pda);
         // keys.add(pubkeyObj)
     } catch (err) {
+        blacklist.add(pubkey.toBase58());
         console.error(
-            'error', currentPeriod.toNumber(), first_block_id, '-',
+            'error', currentPeriod.toNumber(), first_block_id, blacklist.size,
             final_hash?.slice(0, 8), pubkey, pda?.toString(), err.message || '?'
         );
         res.status(500).json({error: "Failed to append data", details: err.toString()});
