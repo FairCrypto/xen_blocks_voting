@@ -341,15 +341,15 @@ app.get('/fetch_data/:block_id', async (req, res) => {
 
 app.get('/fetch_user/:pubkey/:period', async (req, res) => {
 
-    const pubkeyObj = new PublicKey(req.params.pubkey);
-
-    const userPda = getUserPda(pubkeyObj, new BN(req.params.period || 0))
-    if (!userPda) {
-        return res.status(404)
-    }
-
     try {
         // console.log(`Fetching user data for pubkey: ${pubkeyObj.toString()}, PDA: ${userPda.toString()}`);
+        const pubkeyObj = new PublicKey(req.params.pubkey);
+
+        const userPda = getUserPda(pubkeyObj, new BN(req.params.period || 0))
+        if (!userPda) {
+            return res.status(404)
+        }
+        
         const account = await program.account.userPeriodCounter.fetch(userPda);
         /*
         const blockInfo = {
