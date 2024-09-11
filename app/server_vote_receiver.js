@@ -187,7 +187,7 @@ app.post('/', async (req, res) => {
         const allKeys = (prevPDAData?.blockIds?.[0]?.finalHashes?.[0]?.pubkeys || [])
             .map((k, i) => ({i, k}));
         const filteredKeys = allKeys
-            .filter(({k}) => !blacklist.has(k.toBase58()))
+            // .filter(({k}) => !blacklist.has(k.toBase58()))
             .filter(({k}) => !creditedVoters.includes(k.toBase58()));
         // console.log(prev_block_id, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
         const shuffled = filteredKeys.sort(() => 0.5 - Math.random());
@@ -258,9 +258,9 @@ app.post('/', async (req, res) => {
         // pdas.add(pda);
         // keys.add(pubkeyObj)
     } catch (err) {
-        blacklist.add(pubkey);
+        // blacklist.add(pubkey);
         console.error(
-            'error', currentPeriod.toNumber(), first_block_id, blacklist.size,
+            'error', currentPeriod.toNumber(), first_block_id,
             final_hash?.slice(0, 8), pubkey, pda?.toString(), err.message || '?'
         );
         res.status(500).json({error: "Failed to append data", details: err.toString()});
