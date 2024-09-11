@@ -349,7 +349,7 @@ app.get('/fetch_user/:pubkey/:period', async (req, res) => {
         if (!userPda) {
             return res.status(404)
         }
-        
+
         const account = await program.account.userPeriodCounter.fetch(userPda);
         /*
         const blockInfo = {
@@ -376,12 +376,12 @@ app.get('/fetch_user/:pubkey/:period', async (req, res) => {
 });
 
 app.get('/stats/:period', async (req, res) => {
-    if (!userPDAs.has(req.params?.period?.toString())) {
+    if (!userPDAs.has(Number(req.params?.period))) {
         return res.status(404)
     }
     res.status(200).json({
-        userPDAs: [...userPDAs.get(req.params?.period?.toString())],
-        userPDAsCount: [...userPDAs.get(req.params?.period?.toString())].length,
+        userPDAs: [...userPDAs.get(Number(req.params?.period))],
+        userPDAsCount: [...userPDAs.get(Number(req.params?.period))].length,
         votes: [...votes]
     });
 })
