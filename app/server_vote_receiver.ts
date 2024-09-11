@@ -386,10 +386,13 @@ app.get('/votes/last_block', async (req, res) => {
 })
 app.get('/votes/:block_id', async (req, res) => {
     if (Number(req.params.block_id) < 0) {
-        const lastBlock = [...votes].slice(-1)[0][0];
-        return res.status(200).json({
-            votes: votes[lastBlock + Number(req.params.block_id)]
-        });
+        const lastBlock = [...votes].slice(-1)[0]?.[0];
+        if (lastBlock) {
+            return res.status(200).json({
+                votes: votes[lastBlock + Number(req.params.block_id)]
+            });
+        }
+        return res.status(404)
     }
     res.status(200).json({
         votes: votes[Number(req.params.block_id)]
