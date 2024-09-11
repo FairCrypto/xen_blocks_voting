@@ -381,7 +381,7 @@ app.get('/fetch_user/:pubkey/:period', async (req, res) => {
 
 app.get('/votes/last_block', async (req, res) => {
     res.status(200).json({
-        votes: [...votes].slice(-1)[0]
+        votes: [...[...votes].slice(-1)[0] || []]
     });
 })
 app.get('/votes/:block_id', async (req, res) => {
@@ -398,10 +398,7 @@ app.get('/votes/:block_id', async (req, res) => {
         votes: votes[Number(req.params.block_id)]
     });
 })
-app.get('/votes/:period', async (req, res) => {
-    if (!userPDAs.has(Number(req.params?.period))) {
-        return res.status(404)
-    }
+app.get('/votes', async (req, res) => {
     res.status(200).json({
         votes: [...votes]
     });
