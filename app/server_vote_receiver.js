@@ -191,8 +191,8 @@ app.post('/', async (req, res) => {
         const shuffled = filteredKeys.sort(() => 0.5 - Math.random());
 
         const remaining = shuffled
-            .filter(({k}) => !!k)
-            .slice(0, 5)
+            // .filter(({k}) => !!k)
+            .slice(0, 3)
             .map(({k}) => ({
                 pubkey: getUserPda(k, currentPeriod),
                 isSigner: false,
@@ -206,7 +206,10 @@ app.post('/', async (req, res) => {
                 final_hash,
                 pubkeyObj,
                 new BN(currentPeriod),
-                shuffled.filter(({k}) => !!k).slice(0, 5).map(({i}) => new BN(i))
+                shuffled
+                    // .filter(({k}) => !!k)
+                    .slice(0, 3)
+                    .map(({i}) => new BN(i))
             )
             .accountsPartial({
                 treasury,
