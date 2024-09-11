@@ -1,8 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import {AnchorProvider, Program, workspace} from '@coral-xyz/anchor';
+import {AnchorProvider, Program, workspace, web3} from '@coral-xyz/anchor';
 import {PublicKey, ComputeBudgetProgram} from '@solana/web3.js';
-import {web3} from '@coral-xyz/anchor';
 import BN from 'bn.js';
 import type {GrowSpace} from '../target/types/grow_space';
 import dotenv from 'dotenv';
@@ -165,7 +164,7 @@ app.post('/', async (req, res) => {
                 await program.methods.initializePda(uniqueId).accounts({
                     pdaAccount: pda,
                     payer: provider.wallet.publicKey,
-                    systemProgram: anchor.web3.SystemProgram.programId,
+                    systemProgram: web3.SystemProgram.programId,
                 })
                     .signers([provider.wallet])
                     .rpc({commitment: "confirmed", skipPreflight: false});
@@ -218,7 +217,7 @@ app.post('/', async (req, res) => {
                 userAccountPda: userPda,
                 payer: provider.wallet.publicKey,
                 prevPdaAccount: prevExists ? prevPda : null, // [...pdas].slice(-1)[0] || null,
-                systemProgram: anchor.web3.SystemProgram.programId,
+                systemProgram: web3.SystemProgram.programId,
                 // programId: program.programId
             })
             .remainingAccounts(remaining.map(({i, ...rest}) => ({...rest})))
