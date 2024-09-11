@@ -34,10 +34,10 @@ async function pdaExists(pda) {
 const userPDAs = new Map();
 
 const getUserPda = (pubkey, period) => {
-    if (userPDAs.has(period) && userPDAs.get(period).has(pubkey.toBase58())) {
-        return userPDAs.get(period).get(pubkey.toBase58());
+    if (userPDAs.has(period.toNumber()) && userPDAs.get(period.toNumber()).has(pubkey.toBase58())) {
+        return userPDAs.get(period.toNumber()).get(pubkey.toBase58());
     }
-    const pdas = userPDAs.has(period) ? userPDAs.get(period) : new Map();
+    const pdas = userPDAs.has(period.toNumber()) ? userPDAs.get(period.toNumber()) : new Map();
     const [userPda] = web3.PublicKey.findProgramAddressSync(
         [
             Buffer.from("user_account_pda"),
@@ -47,7 +47,7 @@ const getUserPda = (pubkey, period) => {
         program.programId
     )
     pdas.set(pubkey.toBase58(), userPda.toBase58())
-    userPDAs.set(period, pdas)
+    userPDAs.set(period.toNumber(), pdas)
     return userPda;
 }
 
@@ -107,7 +107,6 @@ app.post('/', async (req, res) => {
             error: "Bad request",
             details: "One or more of required params were not supplied"
         });
-        ;
     }
     if (first_block_id > current_block) {
         current_block = first_block_id
@@ -205,7 +204,7 @@ app.post('/', async (req, res) => {
                 uniqueId,
                 final_hash,
                 pubkeyObj,
-                new BN(currentPeriod),
+                currentPeriod,
                 shuffled
                     // .filter(({k}) => !!k)
                     .slice(0, 3)
@@ -243,7 +242,10 @@ app.post('/', async (req, res) => {
             .signers([provider.wallet.payer])
             .rpc({commitment: "processed", skipPreflight: false});
 
-        console.log('processed', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), instruction);
+        console.log(
+            'processed', currentPeriod.toNumber(), first_block_id, remaining.length,
+            final_hash?.slice(0, 8), pubkey, pda?.toString(), instruction
+        );
         res.status(200).json({
             message: "Appended data",
             pda: pda.toString(),
@@ -254,7 +256,10 @@ app.post('/', async (req, res) => {
         // pdas.add(pda);
         // keys.add(pubkeyObj)
     } catch (err) {
-        console.error('error', first_block_id, final_hash?.slice(0, 8), pubkey, pda?.toString(), err);
+        console.error(
+            'error', currentPeriod.toNumber(), first_block_id, remaining.length,
+            final_hash?.slice(0, 8), pubkey, pda?.toString(), err
+        );
         res.status(500).json({error: "Failed to append data", details: err.toString()});
     }
 });
