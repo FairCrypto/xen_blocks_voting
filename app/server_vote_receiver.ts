@@ -381,7 +381,7 @@ app.get('/fetch_user/:pubkey/:period', async (req, res) => {
 
 app.get('/votes/last_block', async (req, res) => {
     res.status(200).json({
-        votes: [...[...votes].slice(-1)[0] || []]
+        votes: [...votes].slice(-1)[0] || []
     });
 })
 app.get('/votes/:block_id', async (req, res) => {
