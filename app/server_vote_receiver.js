@@ -80,9 +80,9 @@ program.addEventListener(
         const prevBlockId = e.blockId.toNumber() - 100;
         if (votes.has(prevBlockId)) {
             const voters = votes.get(prevBlockId) || [];
-            votes.set(prevBlockId, [...voters, {pubkey: e.voter.toString(), credit: e.credit.toNumber()}])
+            votes.set(prevBlockId, [...voters, {pubkey: e.voter.toBase58(), credit: e.credit.toNumber()}])
         } else {
-            votes.set(prevBlockId, [{pubkey: e.voter.toString(), credit: e.credit.toNumber()}])
+            votes.set(prevBlockId, [{pubkey: e.voter.toBase58(), credit: e.credit.toNumber()}])
         }
         // Step 1: Extract keys and sort them in descending order
         const sortedKeys = Array.from(votes.keys()).sort((a, b) => b - a);
@@ -92,7 +92,7 @@ program.addEventListener(
             votes.delete(sortedKeys[i]);
         }
         // console.log(votes)
-        console.log('credit: b=', prevBlockId, 'u=', e.user.toString(), 'v=', e.voter.toString(), 'c=', e.credit.toNumber())
+        console.log('credit: b=', prevBlockId, 'u=', e.user.toBase58(), 'v=', e.voter.toBase58(), 'c=', e.credit.toNumber())
     }
 )
 
