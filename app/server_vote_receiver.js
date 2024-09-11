@@ -190,7 +190,7 @@ app.post('/', async (req, res) => {
         const shuffled = filteredKeys.sort(() => 0.5 - Math.random());
 
         const remaining = shuffled
-            // .filter(({k}) => !!k)
+            .filter(({k}) => !!k)
             .slice(0, 3)
             .map(({k}) => ({
                 pubkey: getUserPda(k, currentPeriod),
@@ -206,7 +206,7 @@ app.post('/', async (req, res) => {
                 pubkeyObj,
                 currentPeriod,
                 shuffled
-                    // .filter(({k}) => !!k)
+                    .filter(({k}) => !!k)
                     .slice(0, 3)
                     .map(({i}) => new BN(i))
             )
