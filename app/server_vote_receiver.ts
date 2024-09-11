@@ -380,27 +380,31 @@ app.get('/fetch_user/:pubkey/:period', async (req, res) => {
 });
 
 app.get('/votes/last_block', async (req, res) => {
+    const sortedKeys = Object.keys(Object.fromEntries(votes)).sort();
+    const sortedVotes = {};
+    sortedKeys.forEach(key => {
+        sortedVotes[key] = Object.fromEntries(votes)[key];
+    });
+
     res.status(200).json({
-        votes: [...votes].slice(-1)[0] || []
+        block: Object.keys(sortedVotes)[-1][0],
+        votes: Object.values(sortedVotes)[-1][0]
     });
 })
 app.get('/votes/:block_id', async (req, res) => {
-    if (Number(req.params.block_id) < 0) {
-        const lastBlock = [...votes].slice(-1)[0]?.[0];
-        if (lastBlock) {
-            return res.status(200).json({
-                votes: votes[lastBlock + Number(req.params.block_id)]
-            });
-        }
-        return res.status(404)
-    }
     res.status(200).json({
-        votes: votes[Number(req.params.block_id)]
+        votes: Object.fromEntries(votes)[Number(req.params.block_id)]
     });
 })
 app.get('/votes', async (req, res) => {
+    const sortedKeys = Object.keys(Object.fromEntries(votes)).sort();
+    const sortedVotes = {};
+    sortedKeys.forEach(key => {
+        sortedVotes[key] = Object.fromEntries(votes)[key];
+    });
+
     res.status(200).json({
-        votes: [...votes]
+        votes: sortedVotes
     });
 })
 
@@ -409,8 +413,8 @@ app.get('/stats/:period', async (req, res) => {
         return res.status(404)
     }
     res.status(200).json({
-        userPDAs: [...userPDAs.get(Number(req.params?.period))],
-        userPDAsCount: [...userPDAs.get(Number(req.params?.period))].length,
+        userPDAs: Object.fromEntries(Object.fromEntries(userPDAs)[Number(req.params.period)]),
+        userPDAsCount: Object.keys(Object.fromEntries(Object.fromEntries(userPDAs)[Number(req.params.period)])).length,
     });
 })
 
