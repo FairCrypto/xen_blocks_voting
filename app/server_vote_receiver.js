@@ -192,7 +192,8 @@ app.post('/', async (req, res) => {
         const remaining = shuffled
             .filter(({k}) => !!k)
             .slice(0, 3)
-            .map(({k}) => ({
+            .map(({k, i}) => ({
+                i,
                 pubkey: getUserPda(k, currentPeriod),
                 isSigner: false,
                 isWritable: true
@@ -205,9 +206,7 @@ app.post('/', async (req, res) => {
                 final_hash,
                 pubkeyObj,
                 currentPeriod,
-                shuffled
-                    .filter(({k}) => !!k)
-                    .slice(0, 3)
+                remaining
                     .map(({i}) => new BN(i))
             )
             .accountsPartial({
@@ -220,7 +219,7 @@ app.post('/', async (req, res) => {
                 systemProgram: anchor.web3.SystemProgram.programId,
                 programId: program.programId
             })
-            .remainingAccounts(remaining)
+            .remainingAccounts(remaining.map(({i, ...rest}) => ({...rest})))
             .preInstructions([modifyComputeUnits])
             /*
             .instruction();
