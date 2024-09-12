@@ -5,15 +5,15 @@ use bpf_writer::BpfWriter;
 use solana_program::program::invoke;
 use solana_program::system_instruction;
 
-declare_id!("CfJMxKKBLGtCqixXcSjRTYfv4RvH3v9EG8Sb1nht3gv3");
+declare_id!("G99ugCUVdi53WJ8LQ8AP43uxS6twXbxRXTJb7Ni2Wzgw");
 
 const TREASURY_SEED: &[u8; 15] = b"blocks_treasury";
 const PDA_ACCOUNT_SEED: &[u8; 11] = b"pda_account";
 const PERIOD_COUNTER_SEED: &[u8; 14] = b"period_counter";
 const USER_ACCOUNT_PDA_SEED: &[u8; 16] = b"user_account_pda";
 // TODO: change for production !!!
-const REWARD_PERIOD_DURATION: u64 = 36_000; // 3_600 * 24; // 1 day in seconds
-                                            // TODO: change for production !!!
+const REWARD_PERIOD_DURATION: u64 = 3_600; // 3_600 * 24; // 1 day in seconds
+                                           // TODO: change for production !!!
 const REWARD_PER_PERIOD: u64 = 10_000_000; // lamports
 
 /*
@@ -90,17 +90,18 @@ pub mod grow_space {
                     .map(|h| h.pubkeys.len() as u64)
                     .sum();
                 // sort hashes by votes count in reverse order
-                let mut hashes_sorted = entry.final_hashes.clone();
-                hashes_sorted.sort_by_key(|h| std::cmp::Reverse(h.pubkeys.len()));
+                // let mut hashes_sorted = entry.final_hashes.clone();
+                // hashes_sorted.sort_by_key(|h| std::cmp::Reverse(h.pubkeys.len()));
 
                 // check if the highest score gets over 50% of total votes
-                if hashes_sorted[0].pubkeys.len() as u64 > total_count / 2 {
+                // if hashes_sorted[0].pubkeys.len() as u64 > total_count / 2 {
+                if entry.final_hashes[0].pubkeys.len() as u64 > total_count / 2 {
                     // for each voter in the voting vector
                     for idx in voters.iter() {
-                        if *idx as usize >= hashes_sorted[0].pubkeys.len() {
+                        if *idx as usize >= entry.final_hashes[0].pubkeys.len() {
                             break;
                         }
-                        let voter = hashes_sorted[0].pubkeys[*idx as usize];
+                        let voter = entry.final_hashes[0].pubkeys[*idx as usize];
                         // for voter in hashes_sorted[0].pubkeys.iter() {
                         // find voter's PDA
                         let (voter_pda, _) = Pubkey::find_program_address(
@@ -135,7 +136,7 @@ pub mod grow_space {
                                             block_id,
                                             prev_block_id: prev_block,
                                             credit: voter_account.credit,
-                                            final_hash: hashes_sorted[0].final_hash
+                                            final_hash: entry.final_hashes[0].final_hash
                                         });
                                         let mut writer = BpfWriter::new(&mut *buf);
                                         voter_account.try_serialize(&mut writer)?;
