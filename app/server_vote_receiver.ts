@@ -60,7 +60,7 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
     units: 1_400_000
 });
 
-const MAX_VOTES_BLOCKS = 10; // keep data on last 10 blocks
+const MAX_VOTES_BLOCKS = 20; // keep data on last 10 blocks
 let votes = new Map<number, Array<{ pubkey: string, credit: number }>>();
 
 const getVoters = (prevUniqueId: BN) => {
@@ -197,7 +197,6 @@ app.post('/', async (req, res) => {
         const filteredKeys = allKeys
             // .filter(({k}) => !blacklist.has(k.toBase58()))
             .filter(({k}) => !creditedVoters.includes(k.toBase58()));
-        // console.log(prevBlockId, 'all', allKeys.length, creditedVoters.length, filteredKeys.length)
         const shuffled = filteredKeys.sort(() => 0.5 - Math.random());
 
         const remaining = shuffled
@@ -217,8 +216,7 @@ app.post('/', async (req, res) => {
                 final_hash,
                 pubkeyObj,
                 currentPeriod,
-                remaining
-                    .map(({i}) => new BN(i))
+                remaining.map(({i}) => new BN(i))
             )
             .accountsPartial({
                 treasury,
