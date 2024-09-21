@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {AnchorProvider, Program, workspace, web3, Wallet, setProvider} from '@coral-xyz/anchor';
-import {PublicKey, ComputeBudgetProgram, Connection, StakeProgram} from '@solana/web3.js';
+import {PublicKey, ComputeBudgetProgram, Connection, StakeProgram, LAMPORTS_PER_SOL} from '@solana/web3.js';
 import BN from 'bn.js';
 import type {GrowSpace} from '../target/types/grow_space';
 import dotenv from 'dotenv';
@@ -45,6 +45,7 @@ console.log('Program ID', program.programId.toBase58());
 console.log('Payer', provider.wallet.publicKey.toBase58());
 
 let stakingAccount;
+const MIN_STAKE = 0.01 * LAMPORTS_PER_SOL;
 
 web3.PublicKey.createWithSeed(
     wallet.publicKey,
@@ -52,7 +53,30 @@ web3.PublicKey.createWithSeed(
     StakeProgram.programId
 ).then(a => {
     stakingAccount = a;
-    console.log('Staking account', stakingAccount.toBase58());
+    console.log('Staking account addr', stakingAccount.toBase58());
+    return a;
+}).then(async a => {
+    const instruction = await program.methods.createStakeAccount(new BN(MIN_STAKE))
+        .accounts({
+            staker: wallet.publicKey,
+            stakingAccount,
+            // systemProgram: SystemProgram.programId,
+            // stakeProgram: StakeProgram.programId
+        })
+        //.signers([])
+        .instruction();
+    const recentBlockhash = await provider.connection.getLatestBlockhash();
+    const transaction = new web3.Transaction({
+        feePayer: wallet.publicKey,
+        recentBlockhash: recentBlockhash.blockhash
+    }).add(instruction)
+    transaction.partialSign(keyPair);
+    const ss = await provider.connection.sendRawTransaction(transaction.serialize(), {
+        preflightCommitment: 'finalized',
+        skipPreflight: true,
+        // maxRetries: 1
+    })
+    console.log('created admin staking account', ss)
 });
 
 // Function to check if a PDA account already exists

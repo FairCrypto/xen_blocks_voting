@@ -149,7 +149,7 @@ describe("grow_space_combined", () => {
             skipPreflight: true,
             // maxRetries: 1
         })
-        console.log('created admin staking account')
+        console.log('created admin staking account', ss)
 
         newPeriodListener = program.addEventListener('newPeriod', ({newPeriod}) => {
             console.log('New Period', newPeriod.toNumber());
