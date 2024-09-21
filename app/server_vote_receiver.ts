@@ -170,7 +170,7 @@ program.addEventListener(
         // ts, period, user, voter, pda, block_id, prev_block_id, final_hash, credit, debit
         await insertVoterCreditRecord(
             Date.now() / 1_000,
-            (e as any).period || period, // TODO: stub before we add period to the Program even
+            Number(((e as any).period || period).toString()), // TODO: stub before we add period to the Program even
             e.user.toBase58(),
             e.voter.toBase58(),
             e.pda.toBase58(),
