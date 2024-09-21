@@ -1,28 +1,59 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import {AnchorProvider, Program, workspace, web3, Wallet} from '@coral-xyz/anchor';
-import {PublicKey, ComputeBudgetProgram} from '@solana/web3.js';
+import {AnchorProvider, Program, workspace, web3, Wallet, setProvider} from '@coral-xyz/anchor';
+import {PublicKey, ComputeBudgetProgram, Connection, StakeProgram} from '@solana/web3.js';
 import BN from 'bn.js';
 import type {GrowSpace} from '../target/types/grow_space';
 import dotenv from 'dotenv';
 import fs from "node:fs";
 import path from "node:path";
+import {initDB, insertVoterCreditRecord, closeDB, updateVoter} from "../db/db";
 
 dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
 
-const provider = AnchorProvider.env();
-const program = workspace.GrowSpace as Program<GrowSpace>;
+initDB()
+    .then(() => console.log('db initialized'))
+    .catch(e => {
+        console.error(e);
+        process.exit(1)
+    });
+
+const closeServer = () => {
+    console.log('closing server');
+    closeDB(() => console.log('db closed'));
+    process.exit(1)
+};
+
+process.on("SIGINT", closeServer);
+process.on("SIGABRT", closeServer);
 
 const keyPairFileName = process.env.ANCHOR_WALLET || '';
 const keyPairString = fs.readFileSync(path.resolve(keyPairFileName), 'utf-8');
 const keyPair = web3.Keypair.fromSecretKey(new Uint8Array(JSON.parse(keyPairString)));
 console.log('Using wallet', keyPair.publicKey.toBase58());
+
 const wallet = new Wallet(keyPair);
-console.log('Program ID', program.programId.toString())
-console.log('Payer', provider.wallet.publicKey.toString())
+const provider = AnchorProvider.env();
+setProvider(provider);
+
+const program = workspace.GrowSpace as Program<GrowSpace>;
+
+console.log('Program ID', program.programId.toBase58());
+console.log('Payer', provider.wallet.publicKey.toBase58());
+
+let stakingAccount;
+
+web3.PublicKey.createWithSeed(
+    wallet.publicKey,
+    "1",
+    StakeProgram.programId
+).then(a => {
+    stakingAccount = a;
+    console.log('Staking account', stakingAccount.toBase58());
+});
 
 // Function to check if a PDA account already exists
 async function pdaExists(pda: PublicKey) {
@@ -77,10 +108,26 @@ const getVoterCredit = (blockId: number, pubkey: PublicKey) => {
     }
 }
 
-// const onVoterCredited = (e, ...rest) => console.log(e, ...rest)
+const [treasury] = web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("blocks_treasury")],
+    program.programId
+);
+
+let period = 0;
+
+program.account.treasuryAccount.fetch(treasury).then((t) => {
+    period = t.currentPeriod.toNumber()
+})
+
+program.addEventListener(
+    'newPeriod', e => {
+        period = e.newPeriod.toNumber();
+        console.log('new period', e.newPeriod.toNumber(), 'prev.cred', e.prevCredit.toNumber())
+    })
+
 program.addEventListener(
     'voterCredited',
-    (e) => {
+    async (e) => {
         const prevBlockId = e.blockId.toNumber() - 100;
         if (votes.has(prevBlockId)) {
             const voters = votes.get(prevBlockId) || [];
@@ -96,6 +143,23 @@ program.addEventListener(
             votes.delete(sortedKeys[i]);
         }
         // console.log(votes)
+        // ts, period, user, voter, pda, block_id, prev_block_id, final_hash, credit, debit
+        await insertVoterCreditRecord(
+            Date.now() / 1_000,
+            (e as any).period || period, // TODO: stub before we add period to the Program even
+            e.user.toBase58(),
+            e.voter.toBase58(),
+            e.pda.toBase58(),
+            e.blockId.toString(),
+            prevBlockId.toString(),
+            Buffer.from(e.finalHash).toString(),
+            1,
+            0
+        );
+        await updateVoter(
+            e.voter.toBase58(),
+            prevBlockId > 0 ? prevBlockId.toString() : '0'
+        );
         console.log('credit: b=', prevBlockId, 'u=', e.user.toBase58(), 'v=', e.voter.toBase58(), 'c=', e.credit.toNumber())
     }
 )
@@ -133,10 +197,6 @@ app.post('/', async (req, res) => {
         return res.status(400).json({error: "Bad request", details: err.toString()});
     }
 
-    const [treasury] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("blocks_treasury")],
-        program.programId
-    );
     const [pda] = PublicKey.findProgramAddressSync(
         [Buffer.from("pda_account"), uniqueId.toArrayLike(Buffer, "le", 8)],
         program.programId
@@ -186,7 +246,6 @@ app.post('/', async (req, res) => {
             // console.log("PDA already initialized, proceeding to append data.");
         }
 
-
         const prevExists = prevPda && await pdaExists(prevPda);
         const prevPDAData = prevExists
             ? await program.account.pdaAccount.fetch(prevPda)
@@ -224,6 +283,7 @@ app.post('/', async (req, res) => {
                 pdaAccount: pda,
                 userAccountPda: userPda,
                 payer: provider.wallet.publicKey,
+                stakingAccount,
                 prevPdaAccount: prevExists ? prevPda : null, // [...pdas].slice(-1)[0] || null,
                 systemProgram: web3.SystemProgram.programId,
                 // programId: program.programId
@@ -253,6 +313,10 @@ app.post('/', async (req, res) => {
         console.log(
             'processed', currentPeriod.toNumber(), first_block_id, remaining?.length || '-',
             final_hash?.slice(0, 8), pubkey, pda?.toString(), instruction
+        );
+        await updateVoter(
+            pubkeyObj.toBase58(),
+            blockId
         );
         res.status(200).json({
             message: "Appended data",

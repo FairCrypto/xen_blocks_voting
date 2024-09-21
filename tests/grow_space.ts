@@ -1,9 +1,22 @@
-import {workspace, web3, AnchorProvider, setProvider, AnchorError,} from "@coral-xyz/anchor";
+import {workspace, web3, AnchorProvider, setProvider, AnchorError, Wallet,} from "@coral-xyz/anchor";
 import type {Program} from "@coral-xyz/anchor";
 import {GrowSpace} from "../target/types/grow_space";
 import {assert} from "chai";
 import {BN} from "bn.js";
-import {ComputeBudgetProgram, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction} from "@solana/web3.js";
+import {
+    ComputeBudgetProgram, Connection,
+    Keypair,
+    LAMPORTS_PER_SOL,
+    PublicKey,
+    StakeProgram,
+    SystemProgram,
+    Transaction
+} from "@solana/web3.js";
+import fs from "node:fs";
+import path from "node:path";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const formatUserPda = (a) => ({
     // user: a.user.toString(),
@@ -20,13 +33,27 @@ const formatPeriodStats = (a) => ({
     redeemed: a.redeemed.toNumber(),
 });
 
+const keyPairFileName = process.env.ANCHOR_WALLET || '';
+const keyPairString = fs.readFileSync(path.resolve(keyPairFileName), 'utf-8');
+const adminKeyPair = web3.Keypair.fromSecretKey(new Uint8Array(JSON.parse(keyPairString)));
+console.log('Using admin wallet', adminKeyPair.publicKey.toBase58());
+
+const wallet = new Wallet(adminKeyPair);
+const connection = new Connection(process.env.ANCHOR_PROVIDER_URL);
+const provider = new AnchorProvider(connection, wallet);
+setProvider(provider);
+
 describe("grow_space_combined", () => {
     // Configure the client to use the local cluster.
-    const provider = AnchorProvider.env();
-    setProvider(provider);
+    // const provider = AnchorProvider.env();
+    // setProvider(provider);
 
     const program = workspace.GrowSpace as Program<GrowSpace>;
     // program.addEventListener('voterCredited', console.log)
+
+    const TREASURY_FUNDING = 0.2 * LAMPORTS_PER_SOL;
+    const SINGLE_ACCOUNT_FUNDING = 0.02 * LAMPORTS_PER_SOL;
+    const MIN_STAKE = 0.01 * LAMPORTS_PER_SOL;
 
     // test state vars
     const keypairs: Keypair[] = []
@@ -36,6 +63,7 @@ describe("grow_space_combined", () => {
     const userAccounts = new Map<number, Set<string>>();
     let newPeriodListener;
     const blockIds = new Set<string>();
+    const stakingAccounts = new Map<string, PublicKey>();
 
     // @ts-ignore
     const getUserPda = (publicKey: PublicKey, period: BN) => {
@@ -59,14 +87,70 @@ describe("grow_space_combined", () => {
             SystemProgram.transfer({
                 fromPubkey: provider.wallet.publicKey,
                 toPubkey: keypair.publicKey,
-                lamports: 1 * LAMPORTS_PER_SOL, // TODO: refactor to separate instance !!!
+                lamports: SINGLE_ACCOUNT_FUNDING, // TODO: refactor to separate instance !!!
             })
         );
-        await provider.sendAndConfirm(fundTx, []);
+        await provider.sendAndConfirm(fundTx, [], {commitment: 'finalized'});
+
+        const stakingAccount = await web3.PublicKey.createWithSeed(
+            keypair.publicKey,
+            "1",
+            StakeProgram.programId
+        );
+        const instruction = await program.methods.createStakeAccount(new BN(MIN_STAKE))
+            .accounts({
+                staker: keypair.publicKey,
+                stakingAccount,
+                // systemProgram: SystemProgram.programId,
+                // stakeProgram: StakeProgram.programId
+            })
+            //.signers([])
+            .instruction();
+        const recentBlockhash = await provider.connection.getLatestBlockhash();
+        const transaction = new web3.Transaction({
+            feePayer: keypair.publicKey,
+            recentBlockhash: recentBlockhash.blockhash
+        }).add(instruction)
+        transaction.partialSign(keypair);
+        const ss = await provider.connection.sendRawTransaction(transaction.serialize(), {
+            preflightCommitment: 'finalized',
+            skipPreflight: true,
+            // maxRetries: 1
+        })
+        process.stdout.write('+')
+        stakingAccounts.set(keypair.publicKey.toBase58(), stakingAccount)
+
         return keypair;
     }
 
     before(async () => {
+        const stakingAccount = await web3.PublicKey.createWithSeed(
+            wallet.publicKey,
+            "1",
+            StakeProgram.programId
+        );
+        const instruction = await program.methods.createStakeAccount(new BN(MIN_STAKE))
+            .accounts({
+                staker: wallet.publicKey,
+                stakingAccount,
+                // systemProgram: SystemProgram.programId,
+                // stakeProgram: StakeProgram.programId
+            })
+            //.signers([])
+            .instruction();
+        const recentBlockhash = await provider.connection.getLatestBlockhash();
+        const transaction = new web3.Transaction({
+            feePayer: wallet.publicKey,
+            recentBlockhash: recentBlockhash.blockhash
+        }).add(instruction)
+        transaction.partialSign(adminKeyPair);
+        const ss = await provider.connection.sendRawTransaction(transaction.serialize(), {
+            preflightCommitment: 'finalized',
+            skipPreflight: true,
+            // maxRetries: 1
+        })
+        console.log('created admin staking account')
+
         newPeriodListener = program.addEventListener('newPeriod', ({newPeriod}) => {
             console.log('New Period', newPeriod.toNumber());
             // currentPeriod = newPeriod;
@@ -76,6 +160,7 @@ describe("grow_space_combined", () => {
         for await (const i of Array.from({length: KEYS + 1}, (_, i) => i)) {
             const keypair = await createAndFundAccount();
             process.stdout.write('.')
+
             keypairs.push(keypair)
         }
         process.stdout.write('\n');
@@ -95,12 +180,12 @@ describe("grow_space_combined", () => {
         console.log('Treasury PDA', treasury.toBase58())
 
         try {
-            const sig = await program.methods.initializeTreasury(new BN(0.2 * LAMPORTS_PER_SOL))
+            const sig = await program.methods.initialize(new BN(TREASURY_FUNDING), new BN(MIN_STAKE))
                 .accounts({
                     admin: provider.wallet.publicKey,
                 })
                 .signers([])
-                .rpc({commitment: "confirmed", skipPreflight: false});
+                .rpc({commitment: "finalized", skipPreflight: false});
             console.log("Initialized treasury account", 'sig:', sig);
 
 
@@ -161,6 +246,7 @@ describe("grow_space_combined", () => {
                 for await (const repeatingHash of repeatingHashes) {
                     try {
                         const keypair = keypairs[Math.floor(Math.random() * (KEYS + 1))];
+
                         const treasuryState = await program.account.treasuryAccount.fetch(treasury);
                         currentPeriod = treasuryState.currentPeriod;
 
@@ -197,6 +283,8 @@ describe("grow_space_combined", () => {
                                 payer: keypair.publicKey,
                                 userAccountPda: userPda,
                                 prevPdaAccount: prevPda || null,
+                                stakingAccount: stakingAccounts.get(keypair.publicKey.toBase58()),
+                                // stakeProgram: StakeProgram.programId
                             })
                             .remainingAccounts([...shuffled.slice(0, 5)
                                 .map(({k}) => ({
@@ -217,7 +305,7 @@ describe("grow_space_combined", () => {
 
                         console.log("  Hash:", repeatingHash, "period:", currentPeriod.toNumber(), "payer:", keypair.publicKey.toString(), "sig:", sig);
                     } catch (err) {
-                        console.error(`Failed to append data for Block ID ${randomBlockId}:`, err.message);
+                        console.error(`Failed to append data for Block ID ${randomBlockId}:`, err);
                     }
                 }
             }
@@ -257,6 +345,7 @@ describe("grow_space_combined", () => {
                             pdaAccount: pda,
                             prevPdaAccount: prevPda || null,
                             payer: keypair.publicKey,
+                            stakingAccount: stakingAccounts.get(keypair.publicKey.toBase58()),
                         })
                         .signers([keypair])
                         .remainingAccounts([...shuffled.slice(0, 5)

@@ -2,19 +2,31 @@ mod bpf_writer;
 
 use anchor_lang::prelude::*;
 use bpf_writer::BpfWriter;
-use solana_program::program::invoke;
-use solana_program::system_instruction;
+use solana_program::{
+    program::invoke,
+    stake::instruction as stake_instruction,
+    stake::program::ID as STAKE_PROGRAM_ID,
+    stake::state::{Authorized, Lockup, StakeStateV2},
+    system_instruction, sysvar,
+};
 
-declare_id!("G99ugCUVdi53WJ8LQ8AP43uxS6twXbxRXTJb7Ni2Wzgw");
+declare_id!("6SqnSGxahm46dMgbbaQC9FCiXmw7sYABKwC5tPdzRW1J");
+
+// Hardcoded public key for the Stake Config Sysvar
+// const STAKE_CONFIG_PUBKEY: &str = "StakeConfig11111111111111111111111111111111";
 
 const TREASURY_SEED: &[u8; 15] = b"blocks_treasury";
 const PDA_ACCOUNT_SEED: &[u8; 11] = b"pda_account";
 const PERIOD_COUNTER_SEED: &[u8; 14] = b"period_counter";
 const USER_ACCOUNT_PDA_SEED: &[u8; 16] = b"user_account_pda";
+// const STAKING_ACCOUNT_PDA_SEED: &[u8; 15] = b"staking_account";
 // TODO: change for production !!!
 const REWARD_PERIOD_DURATION: u64 = 3_600; // 3_600 * 24; // 1 day in seconds
                                            // TODO: change for production !!!
 const REWARD_PER_PERIOD: u64 = 10_000_000; // lamports
+
+// TODO: check/change for production
+const MIN_STAKE_AMOUNT: u64 = 10_000_000; // lamports
 
 /*
    Rewards:
@@ -26,11 +38,13 @@ const REWARD_PER_PERIOD: u64 = 10_000_000; // lamports
 pub mod grow_space {
     use super::*;
 
-    pub fn initialize_treasury(ctx: Context<InitializeTreasury>, amount: u64) -> Result<()> {
+    pub fn initialize(ctx: Context<Initialize>, amount: u64, min_stake: u64) -> Result<()> {
         // init genesis timestamp for rewards
         ctx.accounts.treasury.genesis_ts = Clock::get().unwrap().unix_timestamp as u64;
         // init counter for the first day
         ctx.accounts.treasury.current_period = 1;
+        // set min stake required for voters
+        ctx.accounts.treasury.min_stake = min_stake;
         // fund the treasury
         invoke(
             &system_instruction::transfer(
@@ -49,6 +63,64 @@ pub mod grow_space {
         Ok(())
     }
 
+    pub fn update_treasury(ctx: Context<UpdateTreasury>, min_stake: u64) -> Result<()> {
+        // set min stake required for voters
+        ctx.accounts.treasury.min_stake = min_stake;
+
+        Ok(())
+    }
+
+    pub fn create_stake_account(ctx: Context<CreateStakeAccount>, lamports: u64) -> Result<()> {
+        let staking_authority = &ctx.accounts.staker.key();
+        let staking_account = &ctx.accounts.staking_account.key();
+        // TODO: do we allow any stake and then just verify MIN_STAKE_AMOUNT on action ???
+        require!(lamports >= MIN_STAKE_AMOUNT, ErrorCode::StakeTooLow);
+        // TODO: remove after testing !!!
+        msg!(
+            "stake: e={} w={} s={}",
+            ctx.accounts
+                .staking_account
+                .to_account_info()
+                .data_is_empty(),
+            ctx.accounts.staking_account.to_account_info().is_writable,
+            ctx.accounts.staking_account.to_account_info().is_signer,
+        );
+
+        let authorized = Authorized {
+            staker: *staking_authority,
+            withdrawer: *staking_authority,
+        };
+
+        // Define the lockup (we'll use default "never locked")
+        let lockup = Lockup::default();
+
+        // Transfer SOL to the stake account
+        let instructions = &stake_instruction::create_account_with_seed(
+            staking_authority,
+            staking_account,
+            staking_authority,
+            "1",
+            &authorized,
+            &lockup,
+            lamports,
+        );
+
+        for instruction in instructions {
+            invoke(
+                instruction,
+                &[
+                    ctx.accounts.staker.to_account_info(),
+                    ctx.accounts.staking_account.to_account_info(),
+                    ctx.accounts.system_program.to_account_info(),
+                    ctx.accounts.stake_program.to_account_info(),
+                    ctx.accounts.rent_sysvar.to_account_info(), // The Sysvar Rent account
+                ],
+            )?;
+        }
+
+        Ok(())
+    }
+
     pub fn initialize_pda(_ctx: Context<InitializePDA>, _unique_id: u64) -> Result<()> {
         Ok(())
     }
@@ -58,12 +130,13 @@ pub mod grow_space {
         block_id: u64,
         final_hash: String,
         pubkey: Pubkey,
-        _period: u64,
+        period: u64,
         voters: Vec<u64>,
     ) -> Result<()> {
         let treasury = &mut ctx.accounts.treasury;
-
         let pda_account = &mut ctx.accounts.pda_account;
+        let stake_account = &mut ctx.accounts.staking_account;
+        // stake_state;
 
         // init user account if necessary
         let user_account_pda = &mut ctx.accounts.user_account_pda;
@@ -72,6 +145,27 @@ pub mod grow_space {
             // user_account_pda.user = ctx.accounts.payer.key();
             user_account_pda.user = pubkey;
         }
+        let stake_state = StakeStateV2::deserialize(&mut &**stake_account.try_borrow_data()?)
+            .map_err(|_| ProgramError::InvalidAccountData)?;
+
+        // Check if the signer (staker) is the authorized staker for the stake account
+        match stake_state {
+            StakeStateV2::Initialized(meta) | StakeStateV2::Stake(meta, ..) => {
+                // Get the authorized staker from the metadata (meta)
+                // and compare the authorized staker with the instruction signer
+                // TODO: compare with submitted pubkey instead ???
+                if meta.authorized.staker != *ctx.accounts.payer.key {
+                    // If they don't match, return an error
+                    msg!("Not account owner");
+                }
+            }
+            _ => msg!("Invalid stake account"), // Handle other stake states
+        }
+
+        require!(
+            stake_account.to_account_info().lamports() >= treasury.min_stake,
+            ErrorCode::StakeTooLow
+        );
 
         msg!("Block Id: {} PDA: {}", block_id, pda_account.key(),);
 
@@ -130,6 +224,7 @@ pub mod grow_space {
                                         voter_account.credit += 1;
                                         voter_account.inblock = block_id;
                                         emit!(VoterCredited {
+                                            period,
                                             user: pubkey,
                                             voter,
                                             pda: pda_account.key(),
@@ -315,7 +410,7 @@ fn grow_account(
 }
 
 #[derive(Accounts)]
-pub struct InitializeTreasury<'info> {
+pub struct Initialize<'info> {
     #[account(
         init,
         seeds = [TREASURY_SEED],
@@ -327,6 +422,31 @@ pub struct InitializeTreasury<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct UpdateTreasury<'info> {
+    #[account(mut)]
+    pub treasury: Account<'info, TreasuryAccount>,
+    #[account(mut)]
+    pub admin: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct CreateStakeAccount<'info> {
+    /// CHECK: Stake program needs to be included for CPI
+    #[account(mut)]
+    pub staking_account: AccountInfo<'info>,
+    #[account(signer)]
+    pub staker: Signer<'info>,
+    /// CHECK: all good
+    #[account(address = sysvar::rent::ID)] // Add the Sysvar Rent account
+    pub rent_sysvar: AccountInfo<'info>, // Sysvar Rent account
+    pub system_program: Program<'info, System>,
+    /// CHECK: Stake program needs to be included for CPI
+    #[account(address = STAKE_PROGRAM_ID)] // Ensure it's the Solana stake program
+    pub stake_program: AccountInfo<'info>, // The Solana stake program
 }
 
 #[derive(Accounts)]
@@ -385,9 +505,13 @@ pub struct AppendData<'info> {
         // constraint = user_account_pda.user == payer.key()
     )]
     pub user_account_pda: Account<'info, UserPeriodCounter>,
+    /// CHECK: Constraints checked in code
+    #[account(mut)]
+    pub staking_account: AccountInfo<'info>,
     #[account(mut)]
     pub payer: Signer<'info>,
     pub system_program: Program<'info, System>,
+    // pub stake_program: Program<'info, System>, // The Solana stake program
 }
 
 #[derive(Accounts)]
@@ -424,6 +548,7 @@ pub struct FinalHashEntry {
 pub struct TreasuryAccount {
     pub genesis_ts: u64,
     pub current_period: u64,
+    pub min_stake: u64,
 }
 
 #[account]
@@ -467,6 +592,7 @@ pub struct VoterCredited {
     pub prev_block_id: u64,
     pub final_hash: [u8; 8],
     pub credit: u64,
+    pub period: u64,
 }
 
 #[error_code]
@@ -487,5 +613,9 @@ pub enum ErrorCode {
     NoRedeemableCredit,
     #[msg("Cannot claim in current period")]
     BadPeriod,
+    #[msg("Stake too low")]
+    StakeTooLow,
+    #[msg("No active Stake")]
+    NoActiveStake,
     // Add other error codes as needed
 }
