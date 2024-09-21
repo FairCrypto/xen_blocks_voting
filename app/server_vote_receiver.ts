@@ -180,10 +180,10 @@ program.addEventListener(
             1,
             0
         );
-        await updateVoter(
-            e.voter.toBase58(),
-            prevBlockId > 0 ? prevBlockId.toString() : '0'
-        );
+        // await updateVoter(
+        //    e.voter.toBase58(),
+        //    prevBlockId > 0 ? prevBlockId.toString() : '0'
+        // );
         console.log('credit: b=', prevBlockId, 'u=', e.user.toBase58(), 'v=', e.voter.toBase58(), 'c=', e.credit.toNumber())
     }
 )

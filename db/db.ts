@@ -96,7 +96,6 @@ export const insertVoterCreditRecord = async (...params: unknown[]): Promise<sql
 
 export const updateVoter = async (...params: unknown[]): Promise<sqlite3.Database> => {
     if (!db) throw new Error('DB not initialized or unavailable');
-    console.log('upsert', ...params);
     return db.run(UPSERT_VOTE, ...params);
 }
 
