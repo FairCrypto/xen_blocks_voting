@@ -508,24 +508,22 @@ app.get('/stats/:period', async (req, res) => {
 })
 
 app.get('/voters', async (req, res) => {
-    if (!db) {
-        return res.status(500).json({error: 'No db connection'})
+    try {
+        const voters = await getAllVoters();
+        res.status(200).json(voters);
+    } catch (e) {
+        res.status(400).json({error: e.message})
     }
-    const voters = await getAllVoters();
-    res.status(200).json(voters);
 })
 
 app.get('/voter/:pubkey', async (req, res) => {
-    if (!db) {
-        return res.status(500).json({error: 'No db connection'})
-    }
     const pubkeyStr = req.params?.pubkey
     try {
         const pubkey = new PublicKey(pubkeyStr)
         const voter = await getVoterInfo(pubkey.toBase58());
         res.status(200).json(voter);
     } catch (e) {
-        res.status(400).json({error: 'pubkey is not a pubkey'})
+        res.status(400).json({error: e.message})
     }
 })
 
