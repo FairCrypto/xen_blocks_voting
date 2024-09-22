@@ -71,7 +71,7 @@ const UPSERT_BACKFILLED_VOTE = `
    ;`;
 
 const GET_VOTERS = `
-    SELECT * FROM Voters;
+    SELECT * FROM Voters ORDER BY total_votes DESC;
 `;
 
 const GET_VOTER = `
