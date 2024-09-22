@@ -7,7 +7,7 @@ import type {GrowSpace} from '../target/types/grow_space';
 import dotenv from 'dotenv';
 import fs from "node:fs";
 import path from "node:path";
-import {initDB, insertVoterCreditRecord, closeDB, updateVoter} from "../db/db";
+import db, {initDB, insertVoterCreditRecord, closeDB, updateVoter, getAllVoters, getVoterInfo} from "../db/db";
 
 dotenv.config();
 
@@ -505,6 +505,28 @@ app.get('/stats/:period', async (req, res) => {
         userPDAs: Object.fromEntries(Object.fromEntries(userPDAs)[Number(req.params.period)]),
         userPDAsCount: Object.keys(Object.fromEntries(Object.fromEntries(userPDAs)[Number(req.params.period)])).length,
     });
+})
+
+app.get('/voters', async (req, res) => {
+    if (!db) {
+        return res.status(500).json({error: 'No db connection'})
+    }
+    const voters = await getAllVoters();
+    res.status(200).json(voters);
+})
+
+app.get('/voter/:pubkey', async (req, res) => {
+    if (!db) {
+        return res.status(500).json({error: 'No db connection'})
+    }
+    const pubkeyStr = req.params?.pubkey
+    try {
+        const pubkey = new PublicKey(pubkeyStr)
+        const voter = await getVoterInfo(pubkey.toBase58());
+        res.status(200).json(voter);
+    } catch (e) {
+        res.status(400).json({error: 'pubkey is not a pubkey'})
+    }
 })
 
 const PORT = Number(process.env.SERVER_PORT || '') || 5555;

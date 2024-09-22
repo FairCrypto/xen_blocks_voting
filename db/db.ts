@@ -70,6 +70,15 @@ const UPSERT_BACKFILLED_VOTE = `
         END
    ;`;
 
+const GET_VOTERS = `
+    SELECT * FROM Voters;
+`;
+
+const GET_VOTER = `
+    SELECT * FROM Voters 
+    WHERE voter = (?);
+`;
+
 let db: sqlite3.Database;
 
 export const initDB = async (): Promise<sqlite3.Database> => {
@@ -99,6 +108,26 @@ export const updateVoter = async (...params: unknown[]): Promise<sqlite3.Databas
     return db.run(UPSERT_VOTE, ...params);
 }
 
+export const getVoterInfo = async (id: string): Promise<any> => {
+    if (!db) throw new Error('DB not initialized or unavailable');
+    return new Promise((resolve, reject) => {
+        db.each(GET_VOTER, id, (err, rows) => {
+            if (err) reject(err);
+            resolve(rows)
+        });
+    });
+}
+
+export const getAllVoters = async (): Promise<any> => {
+    if (!db) throw new Error('DB not initialized or unavailable');
+    return new Promise((resolve, reject) => {
+        db.all(GET_VOTERS, (err, rows) => {
+            if (err) reject(err);
+            resolve(rows)
+        });
+    });
+}
+
 export const backfillVoter = async (...params: unknown[]): Promise<sqlite3.Database> => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
@@ -110,3 +139,5 @@ export const closeDB = (cb: (e: Error | null) => void) => {
 
     return db.close(cb);
 }
+
+export default db

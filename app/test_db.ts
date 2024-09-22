@@ -1,21 +1,10 @@
-import {initDB, insertVoterCreditRecord} from "../db/db";
-import {Keypair} from "@solana/web3.js";
-
+import {getAllVoters, getVoterInfo, initDB, insertVoterCreditRecord} from "../db/db";
 
 async function main() {
     await initDB().then(() => console.log('db initialized'));
-    await insertVoterCreditRecord(
-        null, // ts
-        0,
-        Keypair.generate().publicKey.toBase58(),
-        Keypair.generate().publicKey.toBase58(),
-        Keypair.generate().publicKey.toBase58(),
-        BigInt(0),
-        BigInt(0),
-        Buffer.from([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]).toString('hex'),
-        1,
-        0
-    ).then(() => console.log('data inserted'))
+    await getVoterInfo('FwznmVkDsvf3v56Y4vV8MtGUNQ8PJGUVMLT5demygHwV').then(console.log);
+    console.log("\n\n");
+    await getAllVoters().then(console.log);
 }
 
 main().catch(console.error)
