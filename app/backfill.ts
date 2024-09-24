@@ -26,22 +26,24 @@ async function main() {
 
     await initDB().then(() => console.log('db initialized'));
 
-    let blockId = new BN(26526001);
+    let blockId = new BN(30325501);
+    // let blockId = new BN(26539701);
     while (true) {
         const [pda] = PublicKey.findProgramAddressSync(
             [Buffer.from("pda_account"), blockId.toArrayLike(Buffer, "le", 8)],
             program.programId
         );
         try {
+            console.log(blockId.toNumber(), pda.toBase58());
             const state = await program.account.pdaAccount.fetch(pda);
-            console.log(blockId.toNumber(), 'pubkeys', state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys.length)
+            console.log(blockId.toNumber(), pda.toBase58(), 'pubkeys', state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys.length)
             for await (const pubkey of state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys) {
                 await backfillVoter(pubkey.toBase58(), blockId.toNumber());
             }
         } catch (e) {
             console.log(blockId.toNumber(), e.message)
         } finally {
-            blockId = blockId.add(new BN(100))
+            blockId = blockId.sub(new BN(100))
             await new Promise((resolve) => setTimeout(resolve, 500))
         }
     }
