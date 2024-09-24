@@ -1,11 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import {AnchorProvider, Program, setProvider, Wallet, web3, workspace} from "@coral-xyz/anchor";
-import type {GrowSpace} from '../target/types/grow_space_prod';
+import type {GrowSpace} from './target/types/grow_space';
 import {PublicKey} from "@solana/web3.js";
 import {BN} from "bn.js";
 import dotenv from "dotenv";
-import {initDB, backfillVoter} from "../db/db";
 
 dotenv.config();
 
@@ -19,14 +18,12 @@ async function main() {
     const provider = AnchorProvider.env();
     setProvider(provider);
 
-    const program = workspace.GrowSpaceProd as Program<GrowSpace>;
+    const program = workspace.GrowSpace as Program<GrowSpace>;
 
     console.log('Program ID', program.programId.toBase58());
     console.log('Payer', provider.wallet.publicKey.toBase58());
 
-    await initDB().then(() => console.log('db initialized'));
-
-    let blockId = new BN(26526001);
+    let blockId = new BN(30503401);
     while (true) {
         const [pda] = PublicKey.findProgramAddressSync(
             [Buffer.from("pda_account"), blockId.toArrayLike(Buffer, "le", 8)],
@@ -34,10 +31,7 @@ async function main() {
         );
         try {
             const state = await program.account.pdaAccount.fetch(pda);
-            console.log(blockId.toNumber(), 'pubkeys', state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys.length)
-            for await (const pubkey of state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys) {
-                await backfillVoter(pubkey.toBase58(), blockId.toNumber());
-            }
+            console.log(blockId.toNumber(), state)
         } catch (e) {
             console.log(blockId.toNumber(), e.message)
         } finally {
