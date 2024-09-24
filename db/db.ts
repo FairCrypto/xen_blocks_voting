@@ -59,12 +59,12 @@ const UPSERT_BACKFILLED_VOTE = `
     SET
         ts = CURRENT_TIMESTAMP,
         total_votes = CASE 
-            WHEN excluded.last_backfilled_block_id > Voters.last_backfilled_block_id 
+            WHEN excluded.last_backfilled_block_id < Voters.last_backfilled_block_id 
             THEN total_votes + 1
             ELSE total_votes
         END,     
         last_backfilled_block_id = CASE
-            WHEN excluded.last_backfilled_block_id > Voters.last_backfilled_block_id 
+            WHEN excluded.last_backfilled_block_id < Voters.last_backfilled_block_id 
             THEN excluded.last_backfilled_block_id
             ELSE Voters.last_backfilled_block_id
         END
