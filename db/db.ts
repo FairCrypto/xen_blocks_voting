@@ -90,6 +90,7 @@ export const initDB = async (): Promise<sqlite3.Database> => {
     try {
         db.exec(CREATE_VOTER_CREDITS_TABLE);
         db.exec(CREATE_VOTERS_TABLE);
+        db.run('PRAGMA journal_mode = WAL;');
         return Promise.resolve(db);
     } catch (e) {
         console.log(e)
