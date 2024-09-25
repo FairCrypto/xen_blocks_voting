@@ -16,6 +16,9 @@ async function main() {
     // console.log('Using wallet', keyPair.publicKey.toBase58());
 
     // const wallet = new Wallet(keyPair);
+
+    const [, , from] = process.argv;
+
     const provider = AnchorProvider.env();
     setProvider(provider);
 
@@ -26,15 +29,17 @@ async function main() {
 
     await initDB().then(() => console.log('db initialized'));
 
-    let blockId = new BN(30325501);
+    let blockId = new BN(from || 30325501);
     // let blockId = new BN(26539701);
+    console.log('from', blockId.toNumber());
+
+
     while (true) {
         const [pda] = PublicKey.findProgramAddressSync(
             [Buffer.from("pda_account"), blockId.toArrayLike(Buffer, "le", 8)],
             program.programId
         );
         try {
-            console.log(blockId.toNumber(), pda.toBase58());
             const state = await program.account.pdaAccount.fetch(pda);
             console.log(blockId.toNumber(), pda.toBase58(), 'pubkeys', state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys.length)
             for await (const pubkey of state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys) {
