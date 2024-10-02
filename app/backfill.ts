@@ -33,7 +33,6 @@ async function main() {
     // let blockId = new BN(26539701);
     console.log('from', blockId.toNumber());
 
-
     while (true) {
         const [pda] = PublicKey.findProgramAddressSync(
             [Buffer.from("pda_account"), blockId.toArrayLike(Buffer, "le", 8)],

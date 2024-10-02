@@ -123,27 +123,34 @@ describe("grow_space_combined", () => {
         return keypair;
     }
 
+    const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
+        units: 1_400_000
+    });
+
+
     before(async () => {
         const stakingAccount = await web3.PublicKey.createWithSeed(
             wallet.publicKey,
             "1",
             StakeProgram.programId
         );
-        const instruction = await program.methods.createStakeAccount(new BN(MIN_STAKE))
+        const instruction: web3.TransactionInstruction = await program.methods.createStakeAccount(new BN(MIN_STAKE))
             .accounts({
                 staker: wallet.publicKey,
                 stakingAccount,
                 // systemProgram: SystemProgram.programId,
                 // stakeProgram: StakeProgram.programId
             })
-            //.signers([])
+            .preInstructions([modifyComputeUnits])
             .instruction();
         const recentBlockhash = await provider.connection.getLatestBlockhash();
         const transaction = new web3.Transaction({
             feePayer: wallet.publicKey,
             recentBlockhash: recentBlockhash.blockhash
         }).add(instruction)
+        console.log(transaction.compileMessage())
         transaction.partialSign(adminKeyPair);
+        // console.log(transaction)
         const ss = await provider.connection.sendRawTransaction(transaction.serialize(), {
             preflightCommitment: 'finalized',
             skipPreflight: true,
@@ -201,10 +208,6 @@ describe("grow_space_combined", () => {
     it("Appends multiple final hashes, including repeats, to random block IDs in the PDA with repeated pubkeys", async () => {
         let pda: web3.PublicKey;
         let prevPda: web3.PublicKey;
-
-        const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
-            units: 1_400_000
-        });
 
         let randomBlockId = Math.floor(Math.random() * 10_000);
         const treasuryState = await program.account.treasuryAccount.fetch(treasury);
