@@ -24,7 +24,6 @@ async function main() {
         // until interrupted
         while (true) {
             for await (const period of fetchRewardPeriods()) {
-                console.log(period)
                 if (!period) {
                     console.log(`no new periods; will retry in ${RETRY_PERIOD / 1_000}`);
                     break
