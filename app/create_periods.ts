@@ -33,7 +33,7 @@ async function main() {
         while (true) {
             for await (const batch of fetchRecordsInBatches(blockId.toNumber(), BATCH)) {
                 if (batch.length < BATCH) {
-                    // console.log(`incomplete batch: got ${batch.length}, expected: ${BATCH}; will retry in ${RETRY_PERIOD / 1_000}`);
+                    console.log(`incomplete batch: got ${batch.length}, expected: ${BATCH}; will retry in ${RETRY_PERIOD / 1_000}`);
                     break
                 }
                 // Process each batch as needed
