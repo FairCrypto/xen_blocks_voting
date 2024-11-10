@@ -99,7 +99,7 @@ const CREATE_REWARD_PERIODS_TABLE = `
                 end_ts DATETIME,
                 start_block_id INTEGER,
                 end_block_id INTEGER,
-                period_number INTEGER AUTOINCREMENT,
+                period_number INTEGER PRIMARY KEY AUTOINCREMENT,
                 budget INTEGER DEFAULT 0,
                 allocated INTEGER DEFAULT 0,
                 PRIMARY KEY (start_block_id, end_block_id)
@@ -155,6 +155,7 @@ const INSERT_PERIOD = `
             INSERT INTO Reward_Periods 
                 (start_ts, end_ts, start_block_id, end_block_id, budget, allocated)
                 VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT(start_block_id, end_block_id) DO NOTHING
             ;`;
 
 const UPDATE_PERIOD = `
