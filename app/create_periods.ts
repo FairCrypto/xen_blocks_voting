@@ -14,7 +14,7 @@ let db: sqlite3.Database | void;
 
 const BATCH = 864;
 const BUDGET = 1000;
-const RETRY_PERIOD = 20_000;
+const RETRY_PERIOD = 60_000;
 
 async function main() {
 
@@ -33,7 +33,7 @@ async function main() {
         while (true) {
             for await (const batch of fetchRecordsInBatches(blockId.toNumber(), BATCH)) {
                 if (batch.length < BATCH) {
-                    console.log(`incomplete batch: got ${batch.length}, expected: ${BATCH}; will retry in ${RETRY_PERIOD / 1_000}`);
+                    // console.log(`incomplete batch: got ${batch.length}, expected: ${BATCH}; will retry in ${RETRY_PERIOD / 1_000}`);
                     break
                 }
                 // Process each batch as needed
