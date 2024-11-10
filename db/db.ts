@@ -102,7 +102,7 @@ const CREATE_REWARD_PERIODS_TABLE = `
                 period_number INTEGER PRIMARY KEY AUTOINCREMENT,
                 budget INTEGER DEFAULT 0,
                 allocated INTEGER DEFAULT 0,
-                PRIMARY KEY (start_block_id, end_block_id)
+                UNIQUE (start_block_id, end_block_id)
             );`;
 
 const CREATE_DISTRIBUTIONS_TABLE = `
