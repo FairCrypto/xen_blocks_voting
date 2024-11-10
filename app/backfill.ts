@@ -44,7 +44,7 @@ async function main() {
             console.log('error', blockId.toNumber(), e.message)
         } finally {
             blockId = blockId.sub(new BN(100))
-            await new Promise((resolve) => setTimeout(resolve, 50))
+            await new Promise((resolve) => setTimeout(resolve, 10))
         }
     }
 }
