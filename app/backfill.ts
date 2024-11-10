@@ -5,18 +5,11 @@ import type {GrowSpace} from '../target/types/grow_space_prod';
 import {PublicKey} from "@solana/web3.js";
 import {BN} from "bn.js";
 import dotenv from "dotenv";
-import {initDB, backfillVoter} from "../db/db";
+import {initDB, backfillVote} from "../db/db";
 
 dotenv.config();
 
 async function main() {
-    // const keyPairFileName = process.env.ANCHOR_WALLET || '';
-    // const keyPairString = fs.readFileSync(path.resolve(keyPairFileName), 'utf-8');
-    // const keyPair = web3.Keypair.fromSecretKey(new Uint8Array(JSON.parse(keyPairString)));
-    // console.log('Using wallet', keyPair.publicKey.toBase58());
-
-    // const wallet = new Wallet(keyPair);
-
     const [, , from] = process.argv;
 
     const provider = AnchorProvider.env();
@@ -29,9 +22,10 @@ async function main() {
 
     await initDB().then(() => console.log('db initialized'));
 
-    let blockId = new BN(from || 30325501);
+    let blockId = new BN(from || 30321001);
     // let blockId = new BN(26539701);
     console.log('from', blockId.toNumber());
+    // 1 reward period ~~ 864 blocks
 
     while (true) {
         const [pda] = PublicKey.findProgramAddressSync(
@@ -40,15 +34,17 @@ async function main() {
         );
         try {
             const state = await program.account.pdaAccount.fetch(pda);
-            console.log(blockId.toNumber(), pda.toBase58(), 'pubkeys', state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys.length)
+            const finalHash = Buffer.from(state.blockIds?.[0]?.finalHashes?.[0].finalHash).toString('hex');
+            console.log('fill', blockId.toNumber(), pda.toBase58(), 'pubkeys', state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys.length)
             for await (const pubkey of state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys) {
-                await backfillVoter(pubkey.toBase58(), blockId.toNumber());
+                // await backfillVoter(pubkey.toBase58(), blockId.toNumber());
+                await backfillVote(blockId.toNumber(), finalHash, pubkey.toBase58())
             }
         } catch (e) {
-            console.log(blockId.toNumber(), e.message)
+            console.log('error', blockId.toNumber(), e.message)
         } finally {
             blockId = blockId.sub(new BN(100))
-            await new Promise((resolve) => setTimeout(resolve, 500))
+            await new Promise((resolve) => setTimeout(resolve, 50))
         }
     }
 }
