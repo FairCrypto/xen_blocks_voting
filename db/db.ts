@@ -323,7 +323,7 @@ export const backfillVote = async (...params: unknown[]): Promise<sqlite3.Databa
     const retries = 5;
     return new Promise((resolve, reject) => {
         const attempt = (retryCount: number) => {
-            db.run(UPSERT_BACKFILLED_VOTE, ...params, (err: any, result: any) => {
+            db.run(UPSERT_BACKFILLED_VOTE, ...params, function (err: any, result: any) {
                 if (err) {
                     if (err.message.includes("database is locked") && retryCount > 0) {
                         setTimeout(() => attempt(retryCount - 1), delay);
@@ -331,7 +331,7 @@ export const backfillVote = async (...params: unknown[]): Promise<sqlite3.Databa
                         reject(err);
                     }
                 } else {
-                    resolve(result);
+                    resolve(this.changes);
                 }
             });
         };

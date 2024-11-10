@@ -38,11 +38,13 @@ async function main() {
         try {
             const state = await program.account.pdaAccount.fetch(pda);
             const finalHash = Buffer.from(state.blockIds?.[0]?.finalHashes?.[0].finalHash).toString('hex');
-            console.log('fill', blockId.toNumber(), pda.toBase58(), 'pubkeys', state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys.length)
+            process.stdout.write(`fill block=${blockId.toNumber()}, hash=${finalHash}, votes=${state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys.length}`);
             for await (const pubkey of state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys) {
-                // await backfillVoter(pubkey.toBase58(), blockId.toNumber());
-                await backfillVote(blockId.toNumber(), finalHash, pubkey.toBase58())
+                const res = await backfillVote(blockId.toNumber(), finalHash, pubkey.toBase58())
+                if (res) process.stdout.write('*')
+                else process.stdout.write('.')
             }
+            process.stdout.write('\n');
         } catch (e) {
             console.log('error', blockId.toNumber(), e.message)
         } finally {
