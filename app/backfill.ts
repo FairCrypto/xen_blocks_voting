@@ -5,7 +5,7 @@ import type {GrowSpace} from '../target/types/grow_space_prod';
 import {PublicKey} from "@solana/web3.js";
 import {BN} from "bn.js";
 import dotenv from "dotenv";
-import {initDB, backfillVote} from "../db/db";
+import {initDB, backfillVote, getLowerVote} from "../db/db";
 
 dotenv.config();
 
@@ -22,9 +22,12 @@ async function main() {
 
     await initDB().then(() => console.log('db initialized'));
 
-    let blockId = new BN(from || 30321001);
+    const lowerVote = await getLowerVote();
+    console.log('got from DB', lowerVote?.block_id, ', param', from);
+
+    let blockId = new BN(from || lowerVote?.block_id);
     // let blockId = new BN(26539701);
-    console.log('from', blockId.toNumber());
+    console.log('starting from', blockId.toNumber());
     // 1 reward period ~~ 864 blocks
 
     while (true) {

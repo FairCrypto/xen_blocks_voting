@@ -185,6 +185,13 @@ const UPSERT_VOTER_ACCRUED_BALANCE = `
 
 // NEW SCHEMA -- QUERIES
 
+const GET_LOWER_VOTE = `
+            SELECT block_id
+                FROM Votes
+                ORDER BY block_id ASC
+                LIMIT 1 OFFSET 1;
+`;
+
 const GET_LAST_PROCESSED_BLOCK = `
             SELECT * FROM Reward_Periods 
                 ORDER BY end_block_id DESC
@@ -359,6 +366,15 @@ export const upsertVoterBalance = async (...params: unknown[]): Promise<number> 
     return new Promise((resolve, reject) => db.run(UPSERT_VOTER_ACCRUED_BALANCE, ...params, function (err: any) {
         if (err) reject(err);
         else resolve(this.changes);
+    }));
+}
+
+export const getLowerVote = async (...params: unknown[]): Promise<any> => {
+    if (!db) throw new Error('DB not initialized or unavailable');
+
+    return new Promise((resolve, reject) => db.get(GET_LOWER_VOTE, ...params, (err: any, rows: any[]) => {
+        if (err) reject(err);
+        else resolve(rows);
     }));
 }
 
