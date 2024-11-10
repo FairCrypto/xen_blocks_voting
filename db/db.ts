@@ -99,9 +99,10 @@ const CREATE_REWARD_PERIODS_TABLE = `
                 end_ts DATETIME,
                 start_block_id INTEGER,
                 end_block_id INTEGER,
-                period_number INTEGER PRIMARY KEY AUTOINCREMENT,
+                period_number INTEGER AUTOINCREMENT,
                 budget INTEGER DEFAULT 0,
-                allocated INTEGER DEFAULT 0
+                allocated INTEGER DEFAULT 0,
+                PRIMARY KEY (start_block_id, end_block_id)
             );`;
 
 const CREATE_DISTRIBUTIONS_TABLE = `
