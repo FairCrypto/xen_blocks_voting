@@ -315,7 +315,24 @@ export const backfillVoter = async (...params: unknown[]): Promise<sqlite3.Datab
 export const addVote = async (...params: unknown[]): Promise<sqlite3.Database> => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
-    return db.run(UPSERT_VOTE, ...params);
+    const delay = 100;
+    const retries = 5;
+    return new Promise((resolve, reject) => {
+        const attempt = (retryCount: number) => {
+            db.run(UPSERT_VOTE, ...params, function (err: any, result: any) {
+                if (err) {
+                    if (err.message.includes("database is locked") && retryCount > 0) {
+                        setTimeout(() => attempt(retryCount - 1), delay);
+                    } else {
+                        reject(err);
+                    }
+                } else {
+                    resolve(this.changes);
+                }
+            });
+        };
+        attempt(retries);
+    });
 }
 
 export const backfillVote = async (...params: unknown[]): Promise<sqlite3.Database> => {
