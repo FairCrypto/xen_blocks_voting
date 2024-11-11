@@ -1,4 +1,3 @@
-import {BN} from "bn.js";
 import dotenv from "dotenv";
 import {
     initDB,
@@ -24,14 +23,14 @@ async function main() {
 
     const lastProcessed = await getLastProcessedBlock();
     console.log('last', lastProcessed?.end_block_id)
-    const blockId = new BN(from || lastProcessed?.end_block_id);
-    console.log('from', blockId.toNumber());
+    let blockId: number = from || lastProcessed?.end_block_id;
+    console.log('from', blockId);
     // NB: 1 reward period ~~ 864 blocks
 
     try {
         // until interrupted
         while (true) {
-            for await (const batch of fetchRecordsInBatches(blockId.toNumber(), BATCH)) {
+            for await (const batch of fetchRecordsInBatches(blockId, BATCH)) {
                 if (batch.length < BATCH) {
                     console.log(`incomplete batch: got ${batch.length}, expected: ${BATCH}; will retry in ${RETRY_PERIOD / 1_000}`);
                     break
@@ -39,7 +38,8 @@ async function main() {
                 // Process each batch as needed
                 // UPSERT_PERIOD (start_ts, end_ts, start_block_id, end_block_id, budget, allocated)
                 await insertPeriod(null, null, batch[0].block_id, batch[batch.length - 1].block_id, BUDGET, 0);
-                console.log('added period', batch[0].block_id, '..', batch[batch.length - 1].block_id)
+                console.log('added period', batch[0].block_id, '..', batch[batch.length - 1].block_id);
+                blockId = batch[batch.length - 1].block_id;
                 // pause 0.5s
                 await new Promise((resolve) => setTimeout(resolve, 100))
             }
