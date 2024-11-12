@@ -5,8 +5,8 @@ module.exports = {
             cwd: "../grow_space",
             script: "./app/server_vote_receiver.js",
             interpreter_args: "--max-old-space-size=512 --expose-gc",
-            mode: "cluster",
-            instances: 4,
+            // mode: "cluster",
+            // instances: 4,
             env: {
                 NODE_ENV: "production",
                 ANCHOR_WALLET: "/mnt/ledger/build/.config/solana/id.json",
