@@ -322,6 +322,7 @@ export const addVote = async (...params: unknown[]): Promise<sqlite3.Database> =
             db.run(UPSERT_VOTE, ...params, function (err: any, result: any) {
                 if (err) {
                     if (err.message.includes("database is locked") && retryCount > 0) {
+                        console.log('db locked; retry', retries + 1 - retryCount);
                         setTimeout(() => attempt(retryCount - 1), delay);
                     } else {
                         reject(err);
