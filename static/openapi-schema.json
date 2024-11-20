@@ -1,0 +1,3832 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "license": {
+      "name": "ISC"
+    },
+    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3).",
+    "title": "",
+    "version": ""
+  },
+  "servers": [
+    {
+      "url": "http://xolana.xen.network:5555"
+    }
+  ],
+  "security": [
+  ],
+  "paths": {
+    "/fetch_data/{block_id}": {
+      "get": {
+        "summary": "/fetch_data/{block_id}",
+        "parameters": [
+          {
+            "name": "block_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "blockId": {
+                      "type": "number",
+                      "example": 30320501
+                    },
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "blockId": {
+                            "type": "number"
+                          },
+                          "finalHashes": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "finalHash": {
+                                  "type": "string"
+                                },
+                                "count": {
+                                  "type": "number"
+                                },
+                                "pubkeys": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "blockId": 30320501,
+                          "finalHashes": [
+                            {
+                              "finalHash": "3031373937303162",
+                              "count": 246,
+                              "pubkeys": [
+                                "135U4c7E2qAWVTHsYw2vLsywhmT89usvBQ88PrXib8qb",
+                                "13K2BFv2yYH6H2XCZkRrSidiGqskCiKTPbh6NB236r4M",
+                                "21UGDjmEGPSVNdMyLk3DbWP9jvcmWWVaE4gLJqmnckg8",
+                                "22K1Trwfio1CXHq26VcuiuTTWGd2DwZMYcKLeuxAQHPn",
+                                "22N6WYCdByjw1VLt6dnXzrrmeXnfmvFFSfyqAfwSibo9",
+                                "22p2Vj6Uv2L7DVZ5wGXnZNceTdgukWQcNgckBv5FFj2G",
+                                "25xW33GLtn1ukPg7g4d3H6vegKnsedvfjP3Fg6tMWHQA",
+                                "26H4xv9N1o9W1uZD3yTLjccWh3tCaJzxDHFN6vJdirwz",
+                                "281RJWoUNBn2jUiUCai88hsbpFqJfLVVAnwk1QYiA4K1",
+                                "2FEZxMubZ4bWVBYNQE1pMedv34CrHRegSzf7fX7S7GGi",
+                                "2JCKYqMXeFqAG3in7syA6XBea74trxybQuM9KQGNaRQC",
+                                "2K1kN5vwjSozNkdjH2tqM42m2yBzTWoRwjAziAyCSdGS",
+                                "2Nwm1K1hywWjwchwZfXcAQe3pCSTByw8nv8huEJQtBit",
+                                "2QWQRvqfKb3ccghVH2ESo4697qbK6ngepstEqe6VUCzj",
+                                "2RYguqoTsjU1C86YSEm9d97o9q7ij4iFx1xApb2wEn4L",
+                                "2WnyDWcBasY6YTQsusRvwEqbtgtfPNSW5P8U8JxxqdbK",
+                                "2XD1twzQiYtHrPHsDhQzH9EiAacjBBHSZNDENc8GFW5J",
+                                "2XMcF5ETkYEFVzSR8rJFfKoyeVmuRKv9mTwQVpDhU1ki",
+                                "2XiskAE3EY2eVizWFmzNRnXHNC7cB33B7ug1ZvTzPrXU",
+                                "2YCAw5xv6SJgbnVJaeNWFR7TKbkL54K8EWw1wSAWdN9H",
+                                "2bdF1a7LL57WT7z8r13QwK32sxkcCBnjX58NPHzuPhaA",
+                                "2kF737rfqdctYoo8nKHjQGxaSxmLiyN9p3E6eoXwUYwr",
+                                "2wGDbx51VkKYLWdR52Tu7MN8KEYPAfR5c82nArW3KTQE",
+                                "2wJncARWojGbcECQ7r2UUjQKvyWDDSVj2U14aMTdsJw6",
+                                "3357wf7ByDKhgczAwrwMMk5d73R1T6fqDrmGkzkGjyB5",
+                                "39hCcZXA5M7DKYo5d1Dvfhx3s9hrLXdUedkpcC3WiyLt",
+                                "3BG8CXPwGsPZHPGqGW48XJtzke1fAng6hyBvEauPhteR",
+                                "3LRevQKnBoH3oSY71QbWtnspPgt9p5QyawupCvt9PTYi",
+                                "3QscfDj2ELvNiDZygw1jbLKpJvGZ1SuihDZuiz7AGDhj",
+                                "3Xh7CKtxVSosUgQzPGmTZ5XCLnmeHJLRezGzE94JsnJ4",
+                                "3XjSpCvucFcR9qgaDoxm8YsX7rskyKKF3BvhBZXyZLBF",
+                                "3bZkupqyj1XGbVYbWxnn39N6in21JXTeF4PtMVxaLuBc",
+                                "3cMM11XSGoG2Sujy5mvXB3nePs3zQirJchisjT7Gegfg",
+                                "3eStxAGKEHRaR8eW8gYZPgPCQZm4jYWdjM1jUhn6yvVa",
+                                "3nEXTZZ2ddwHux2AbRYsjUvBzqRVkHXehc8YxGxBP9k5",
+                                "3npS6kL4UjdKRGJmH7TZCscvNCg7NFSi9M5JsCw9jh3T",
+                                "3qMz6zxVppzpGcG2oR13ivi91W9F8uKH2GwvoTkLN5DA",
+                                "3uWNq5t8RXyKCgfEuDCaunEvGGRzSmVh6fqd3wRb8rMu",
+                                "3vANGraM2gjZkPvp2bTkkSUhaN6yxumtwnuBCoGxDnDq",
+                                "43gWLWov3T8u5mQD7E6NMtWcghotijZaU5nc3PeX7vxd",
+                                "44QsUMKSzqH4X4erkgqerXE9Mce6a2FpkXbFdVuvAtu6",
+                                "4Bnqv7xHFKwkYufJjBXGzvjeCnSzfe6QLxYEeHgsKi9i",
+                                "4KyNbvLN8U28czupRziibLYaxb5jP2HiAMQzM5cfwzKL",
+                                "4MaA5E2XzEwFJbcbDeue8PJ2DDQbVuRXQSNgFnW3jmEo",
+                                "4RUeY1Cnx9hcAwtYnxTp4Y3UYSqLSfkjcwCFFWQJ65RM",
+                                "4SG6BBWHkNaxMZTbanZ3teDrT21QJzGPG7Q8Jh7Ntn8k",
+                                "4Ug6n8k5ozaki7U5Titk2BNNEou3W4zYRUKBycWyT2B2",
+                                "4ZC6vf51xPfscKf2of2UXCs276F4LHoHgz7u294evA5p",
+                                "4bLT4auAPKTHeugrZAfV1oEcEvGmq9586Gh9JpERCzUk",
+                                "4haChj2Gu53EwjKCdEaeY9ysFnUxy2vLjM1ymVhZpGQv",
+                                "4ianSTa2KBjiVvMorpNNiu6t633xDgc8dvkHVybk3w9s",
+                                "4jHJ65oQXUytXVNtwnvUXcT68s9zyJ23WAuCrhuQhLJ6",
+                                "4puk8NKxJwBKbxfPx67pLWdrNYFmjGRYuNxcdUnZ9t2z",
+                                "51uzfW1bUJmBivvG85TpGK8kRGBMhigVpjgW6VL1snf1",
+                                "54kL8uZL33UJj5gxsRMx7qZCjqpTdxJbK2wobw5i5kHv",
+                                "58AmCwtnLiv4qYM2mp8JGdYqndYKVJt7oBHBntmDeR51",
+                                "58kUg1QaCJFAw2WernRrVSduo46fPEyexaRgtBfwnhdH",
+                                "5DGJCVDHTYmotfnLwWKSrpnB4cLmnMQy3g4tvQnS9N81",
+                                "5FcL5hDtjPhuULVzisGw6uSb5MhGtDEKnVki8vh3CzGY",
+                                "5SGZkviPg8fn8xmtF8XPRTQBignsTmwyLZ6EYx52exnx",
+                                "5Z3msjDr8foMg7BGAEkiooccYd7FwgMTKCP1ijTo4qW1",
+                                "5ZkShJfe4fZ6psfQB6c2HrATz4GjW3wGhANHwFWqeWUX",
+                                "5jc4Qa9QMoFdN36GcBMFWFsyLEi8H5aMQEzbCAb5TgFF",
+                                "5qFzQnsVErg6EomHLWnQm5cY3SGWa5XqRwbm7dE8dLCa",
+                                "5wiZNqEjyKst8zZQFapyqFqUrr51112SpLBT2goqFS2J",
+                                "5y82GGaaVFLYNz1YnWw89aGxWSiC1Pk6B2wqfAHdYWEc",
+                                "64VyupXUSbnvH5z8e8sQRzLnQxSrefLdKwS3dqwYX1v4",
+                                "65TWRh6am9eHs9NfSqfgV5pZ9XzdMUo7TQNgQxAdAJci",
+                                "6M3YEF7t54uvQ7QCiRXG5HabwPSKaBT8PKtA3JSE5KZJ",
+                                "6YR9jqfxbke1NbbWbWUcGdmEtADTgPjp8GpKdGpVhctr",
+                                "6dYkMF8vVY8NG5SS7m8ccneHjqUMXPsycvtTMHRjmJDH",
+                                "6djTMQaAJvNQpHjq7Q7eqg836rbZcWxgdMFniAWNuHiv",
+                                "6gaMZ7uJq5mZEpD7soDixNTf8nur88Lnhvwpq6KvHR6k",
+                                "6jyhtBttDTjsc5zWXjB5ctw4kgHoDL9kqov8iW6BzZwf",
+                                "6uwFWffoe7sjyAaKvBgEFadbmM3nVW7RMbykm9e5XY5n",
+                                "6v63XrPDYHe3WXLmLUaAm77XKpycUZQmGkTsrL63iGSW",
+                                "6zVE2ZknwRESRXgYe1Mwozb7aFhTkBn32cJV37uCsivQ",
+                                "776neWqz3XgUfRvsLPaLXB153bJx7gyncVMMb9TMbKQA",
+                                "77nnH6GaF9enfzb29fiFrmktvx4kqpb66M8rGjnLsxhW",
+                                "7AyFaCs8NDryZGt8J2M2GtpZH7FnprKnKy8RzvKBBiK3",
+                                "7G1yX7mjxbTKDsu5T5prayLZQdfWiod5bd9Dfa3iRhxF",
+                                "7G9sDWjwJoNU8qQfasiDpuNij4J6ab57o7XYpGpgzmCV",
+                                "7GQNBLphDnoVUk9rXkzcmfsUeWqBxXQZ5a4NZ6pd3oSp",
+                                "7JSYka6MYYs5MC155sUSUaARrTcSAY9RYaiwcq5MbXBV",
+                                "7XzfRYGLk3b8v2HY1wT4W515aMVkhuzEGMavLvombo7H",
+                                "7eQUDgtexJF1MnJT5RXJqmNujs2j4R8vCZt7MHzZXBW1",
+                                "7hhfcg4AyVYSma7Dyq2s3iP65JRkqL7SoGwtk5L9Qrop",
+                                "7iugfBMSUePXCqPkKtsQjL5kM9A5pYVrT5XEh7FT6hnk",
+                                "7rFFoXuok3LCTHwWYsghAozoyA5qgUKiTJuhqqHgLQen",
+                                "7vWKpSDQNquC18syXkj9Lo59GgzUabAgD4a9wmqLFFiw",
+                                "7w99yJHkEERLXveGn8XizcYpZ3fT4qSg9KZE9jiY6gkv",
+                                "7xPtBRky4tJ5bK367VCs4ZQHbdnemCxQJUzqTFcfLqVs",
+                                "7yFKBYF7AGRDB8dXxD9Sovpgsg8G26ay7PdnSQ7WCB45",
+                                "82pXdbLTDcNBtfPsj2NnAuBm6QQo4PmfbXgwbqjipyxi",
+                                "844s8PJejyDRe2r4HKGGnLEeRHTrTnbqZsDscek2P3F9",
+                                "87zCnaG5wcGC7EoMoFb8eb15jBVd91MmNgtGdkFBXiRc",
+                                "8BHEq2UKH3tX3FJucXqJvxptHPcspAcwbPCSKqmSqkhD",
+                                "8HqrBMTjivP2QegNkYzRU9EFGaWS1Gei3A5wQTBhdFaa",
+                                "8STzUeuRt9xn7bnrjukfTNf6ySw5A68BuiehxSGKvuKT",
+                                "8Sx2UnhyMzVk9wQYRKXmL9RqKP2kXxovAqneqWBtwg5J",
+                                "8W9ZKpPS5c9znmq3hTR4F2Pdykqj1xo6wASnmTnG9moe",
+                                "8b12ZJb1uKUxqDogMXRcpdYYe2pRGY8tmSB57rEjGJ47",
+                                "8mSbtBrAArC57vwAXtTbMjtVHCF8MfE1mc7RRMWNgV6m",
+                                "8qFQfiHueTky43XuKmETDGYYkK2PmfnUYK9uqpFmuBhu",
+                                "8un5VvPS77bet1APyybgAFTNVMALJvWiaZ8ovWNvcqw1",
+                                "8xuqFKg3wkZ122SsWVsa4wREyycykG77tCS3Gsy2WVvZ",
+                                "8yku4xTeN2DpkiYdUbryLMkdmXsuyW26nBDYsqm719dC",
+                                "91exfAyrAFgoMsNA9ThHsV9gvEdREjYfQvcYBy7KaurV",
+                                "9JmTfbeyWpgDccoy32Fg4yZUJV1qSMKi41NmRQjh4aTK",
+                                "9Koe6oJArypB2yHmGimWLy5ZwngpBYfREE1fqAJevKYB",
+                                "9SwHLDBKRLi5beW2ZEzuqQHPkCt3wubK4sRKynsDUPAx",
+                                "9WqiKMRsQnfp5ccgJy64n3RnU3PotF4UvU53EMpTgmjV",
+                                "9XMa5qj5szdnXPjhT8SqBjj4P2N6cTiQjBEDmSuYdYaC",
+                                "9kr9pHPywG6WYCqt7Kca3NLb2QXDNtbuobJgfJF2x5dm",
+                                "9mVFneKyw9DL3MBK2FfKt8BEzRXyNn1X3k4fpX324ng2",
+                                "9oqfwCYKfx7PD9uzDXjZsqbqBV5YyJFiVp9xQCHwv16x",
+                                "9yJTi56ZDdMDWBGX2mcCJ32tCtx6XywEHfUVedG927ve",
+                                "9ywEXoBhG8yQj6S6JEJYFNr4JHdDG8HpAbuLbTeJE2kL",
+                                "A9wzW7vCUWzQDPqJ372i2t4G5SiWrqnFeFWkBBHyveQY",
+                                "AFhKhJSwTkDyNndxTugkM4jFmHzWAdPE2JN55FDhrWue",
+                                "ALeCJKpADsbiEKz5UZPx8W3ysYgNvBxcME8YFyxxxsZn",
+                                "ALjTYPNZ9h7GHhyzuzEbGukhWJibLgUg2cBGsaeHSgPR",
+                                "APTaC5bocNeE6BrQgTUoA9otuw2U6GX82YNY4wPJYcsW",
+                                "ARXNsX7A3YmiBpEmNKizDFJSSHeLWhsaaZmkUBXiVHvF",
+                                "AWxiUimC4EpsaEUCUsY9crZ6GVeNDifamdZwCCiKDC5s",
+                                "AbrppGam67YgBBXEL4U18yxodDvySJHcDwuaavaNoFgw",
+                                "AeHLXiXYmRhPXDMiz3ky8UDfrCT187httHUxyVxZp7cx",
+                                "AniD1C725KsWkSGwhbooQXxzozW5GZu8BZY5ebozRtgg",
+                                "AomrmcFUnRVf4qS8rXpVAv5SvxYQtF26n6xPvhJ13k4y",
+                                "AuMZH3u3TSzeMhdTLHJBHr2unnFBGJxcaeGy1md3V1Hm",
+                                "BCPFiiqumrrXcC3Prfg1vwsHaXzTJr4vprmWt7bnGvJY",
+                                "BJBpA4U2bvi8yUmJB11VdtbMbxMG5z9xuMsirtsyxqq8",
+                                "BMKY1h9acufbF2USnG5K4atuPxMD5V9NZNqYCH7VMoLz",
+                                "BMzECndNrQs5hZSuYPkSV3Z7n5rUKoMAHGXhKKgEkeDg",
+                                "BQVeomyxDNxuN6nr48hV5oAqnk4c6Hjry32tgcoJh9ea",
+                                "BUx2dAA4GACyuyvz9gUeH8NDKSenhYRAkvAQCVwn93Am",
+                                "BW6MWjVKER4WGw2xFHLNDykJufbq4xEYqo8fzP5diBaR",
+                                "BgKvtDnQiToSZr4b6K1h7AMhAqr5LWo1SWEDpgParMZr",
+                                "BiyG9YghSnWQn58V9myabeCBrU7Ef13tfXT3fX1vdEi9",
+                                "BjvYD5kvoGuDriY1cHWA2NLg5Mg2rA9eZd1P33Y7oH9t",
+                                "BoxNy3VTBMfeweD78FD5jsdkbCrv5oJewcm9cgh2Vh1u",
+                                "BqkJeHEsNYYi6WPFhsfoZiZ84qghrWV2ZoQ5FXrVi2b9",
+                                "Br7oGFfkRSaQ96R3w5uq87JYf9EyGWY1DWd9AkmwQSBk",
+                                "BrhDGwiUqp5zLr9U8Cmm5ybwiS3u3HwU5QgRsm1oNY2i",
+                                "Bu5dsLvDsRhACxHpwUm5Nhj9TWHgu7XmFbCM7yHdpDPT",
+                                "BvPFbbQ7R6rg3BMXHH1AdYDsdpJkm7g2MTpZtkEYE15n",
+                                "BviPrQiSNyNftoqborkuTVLNkQRbf2aeHex13NSQqv4c",
+                                "BwejH9ScHnqaxMPGbcBn75uZ2hN3DpCf46LH7BvAe99Q",
+                                "C1VACYr9s6oAGcuf5HkqNSFE4poYjAedfTfwJS7PPedE",
+                                "C53nUmU177U3ffFJap71Cz8oB3B4QPrq2cRi8A5VMD3B",
+                                "C5fVcbyqBjiX7AjNCB63623gg7Kqfz5diydJG3vuaXxL",
+                                "C7bV9ekFmAbTKHHs2PWRXj9v9pnCSFqDStU8w7zFqQL4",
+                                "CJtD5SeMg3Enmwz63r6BLmgXZUGxVJxyopEVsMNL26x6",
+                                "CKirmq9nUHrioXeEG5oPfqQZaE1VX689pjQDFYSgi2iQ",
+                                "CN8nWsYVhgTTXYZ9FfT6KJcu9f6Bc1Bf7Ws3ULN4EmXs",
+                                "CPM89K5uzzHwfXCUr5o4n5bE5pjPviEWbnNgzLotDs4t",
+                                "CPVqfJbwZ9iHJwGQzFUhBcUHQyGYxWUPrm9JNeLKHvce",
+                                "CPXSrGvX729qEhpbjrBd9cJumuj2vfr6hLUTEoKH72eP",
+                                "CWrbgFRKEPr4YYxxSeupjaWp9kH1GewRSxttCmKqtSJd",
+                                "CYrDpn4oKKf1GKJCthF4Qyfk6HHGMjzMdaAFSvHP4uf5",
+                                "CfE4ZQSxoSqwQxP1JuJkuuA9G9CVgKsBKFUCb7JDw1mw",
+                                "CgM6uX72PyEpVrDoFSsd1GseHcQnN7PiQsDP5UwbZNiD",
+                                "CsivhS8chFhXSGB62dsRC8Wokw7JCD4o7J9ASPxCdyNo",
+                                "Cu6UHRRmmHto8t3vdNGBatx4uNiqgKeTWsFpD1rvxAUF",
+                                "CxfMgy4k86H6JEZMb8ps2s9paC3cr35YBHhCQCfUnhg8",
+                                "CypqBCWR6nS8tkei2XMTuFmVPYT8DvhzqcUcmJ6D7dZ2",
+                                "DBggNvpJzVDFgZXpwsnHyzJFAcUNCY6rQCEKSmrNvrv7",
+                                "DCikX6sN3u7zu13G7WAr6gem1si5jyhfwJ7Yws7VSU94",
+                                "DGaAKs1DXhUi1KrnRpYGEsRbdnATqdCCSQHaAvRHceFY",
+                                "DV7ETRKs8oakVfmceAwsBarU5BXZoSmCt2xA578HqBX8",
+                                "DWr63H4WkUZvwhKFHpK8nJDfiXvyypT1ZVF26YS9Lhnc",
+                                "DZSC4yFos92QH3QuVGnu1pYopdjcknTu8CthY7uH3WNC",
+                                "DiQziMqBWCxo3cZ7RUiXvb99oNihgg8SytvqCMtpWYte",
+                                "DwYwbKWN6yPCX1PLTyFQ47HSrEaWMA7igCC79eTKHtXD",
+                                "E3XVU4aZ4kgbuUMAY3xC4tgqF5B28McSEkNv3WqR98eQ",
+                                "E5voKTWYmtjJtiZyhvGC8LddQDnCd3Nr1dNLKnM32KmL",
+                                "E6mgtnu3rt9weVZZ7mJCkQj1UnMqnMYrUrVc4sxNuFrr",
+                                "E7KyJoM6cE3Cx5ErbNyCQYbRkkhEbKfCakNMYwfVSaXr",
+                                "EB9N6pvMpWvkeBxgUuR931CMMvoX3wzH6JFQMpGkiyTp",
+                                "EBv36JHStpDgEziPi1Q5mUuZuJCWuXQJyN3m2Qbf62BE",
+                                "EDtoVWXFn5VY1GYCyNmM9CQguz885S8ovUZRwvf9bjGE",
+                                "EEb2UFQpdasYJqPULSfyR2mfYptx4tXEqfC24gT3E1zZ",
+                                "EFvjkHk7yRdvKQDAp1ua2x8cfByRAu36gue4hBDBKvPF",
+                                "EHnExiLFQViFdDRiezdDksRD237auC5pg7xSsvJjWzYF",
+                                "EJZcwtm5VF7u1tdn69bdW2VzuUMMpo9WY1K6Ta8174yD",
+                                "EV8U2H58G2AyhAEctHkqCw8fcwR9oWX3VSVSy8Uer9ZF",
+                                "EYKvgVcNYmt7BSMX36J8YCRFNRwGtuG4Z9t6nvtJus8D",
+                                "Ebi6GPwpzh7L8FoXygSys42VdUErieGYYntSw1FeLuCX",
+                                "EdYNcndeMuNDr3ozBGa7LrQpe3ptYbpqt3LkQ2ApLz8H",
+                                "EhGYCkDzHuHLZx3XPvAFRB6ZhUaW1AxoheXyrvS7ibS8",
+                                "Ei6xN6GVAJHycux3q5Dt38S4aZBWwhZq95zCfgmgewDT",
+                                "EiA8Bj8XuHDV6T4CQHkgfV52bsNyEmX55WKiut1BLw8e",
+                                "EvjroZM161Puu6q7kzC5MQgowEMWKSW3g9fWRisonns4",
+                                "ExDCzCB8CHuvZZCenNaukUvecaijqPQDcbucModp31FA",
+                                "F1ssta8wcR9R4vx6coyTtyT7EKzwS1Taawd6ynqQxHpZ",
+                                "FAEuvAzWeeHjFUi9jWQtVqhtK2pXVrno5qTMaqJf5wgb",
+                                "FNUZUbk5yXZFkuWC2FU7SA3zCyXiNmdNy1jooYMrG88w",
+                                "FSM5wPjonYDhTEmooU5t7PL2fb3nj1YTZxfhdneKMdfp",
+                                "FTWfE8BbLn4gvcEqPUriLHHwaqA9GEdxq4xBCWwm4LTp",
+                                "FWxncUzAB8Qd7jm14q3uCcTHuKeb8Mw7ythgXdj2ucrz",
+                                "FWzpQq8M1EDce9PHj9XGvjmcmFVZ123BMbpWQt5n8qDM",
+                                "FZP2PZtFzqcRfku98WENHNTG8B1M32DGt6ppPhXmcxzx",
+                                "Fa1jgSaZsHVtYmQ3LXrvQi5ZohjqZ1TcTHDeVbxhoo6T",
+                                "FaqqRrKTEpz9oeRN2sCt6vKwWLtxuXSWoA21rvJaxt7y",
+                                "FgpXZuKz7mauiWmhaRkxUnX59UBFyHmx2dawKrQzJA5w",
+                                "FiNLcVkaPsAfm47TRhH5EsjLMrg6cJTy7gxVvCpd43gS",
+                                "FuS9NB2UJnUK3iuNDsFhWRrv8VR67cSQywQ25qVRZ3f",
+                                "G3EraKUY44ZbGpiqxQjBMumykKvm2YsVxXenQvpZKExw",
+                                "G5tRyiUkix3fTVBPwmmdw9GhRRd1qwVp7cYtAzcc1NZz",
+                                "GEdCTRibHNnpx7R5burZpzu8GS7bFnsu1SFSevmLAZH8",
+                                "GHFhzoaRUc49tX7rxp2tLj9w829FqrSxtTEs4QGUMQD5",
+                                "GKBEG6f59zVLvH9XmicR2iuJn9ebm9CUKHNnLRKVLBPS",
+                                "GM5Go1VN58LVnMrjoJ6JMBLa1f1dD67x39jMkuuumkyU",
+                                "GRZmT4RnkoMayhSgJz3o6VFQmsEwUPfoyvg7G7P4A6vt",
+                                "GRfVFwZwekjUDzH9sxsfG1jyHVo1SB6U6zGDPMLdDBZe",
+                                "GVW17DrwYDh2y6T7srCiq9yTHYgJvvUGk6QcPJMoybGZ",
+                                "GZCPdavohBZpRttdzJJEaT6Xoedcida9rvnfPQTFrcU9",
+                                "GbaadoVCLc5GVbve29PZm7ZjNAqVFH9CdnZLUZM2N3ht",
+                                "GfcdGhFL458jKHczEhmcyHri8UccPypLQ1KJneRVXsVg",
+                                "GuJRRaeqwtZ7XLiri6fNonvPWbTamRNKhnQSTRXcshwV",
+                                "Guck5FfdQBLJhbjkJLQEBhwAMghaUA23VMW5bTwi42xq",
+                                "H4eSnBiLS8NWZVANjiyBuVFxeLmTq727Q71Vw8xdWGwB",
+                                "H9hcSXkqdJnNGJZQ1N5wnMst4oXhaYwV1av5weTwzkch",
+                                "HDzxxNDvFy7c73iiFoQkYwWL4VdTSnqtDFM5JjeTKEC8",
+                                "HH15XyUGGKN6wBrNTdvn9FcEGCMAZqBD7z2tzVLTo4Z4",
+                                "HXHm7MkLZSiBAQfsRYF71bjKvSbkZVp4YPT8N6McqDiQ",
+                                "HY3y6BawKgimD1XzYfKv2ZfWwGWjDcGA2Ws5iF2kHv9k",
+                                "HYRA3Bu5pu3jYgGT8heADw4eMrcVhDsNSSGZQFKLvdkS",
+                                "HeUr56Dw5H3EhkJ75sufN9ho8ELbgg7PDRUCtuxCDU3Y",
+                                "HiWcgwpjRHyJu5pG1FZot1QZyA3uV1UGdAnQbvS3ePHH",
+                                "Hj3oS9FteuTPWyFyfbe8o6akKfEoBAfdy7LLHihkYgfN",
+                                "HzcMYzRP5SRRVyqVaNvNnQcWYqWw2bMhY8cef2Labqhu",
+                                "J1NPPK7CJquonYVUYo1WsTNGGLXsohTNE7KaSFJbQdu",
+                                "J5rGFiNWEsU2eMwFsjvNdjJEgQrJwMzpXrMT1X1vQGT8",
+                                "J9HzUg3GLmCB3TPWyiehGpSkFCjW7K4gmeEjiaGnqYsN",
+                                "JDZPPNkkVg6A5E8saaH1kAhHFtCfYahfyHyvCeWq8ZBH",
+                                "JLY8sJLARTaTfAAJuEM6y1u8ghWtwM52QiTH4DMMbXp",
+                                "LDbVhZrir4HA4ZJFFLBBddT1V1odv5BzVCxjAzgXHcW",
+                                "NYYYEMpsKJ7bHeCtVBnb5zwJh5YHAjxLZFjJVLMf1UZ",
+                                "PJq9eFMQhTYJbmYHYT2HagLqNkG51SV4PyArYxa22GC",
+                                "XeNApD9TbwFs2nb2UTiYyD8YeCfHbU4xZSFPwWvxqn9",
+                                "fQ1SBCJCSsGXkpLG3gzU4FDffi5CbKa5qj1PFTmMckU",
+                                "vroB9z3R4kJiyaHJCh5rnHV6GGMZE4XecRhZAGp6DUu",
+                                "wFStc2vSKWYG2CaYfpua2zbm49aEsPnxNHU3NqAAaqX",
+                                "ww4HotmSaSGjABYqb6d1gM19giV9vprhV2JcfFCKiQA",
+                                "zghoSnywM8Ny1mtpnkivPjf6wVv228b1pau7VBZr3Xw"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/fetch_user/{pubkey}/{period}": {
+      "get": {
+        "summary": "/fetch_user/{pubkey}/{period}",
+        "parameters": [
+          {
+            "name": "pubkey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "period",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {}
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/votes/last_block": {
+      "get": {
+        "summary": "/votes/last_block",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "blockId": {
+                      "type": "number",
+                      "example": 30321001
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/periods": {
+      "get": {
+        "summary": "/periods",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number",
+                      "example": 5
+                    },
+                    "periods": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "periodNumber": {
+                            "type": "number"
+                          },
+                          "startBlockId": {
+                            "type": "number"
+                          },
+                          "endBlockId": {
+                            "type": "number"
+                          },
+                          "allocated": {
+                            "type": "number"
+                          },
+                          "budget": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "periodNumber",
+                          "startBlockId",
+                          "endBlockId",
+                          "allocated",
+                          "budget"
+                        ]
+                      },
+                      "example": [
+                        {
+                          "periodNumber": 1,
+                          "startBlockId": 29831401,
+                          "endBlockId": 29917701,
+                          "allocated": 1000.0274282579626,
+                          "budget": 1000
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/periods/{period}": {
+      "get": {
+        "summary": "/periods/{period}",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Method Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "period": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "startBlockId": {
+                            "type": "number"
+                          },
+                          "endBlockId": {
+                            "type": "number"
+                          },
+                          "allocated": {
+                            "type": "number"
+                          },
+                          "budget": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "example": [
+                        {
+                          "startBlockId": 29831401,
+                          "endBlockId": 29917701,
+                          "allocated": 1000.0274282579626,
+                          "budget": 1000
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/voters": {
+      "get": {
+        "summary": "/voters",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number",
+                      "example": 487
+                    },
+                    "voters": {
+                      "type": "object",
+                      "properties": {
+                        "135U4c7E2qAWVTHsYw2vLsywhmT89usvBQ88PrXib8qb": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 2.9741954744912045,
+                              "distributed": 0,
+                              "voter": "135U4c7E2qAWVTHsYw2vLsywhmT89usvBQ88PrXib8qb"
+                            }
+                          ]
+                        },
+                        "13K2BFv2yYH6H2XCZkRrSidiGqskCiKTPbh6NB236r4M": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.415949532005349,
+                              "distributed": 0,
+                              "voter": "13K2BFv2yYH6H2XCZkRrSidiGqskCiKTPbh6NB236r4M"
+                            }
+                          ]
+                        },
+                        "1qv2aKfXLh6AFWZFiNVMFCvyQz3pAXocV7eXjnBpDea": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 3.675386567010663,
+                              "distributed": 0,
+                              "voter": "1qv2aKfXLh6AFWZFiNVMFCvyQz3pAXocV7eXjnBpDea"
+                            }
+                          ]
+                        },
+                        "21UGDjmEGPSVNdMyLk3DbWP9jvcmWWVaE4gLJqmnckg8": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 5,
+                              "reward": 0.05868234658967543,
+                              "distributed": 0,
+                              "voter": "21UGDjmEGPSVNdMyLk3DbWP9jvcmWWVaE4gLJqmnckg8"
+                            }
+                          ]
+                        },
+                        "22K1Trwfio1CXHq26VcuiuTTWGd2DwZMYcKLeuxAQHPn": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.650221140329824,
+                              "distributed": 0,
+                              "voter": "22K1Trwfio1CXHq26VcuiuTTWGd2DwZMYcKLeuxAQHPn"
+                            }
+                          ]
+                        },
+                        "22N6WYCdByjw1VLt6dnXzrrmeXnfmvFFSfyqAfwSibo9": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.506222786025303,
+                              "distributed": 0,
+                              "voter": "22N6WYCdByjw1VLt6dnXzrrmeXnfmvFFSfyqAfwSibo9"
+                            }
+                          ]
+                        },
+                        "22p2Vj6Uv2L7DVZ5wGXnZNceTdgukWQcNgckBv5FFj2G": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.45136627009977,
+                              "distributed": 0,
+                              "voter": "22p2Vj6Uv2L7DVZ5wGXnZNceTdgukWQcNgckBv5FFj2G"
+                            }
+                          ]
+                        },
+                        "25xW33GLtn1ukPg7g4d3H6vegKnsedvfjP3Fg6tMWHQA": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.6707923338018995,
+                              "distributed": 0,
+                              "voter": "25xW33GLtn1ukPg7g4d3H6vegKnsedvfjP3Fg6tMWHQA"
+                            }
+                          ]
+                        },
+                        "266XNqThvg1Hiv3gWq6vdjJ4s2twxM66tX2gnYNBHL9S": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.450234854458806,
+                              "distributed": 0,
+                              "voter": "266XNqThvg1Hiv3gWq6vdjJ4s2twxM66tX2gnYNBHL9S"
+                            }
+                          ]
+                        },
+                        "26H4xv9N1o9W1uZD3yTLjccWh3tCaJzxDHFN6vJdirwz": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.55309082181918,
+                              "distributed": 0,
+                              "voter": "26H4xv9N1o9W1uZD3yTLjccWh3tCaJzxDHFN6vJdirwz"
+                            }
+                          ]
+                        },
+                        "27ys6RkMczdBAaGvZBFdQnmNNCy7FD5EvwJy53dLUXxX": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 3.878727264567666,
+                              "distributed": 0,
+                              "voter": "27ys6RkMczdBAaGvZBFdQnmNNCy7FD5EvwJy53dLUXxX"
+                            }
+                          ]
+                        },
+                        "281RJWoUNBn2jUiUCai88hsbpFqJfLVVAnwk1QYiA4K1": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.566804950800562,
+                              "distributed": 0,
+                              "voter": "281RJWoUNBn2jUiUCai88hsbpFqJfLVVAnwk1QYiA4K1"
+                            }
+                          ]
+                        },
+                        "28RMJ6Ai6omNDTrhWvBL27RoWbmMPtgbFQcCARMj1gw4": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.01923335833669917,
+                              "distributed": 0,
+                              "voter": "28RMJ6Ai6omNDTrhWvBL27RoWbmMPtgbFQcCARMj1gw4"
+                            }
+                          ]
+                        },
+                        "29grWn7qYzWVBMm4HTX32hNtFcezpwcuhPX4EYeXLuLm": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.020571193472074603,
+                              "distributed": 0,
+                              "voter": "29grWn7qYzWVBMm4HTX32hNtFcezpwcuhPX4EYeXLuLm"
+                            }
+                          ]
+                        },
+                        "2CasHy3ePyDESupy3Xu8j5dHkg5gqKLUKCb3ry85jkkd": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.2115669417036909,
+                              "distributed": 0,
+                              "voter": "2CasHy3ePyDESupy3Xu8j5dHkg5gqKLUKCb3ry85jkkd"
+                            }
+                          ]
+                        },
+                        "2E2xruqUjDtRBPzeEP8YXuqrwFStcYv7SEhFAtmYYpwy": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.9188466417526657,
+                              "distributed": 0,
+                              "voter": "2E2xruqUjDtRBPzeEP8YXuqrwFStcYv7SEhFAtmYYpwy"
+                            }
+                          ]
+                        },
+                        "2ERVDVsWfzwNdHMrJAutfYpfu8nuhF2qcmbP56kcVEok": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.020571193472074603,
+                              "distributed": 0,
+                              "voter": "2ERVDVsWfzwNdHMrJAutfYpfu8nuhF2qcmbP56kcVEok"
+                            }
+                          ]
+                        },
+                        "2FEZxMubZ4bWVBYNQE1pMedv34CrHRegSzf7fX7S7GGi": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.33366475811705,
+                              "distributed": 0,
+                              "voter": "2FEZxMubZ4bWVBYNQE1pMedv34CrHRegSzf7fX7S7GGi"
+                            }
+                          ]
+                        },
+                        "2JCKYqMXeFqAG3in7syA6XBea74trxybQuM9KQGNaRQC": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 3.2783745571096228,
+                              "distributed": 0,
+                              "voter": "2JCKYqMXeFqAG3in7syA6XBea74trxybQuM9KQGNaRQC"
+                            }
+                          ]
+                        },
+                        "2K1kN5vwjSozNkdjH2tqM42m2yBzTWoRwjAziAyCSdGS": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.423938012137004,
+                              "distributed": 0,
+                              "voter": "2K1kN5vwjSozNkdjH2tqM42m2yBzTWoRwjAziAyCSdGS"
+                            }
+                          ]
+                        },
+                        "2Nwm1K1hywWjwchwZfXcAQe3pCSTByw8nv8huEJQtBit": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.622792882367058,
+                              "distributed": 0,
+                              "voter": "2Nwm1K1hywWjwchwZfXcAQe3pCSTByw8nv8huEJQtBit"
+                            }
+                          ]
+                        },
+                        "2QWQRvqfKb3ccghVH2ESo4697qbK6ngepstEqe6VUCzj": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 2.788308257335504,
+                              "distributed": 0,
+                              "voter": "2QWQRvqfKb3ccghVH2ESo4697qbK6ngepstEqe6VUCzj"
+                            }
+                          ]
+                        },
+                        "2RYguqoTsjU1C86YSEm9d97o9q7ij4iFx1xApb2wEn4L": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 2.7826753113610887,
+                              "distributed": 0,
+                              "voter": "2RYguqoTsjU1C86YSEm9d97o9q7ij4iFx1xApb2wEn4L"
+                            }
+                          ]
+                        },
+                        "2WXAHNqttJUKuRDzmbZ9rgJ8A3v8zkbjpyEYxCD7qnZJ": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.10285596736037303,
+                              "distributed": 0,
+                              "voter": "2WXAHNqttJUKuRDzmbZ9rgJ8A3v8zkbjpyEYxCD7qnZJ"
+                            }
+                          ]
+                        },
+                        "2WnyDWcBasY6YTQsusRvwEqbtgtfPNSW5P8U8JxxqdbK": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.6603453028933383,
+                              "distributed": 0,
+                              "voter": "2WnyDWcBasY6YTQsusRvwEqbtgtfPNSW5P8U8JxxqdbK"
+                            }
+                          ]
+                        },
+                        "2XD1twzQiYtHrPHsDhQzH9EiAacjBBHSZNDENc8GFW5J": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 2.4953950666659157,
+                              "distributed": 0,
+                              "voter": "2XD1twzQiYtHrPHsDhQzH9EiAacjBBHSZNDENc8GFW5J"
+                            }
+                          ]
+                        },
+                        "2XMcF5ETkYEFVzSR8rJFfKoyeVmuRKv9mTwQVpDhU1ki": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 3,
+                              "reward": 0.5118834719954384,
+                              "distributed": 0,
+                              "voter": "2XMcF5ETkYEFVzSR8rJFfKoyeVmuRKv9mTwQVpDhU1ki"
+                            }
+                          ]
+                        },
+                        "2XiskAE3EY2eVizWFmzNRnXHNC7cB33B7ug1ZvTzPrXU": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.525662563856413,
+                              "distributed": 0,
+                              "voter": "2XiskAE3EY2eVizWFmzNRnXHNC7cB33B7ug1ZvTzPrXU"
+                            }
+                          ]
+                        },
+                        "2YCAw5xv6SJgbnVJaeNWFR7TKbkL54K8EWw1wSAWdN9H": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 1.9405492508657045,
+                              "distributed": 0,
+                              "voter": "2YCAw5xv6SJgbnVJaeNWFR7TKbkL54K8EWw1wSAWdN9H"
+                            }
+                          ]
+                        },
+                        "2bdF1a7LL57WT7z8r13QwK32sxkcCBnjX58NPHzuPhaA": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.436520725477423,
+                              "distributed": 0,
+                              "voter": "2bdF1a7LL57WT7z8r13QwK32sxkcCBnjX58NPHzuPhaA"
+                            }
+                          ]
+                        },
+                        "2bxx1VpaYaSuxF7GKauhxu5vidQM4um9j7BwY3ZXBviC": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.4744228389719129,
+                              "distributed": 0,
+                              "voter": "2bxx1VpaYaSuxF7GKauhxu5vidQM4um9j7BwY3ZXBviC"
+                            }
+                          ]
+                        },
+                        "2emXFE9PZ4j3XsZjTsxKnKM5pcw6ktXUhqRwvCEbjEMx": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.013714128981383071,
+                              "distributed": 0,
+                              "voter": "2emXFE9PZ4j3XsZjTsxKnKM5pcw6ktXUhqRwvCEbjEMx"
+                            }
+                          ]
+                        },
+                        "2kF737rfqdctYoo8nKHjQGxaSxmLiyN9p3E6eoXwUYwr": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 5,
+                              "reward": 2.7698067590326803,
+                              "distributed": 0,
+                              "voter": "2kF737rfqdctYoo8nKHjQGxaSxmLiyN9p3E6eoXwUYwr"
+                            }
+                          ]
+                        },
+                        "2mCdovwPwVZAmnu41jiDbNxM8mqs1CQqwryLVFtufiZ2": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.047999451434840745,
+                              "distributed": 0,
+                              "voter": "2mCdovwPwVZAmnu41jiDbNxM8mqs1CQqwryLVFtufiZ2"
+                            }
+                          ]
+                        },
+                        "2nWMf7one8B2tYGnNZTkBzbWi9gVJGNiveJ6rQoij6Sx": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 2.795248078266946,
+                              "distributed": 0,
+                              "voter": "2nWMf7one8B2tYGnNZTkBzbWi9gVJGNiveJ6rQoij6Sx"
+                            }
+                          ]
+                        },
+                        "2nfC1kuzLLU1Cb9eAEgYAKQUAfWhZn5ymJGdDKZg8jNm": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.11540015002019502,
+                              "distributed": 0,
+                              "voter": "2nfC1kuzLLU1Cb9eAEgYAKQUAfWhZn5ymJGdDKZg8jNm"
+                            }
+                          ]
+                        },
+                        "2wGDbx51VkKYLWdR52Tu7MN8KEYPAfR5c82nArW3KTQE": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.677649398292591,
+                              "distributed": 0,
+                              "voter": "2wGDbx51VkKYLWdR52Tu7MN8KEYPAfR5c82nArW3KTQE"
+                            }
+                          ]
+                        },
+                        "2wJncARWojGbcECQ7r2UUjQKvyWDDSVj2U14aMTdsJw6": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.410223883155621,
+                              "distributed": 0,
+                              "voter": "2wJncARWojGbcECQ7r2UUjQKvyWDDSVj2U14aMTdsJw6"
+                            }
+                          ]
+                        },
+                        "2x6eRuqaqCb41C1oAcg2eYMvdBQc1ywR8Y3xBy367KkC": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.3359961600438852,
+                              "distributed": 0,
+                              "voter": "2x6eRuqaqCb41C1oAcg2eYMvdBQc1ywR8Y3xBy367KkC"
+                            }
+                          ]
+                        },
+                        "2xDDTv8jddRcuGmZ1iwkXWeLXeqwZdzrsqHZMJDYmqnV": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.5050913703843385,
+                              "distributed": 0,
+                              "voter": "2xDDTv8jddRcuGmZ1iwkXWeLXeqwZdzrsqHZMJDYmqnV"
+                            }
+                          ]
+                        },
+                        "2yHmdcjmpRf4tzYfTiSFGd4tfLLqZ7Ea9CqTL7gtw3qm": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.01282223889113278,
+                              "distributed": 0,
+                              "voter": "2yHmdcjmpRf4tzYfTiSFGd4tfLLqZ7Ea9CqTL7gtw3qm"
+                            }
+                          ]
+                        },
+                        "2ydBdu1gQyPottcigHGZCzjRY34YN429dUUxN8TA1eS1": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.020571193472074603,
+                              "distributed": 0,
+                              "voter": "2ydBdu1gQyPottcigHGZCzjRY34YN429dUUxN8TA1eS1"
+                            }
+                          ]
+                        },
+                        "32yHCrx6yT1WkkgZgca6CyqTek4P5zDWwBa7MCsPhY7G": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 2.365703075413998,
+                              "distributed": 0,
+                              "voter": "32yHCrx6yT1WkkgZgca6CyqTek4P5zDWwBa7MCsPhY7G"
+                            }
+                          ]
+                        },
+                        "3357wf7ByDKhgczAwrwMMk5d73R1T6fqDrmGkzkGjyB5": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.31422498028594,
+                              "distributed": 0,
+                              "voter": "3357wf7ByDKhgczAwrwMMk5d73R1T6fqDrmGkzkGjyB5"
+                            }
+                          ]
+                        },
+                        "33oNSsio3BWsgD5KpuXSk5SFQosZRrQTA7WqcKfZvdSb": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.013714128981383071,
+                              "distributed": 0,
+                              "voter": "33oNSsio3BWsgD5KpuXSk5SFQosZRrQTA7WqcKfZvdSb"
+                            }
+                          ]
+                        },
+                        "37j26M95X3BFFXbmgps3XXBP1UVAMrPyaquAYm2hHpYX": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.0068570644906915355,
+                              "distributed": 0,
+                              "voter": "37j26M95X3BFFXbmgps3XXBP1UVAMrPyaquAYm2hHpYX"
+                            }
+                          ]
+                        },
+                        "39hCcZXA5M7DKYo5d1Dvfhx3s9hrLXdUedkpcC3WiyLt": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.429663660986732,
+                              "distributed": 0,
+                              "voter": "39hCcZXA5M7DKYo5d1Dvfhx3s9hrLXdUedkpcC3WiyLt"
+                            }
+                          ]
+                        },
+                        "3BG8CXPwGsPZHPGqGW48XJtzke1fAng6hyBvEauPhteR": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.595364624404293,
+                              "distributed": 0,
+                              "voter": "3BG8CXPwGsPZHPGqGW48XJtzke1fAng6hyBvEauPhteR"
+                            }
+                          ]
+                        },
+                        "3H6jG63M7jHNMrtHMCLVRbekBGaYRPoNMMUFQzgKxMZ6": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 3,
+                              "reward": 0.4989243967550475,
+                              "distributed": 0,
+                              "voter": "3H6jG63M7jHNMrtHMCLVRbekBGaYRPoNMMUFQzgKxMZ6"
+                            }
+                          ]
+                        },
+                        "3LRevQKnBoH3oSY71QbWtnspPgt9p5QyawupCvt9PTYi": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.705077656255357,
+                              "distributed": 0,
+                              "voter": "3LRevQKnBoH3oSY71QbWtnspPgt9p5QyawupCvt9PTYi"
+                            }
+                          ]
+                        },
+                        "3QTkD3r7XWWarMx6xukh1ZSFqfePzPhCEP14gMDfjRqv": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.0068570644906915355,
+                              "distributed": 0,
+                              "voter": "3QTkD3r7XWWarMx6xukh1ZSFqfePzPhCEP14gMDfjRqv"
+                            }
+                          ]
+                        },
+                        "3QdvxWSesFwNq92BSDjGrKwJn5Bi1iACcWG83hBzUsnh": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.13028422532313919,
+                              "distributed": 0,
+                              "voter": "3QdvxWSesFwNq92BSDjGrKwJn5Bi1iACcWG83hBzUsnh"
+                            }
+                          ]
+                        },
+                        "3QscfDj2ELvNiDZygw1jbLKpJvGZ1SuihDZuiz7AGDhj": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 2.9009671768238072,
+                              "distributed": 0,
+                              "voter": "3QscfDj2ELvNiDZygw1jbLKpJvGZ1SuihDZuiz7AGDhj"
+                            }
+                          ]
+                        },
+                        "3ShCntmjF6UPgv9F6HsGSCxHaxdLSCephN5sP28dwkic": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.3565673535159598,
+                              "distributed": 0,
+                              "voter": "3ShCntmjF6UPgv9F6HsGSCxHaxdLSCephN5sP28dwkic"
+                            }
+                          ]
+                        },
+                        "3Xh7CKtxVSosUgQzPGmTZ5XCLnmeHJLRezGzE94JsnJ4": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 2.4953950666659157,
+                              "distributed": 0,
+                              "voter": "3Xh7CKtxVSosUgQzPGmTZ5XCLnmeHJLRezGzE94JsnJ4"
+                            }
+                          ]
+                        },
+                        "3XjSpCvucFcR9qgaDoxm8YsX7rskyKKF3BvhBZXyZLBF": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 5,
+                              "reward": 2.711124412443005,
+                              "distributed": 0,
+                              "voter": "3XjSpCvucFcR9qgaDoxm8YsX7rskyKKF3BvhBZXyZLBF"
+                            }
+                          ]
+                        },
+                        "3bZkupqyj1XGbVYbWxnn39N6in21JXTeF4PtMVxaLuBc": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.42280659649604,
+                              "distributed": 0,
+                              "voter": "3bZkupqyj1XGbVYbWxnn39N6in21JXTeF4PtMVxaLuBc"
+                            }
+                          ]
+                        },
+                        "3cMM11XSGoG2Sujy5mvXB3nePs3zQirJchisjT7Gegfg": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.532519628347105,
+                              "distributed": 0,
+                              "voter": "3cMM11XSGoG2Sujy5mvXB3nePs3zQirJchisjT7Gegfg"
+                            }
+                          ]
+                        },
+                        "3eStxAGKEHRaR8eW8gYZPgPCQZm4jYWdjM1jUhn6yvVa": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 3,
+                              "reward": 1.639323017909442,
+                              "distributed": 0,
+                              "voter": "3eStxAGKEHRaR8eW8gYZPgPCQZm4jYWdjM1jUhn6yvVa"
+                            }
+                          ]
+                        },
+                        "3nEXTZZ2ddwHux2AbRYsjUvBzqRVkHXehc8YxGxBP9k5": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.609078753385676,
+                              "distributed": 0,
+                              "voter": "3nEXTZZ2ddwHux2AbRYsjUvBzqRVkHXehc8YxGxBP9k5"
+                            }
+                          ]
+                        },
+                        "3nH8VUS45REZA3nq8BvUGejhRu7HXSfZEipFmvb5MmUJ": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.7817053519388351,
+                              "distributed": 0,
+                              "voter": "3nH8VUS45REZA3nq8BvUGejhRu7HXSfZEipFmvb5MmUJ"
+                            }
+                          ]
+                        },
+                        "3npS6kL4UjdKRGJmH7TZCscvNCg7NFSi9M5JsCw9jh3T": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 5,
+                              "reward": 0.1643105704510912,
+                              "distributed": 0,
+                              "voter": "3npS6kL4UjdKRGJmH7TZCscvNCg7NFSi9M5JsCw9jh3T"
+                            }
+                          ]
+                        },
+                        "3pmpn8a2MKRHy3DpaUB2AMzanu7kH8Y3AErZq5Janpwm": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.00641111944556639,
+                              "distributed": 0,
+                              "voter": "3pmpn8a2MKRHy3DpaUB2AMzanu7kH8Y3AErZq5Janpwm"
+                            }
+                          ]
+                        },
+                        "3puajQDTeDvqMgigMANAujwumwMRiENRacdCV2NrHajn": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.00641111944556639,
+                              "distributed": 0,
+                              "voter": "3puajQDTeDvqMgigMANAujwumwMRiENRacdCV2NrHajn"
+                            }
+                          ]
+                        },
+                        "3qMz6zxVppzpGcG2oR13ivi91W9F8uKH2GwvoTkLN5DA": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.340521822607742,
+                              "distributed": 0,
+                              "voter": "3qMz6zxVppzpGcG2oR13ivi91W9F8uKH2GwvoTkLN5DA"
+                            }
+                          ]
+                        },
+                        "3r4ZDsd4qNFaqkLXafxuoDeRSwN3so63uesmeTsPN4NG": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.02564447778226556,
+                              "distributed": 0,
+                              "voter": "3r4ZDsd4qNFaqkLXafxuoDeRSwN3so63uesmeTsPN4NG"
+                            }
+                          ]
+                        },
+                        "3sANteAkkiFQG86MZaZdRQBUfYiULD7tvwHofxV9DLrK": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 5,
+                              "reward": 0.011736469317935086,
+                              "distributed": 0,
+                              "voter": "3sANteAkkiFQG86MZaZdRQBUfYiULD7tvwHofxV9DLrK"
+                            }
+                          ]
+                        },
+                        "3tyJ5nu61RcK9M5MByXpttPbufAa8jTuVrMkgnQYxZao": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 1.0491308670758048,
+                              "distributed": 0,
+                              "voter": "3tyJ5nu61RcK9M5MByXpttPbufAa8jTuVrMkgnQYxZao"
+                            }
+                          ]
+                        },
+                        "3uWNq5t8RXyKCgfEuDCaunEvGGRzSmVh6fqd3wRb8rMu": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 3,
+                              "reward": 3.3045641862996655,
+                              "distributed": 0,
+                              "voter": "3uWNq5t8RXyKCgfEuDCaunEvGGRzSmVh6fqd3wRb8rMu"
+                            }
+                          ]
+                        },
+                        "3v6TeoNWCzsddNy3pTKBtc3yKSyoFyCETBYjSFo5Gnzu": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.518805499365722,
+                              "distributed": 0,
+                              "voter": "3v6TeoNWCzsddNy3pTKBtc3yKSyoFyCETBYjSFo5Gnzu"
+                            }
+                          ]
+                        },
+                        "3vANGraM2gjZkPvp2bTkkSUhaN6yxumtwnuBCoGxDnDq": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 3.284007503084038,
+                              "distributed": 0,
+                              "voter": "3vANGraM2gjZkPvp2bTkkSUhaN6yxumtwnuBCoGxDnDq"
+                            }
+                          ]
+                        },
+                        "3wVavd8Y637z51UHo3JkbbmETEWyVJQue2a3MaWraFpY": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.484520176912264,
+                              "distributed": 0,
+                              "voter": "3wVavd8Y637z51UHo3JkbbmETEWyVJQue2a3MaWraFpY"
+                            }
+                          ]
+                        },
+                        "41T9W8PUA7KN2bwRH1vKF2tGvDx6skQxZag8ywqTRnEP": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.5142798368018651,
+                              "distributed": 0,
+                              "voter": "41T9W8PUA7KN2bwRH1vKF2tGvDx6skQxZag8ywqTRnEP"
+                            }
+                          ]
+                        },
+                        "43gWLWov3T8u5mQD7E6NMtWcghotijZaU5nc3PeX7vxd": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.643364075839133,
+                              "distributed": 0,
+                              "voter": "43gWLWov3T8u5mQD7E6NMtWcghotijZaU5nc3PeX7vxd"
+                            }
+                          ]
+                        },
+                        "44QsUMKSzqH4X4erkgqerXE9Mce6a2FpkXbFdVuvAtu6": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 2.5919703774814002,
+                              "distributed": 0,
+                              "voter": "44QsUMKSzqH4X4erkgqerXE9Mce6a2FpkXbFdVuvAtu6"
+                            }
+                          ]
+                        },
+                        "46QyPygnVDkEaCaPixcba21qU8GEN1tX5K3H1Bz2Teyx": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.07542770939760689,
+                              "distributed": 0,
+                              "voter": "46QyPygnVDkEaCaPixcba21qU8GEN1tX5K3H1Bz2Teyx"
+                            }
+                          ]
+                        },
+                        "49vZhd9Qy6yHL3NCyz6p4aPHvnpJuaANuY4STNUTeYZt": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.020571193472074603,
+                              "distributed": 0,
+                              "voter": "49vZhd9Qy6yHL3NCyz6p4aPHvnpJuaANuY4STNUTeYZt"
+                            }
+                          ]
+                        },
+                        "4Bnqv7xHFKwkYufJjBXGzvjeCnSzfe6QLxYEeHgsKi9i": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 2.729111667295231,
+                              "distributed": 0,
+                              "voter": "4Bnqv7xHFKwkYufJjBXGzvjeCnSzfe6QLxYEeHgsKi9i"
+                            }
+                          ]
+                        },
+                        "4Cke6o3HqVxTv4ZgdtGC7BjdXizPgYufn4DTLS3tCrdz": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.5417080947646312,
+                              "distributed": 0,
+                              "voter": "4Cke6o3HqVxTv4ZgdtGC7BjdXizPgYufn4DTLS3tCrdz"
+                            }
+                          ]
+                        },
+                        "4FFqJFjRUmFn5z7rHxXB24r5MWGNF7h8SCwQwgNihDXc": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 4.55309082181918,
+                              "distributed": 0,
+                              "voter": "4FFqJFjRUmFn5z7rHxXB24r5MWGNF7h8SCwQwgNihDXc"
+                            }
+                          ]
+                        },
+                        "4Gdo9RH84yq5Y8gAivp76ieTyh3yCd1BSe5eCSbQi71p": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 2.962929582542374,
+                              "distributed": 0,
+                              "voter": "4Gdo9RH84yq5Y8gAivp76ieTyh3yCd1BSe5eCSbQi71p"
+                            }
+                          ]
+                        },
+                        "4GfoWqethA2eZ8HdFKCaqSUbVHzNLhKrQvdRGcRS2PAG": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 5,
+                              "reward": 0.02347293863587017,
+                              "distributed": 0,
+                              "voter": "4GfoWqethA2eZ8HdFKCaqSUbVHzNLhKrQvdRGcRS2PAG"
+                            }
+                          ]
+                        },
+                        "4KyNbvLN8U28czupRziibLYaxb5jP2HiAMQzM5cfwzKL": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 3.289640449058453,
+                              "distributed": 0,
+                              "voter": "4KyNbvLN8U28czupRziibLYaxb5jP2HiAMQzM5cfwzKL"
+                            }
+                          ]
+                        },
+                        "4MaA5E2XzEwFJbcbDeue8PJ2DDQbVuRXQSNgFnW3jmEo": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.574793430932218,
+                              "distributed": 0,
+                              "voter": "4MaA5E2XzEwFJbcbDeue8PJ2DDQbVuRXQSNgFnW3jmEo"
+                            }
+                          ]
+                        },
+                        "4Q9erMDBAM4TP3WDEg1FFwt1DxXZpnTia2pySgiQaSAU": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.8914183837898996,
+                              "distributed": 0,
+                              "voter": "4Q9erMDBAM4TP3WDEg1FFwt1DxXZpnTia2pySgiQaSAU"
+                            }
+                          ]
+                        },
+                        "4RUeY1Cnx9hcAwtYnxTp4Y3UYSqLSfkjcwCFFWQJ65RM": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 4,
+                              "reward": 2.9516636905935436,
+                              "distributed": 0,
+                              "voter": "4RUeY1Cnx9hcAwtYnxTp4Y3UYSqLSfkjcwCFFWQJ65RM"
+                            }
+                          ]
+                        },
+                        "4SG6BBWHkNaxMZTbanZ3teDrT21QJzGPG7Q8Jh7Ntn8k": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.732505914218123,
+                              "distributed": 0,
+                              "voter": "4SG6BBWHkNaxMZTbanZ3teDrT21QJzGPG7Q8Jh7Ntn8k"
+                            }
+                          ]
+                        },
+                        "4TSt5vjyogaAFucu2zQbzBqytFbHUBz5oTt5DFgcqqYf": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.911989577261974,
+                              "distributed": 0,
+                              "voter": "4TSt5vjyogaAFucu2zQbzBqytFbHUBz5oTt5DFgcqqYf"
+                            }
+                          ]
+                        },
+                        "4Ug6n8k5ozaki7U5Titk2BNNEou3W4zYRUKBycWyT2B2": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.636507011348442,
+                              "distributed": 0,
+                              "voter": "4Ug6n8k5ozaki7U5Titk2BNNEou3W4zYRUKBycWyT2B2"
+                            }
+                          ]
+                        },
+                        "4VDcMDUbQY1DhMdhrrA22h42qmLqHupZ3hSFkG9QnkDD": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.15386686669359337,
+                              "distributed": 0,
+                              "voter": "4VDcMDUbQY1DhMdhrrA22h42qmLqHupZ3hSFkG9QnkDD"
+                            }
+                          ]
+                        },
+                        "4VrbACb31mDxvv8GSuuPKGMcHE7xoKhFbGb5t9JD3tt4": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 5,
+                              "reward": 0.04694587727174034,
+                              "distributed": 0,
+                              "voter": "4VrbACb31mDxvv8GSuuPKGMcHE7xoKhFbGb5t9JD3tt4"
+                            }
+                          ]
+                        },
+                        "4X3kAVLoFmj5usd6ZtHfPdsMabCUWLS4bq2dko3oRozE": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 2,
+                              "reward": 0.03846671667339834,
+                              "distributed": 0,
+                              "voter": "4X3kAVLoFmj5usd6ZtHfPdsMabCUWLS4bq2dko3oRozE"
+                            }
+                          ]
+                        },
+                        "4ZC6vf51xPfscKf2of2UXCs276F4LHoHgz7u294evA5p": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.547365172969451,
+                              "distributed": 0,
+                              "voter": "4ZC6vf51xPfscKf2of2UXCs276F4LHoHgz7u294evA5p"
+                            }
+                          ]
+                        },
+                        "4bLT4auAPKTHeugrZAfV1oEcEvGmq9586Gh9JpERCzUk": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 3,
+                              "reward": 0.5248425472358292,
+                              "distributed": 0,
+                              "voter": "4bLT4auAPKTHeugrZAfV1oEcEvGmq9586Gh9JpERCzUk"
+                            }
+                          ]
+                        },
+                        "4guVN7fJK5GvudJYaKKJUw8RPH4GCqqhZECH7Y1ZLS54": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 0.013714128981383071,
+                              "distributed": 0,
+                              "voter": "4guVN7fJK5GvudJYaKKJUw8RPH4GCqqhZECH7Y1ZLS54"
+                            }
+                          ]
+                        },
+                        "4haChj2Gu53EwjKCdEaeY9ysFnUxy2vLjM1ymVhZpGQv": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.561079301950835,
+                              "distributed": 0,
+                              "voter": "4haChj2Gu53EwjKCdEaeY9ysFnUxy2vLjM1ymVhZpGQv"
+                            }
+                          ]
+                        },
+                        "4ianSTa2KBjiVvMorpNNiu6t633xDgc8dvkHVybk3w9s": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "periodNumber": {
+                                "type": "number"
+                              },
+                              "reward": {
+                                "type": "number"
+                              },
+                              "distributed": {
+                                "type": "number"
+                              },
+                              "voter": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "periodNumber",
+                              "reward",
+                              "distributed",
+                              "voter"
+                            ]
+                          },
+                          "example": [
+                            {
+                              "periodNumber": 1,
+                              "reward": 5.711934720746049,
+                              "distributed": 0,
+                              "voter": "4ianSTa2KBjiVvMorpNNiu6t633xDgc8dvkHVybk3w9s"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/voter/{pubkey}": {
+      "get": {
+        "summary": "/voter/{pubkey}",
+        "parameters": [
+          {
+            "name": "pubkey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "periodNumber": {
+                        "type": "number"
+                      },
+                      "reward": {
+                        "type": "number"
+                      },
+                      "distributed": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "periodNumber",
+                      "reward",
+                      "distributed"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/voter/{pubkey}/balance": {
+      "get": {
+        "summary": "/voter/{pubkey}/balance",
+        "parameters": [
+          {
+            "name": "pubkey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "voter": {
+                      "type": "string",
+                      "example": "25xW33GLtn1ukPg7g4d3H6vegKnsedvfjP3Fg6tMWHQA"
+                    },
+                    "accruedRewards": {
+                      "type": "number",
+                      "example": 25.721329381810826
+                    },
+                    "paidRewards": {
+                      "type": "number",
+                      "example": 0
+                    },
+                    "lastPeriod": {
+                      "type": "number",
+                      "example": 5
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    },
+    "/voter/{pubkey}/payouts": {
+      "get": {
+        "summary": "/voter/{pubkey}/payouts",
+        "parameters": [
+          {
+            "name": "pubkey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              }
+            }
+          }
+        },
+        "tags": []
+      }
+    }
+  },
+  "tags": []
+}
