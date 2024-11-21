@@ -62,7 +62,7 @@ const main = async () => {
                 SystemProgram.transfer({
                     fromPubkey: provider.wallet.publicKey,
                     toPubkey: new web3.PublicKey(record.voter),
-                    lamports: record.outstandingBalance * LAMPORTS_PER_SOL,
+                    lamports: Math.round(record.outstandingBalance * LAMPORTS_PER_SOL),
                 })
             );
             const txHash = await provider.sendAndConfirm(fundTx, [], {commitment: 'confirmed'});
