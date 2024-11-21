@@ -24,7 +24,7 @@ const main = async () => {
     const provider = new AnchorProvider(connection, wallet);
     setProvider(provider);
     const balance = await connection.getBalance(keyPair.publicKey);
-    console.log('Wallet balance', balance);
+    console.log('Wallet balance, XNT', balance / LAMPORTS_PER_SOL);
 
     await initDB().then(() => console.log('db initialized'));
 
@@ -55,7 +55,6 @@ const main = async () => {
         console.log('not enough balance: need', (sum?.[0]?.outstandingBalance || 0), 'has', balance / LAMPORTS_PER_SOL)
         process.exit(0)
     }
-    process.exit(0)
 
     for await (const record of data) {
         try {
