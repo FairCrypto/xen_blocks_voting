@@ -16,12 +16,15 @@ const main = async () => {
     const keyPairFileName = process.env.ANCHOR_WALLET || '';
     const keyPairString = fs.readFileSync(path.resolve(keyPairFileName), 'utf-8');
     const keyPair = web3.Keypair.fromSecretKey(new Uint8Array(JSON.parse(keyPairString)));
+
     console.log('Using admin wallet', keyPair.publicKey.toBase58());
 
     const wallet = new Wallet(keyPair);
     const connection = new Connection(process.env.ANCHOR_PROVIDER_URL);
     const provider = new AnchorProvider(connection, wallet);
     setProvider(provider);
+    const balance = await connection.getBalance(keyPair.publicKey);
+    console.log('Wallet balance', balance);
 
     await initDB().then(() => console.log('db initialized'));
 
@@ -46,6 +49,10 @@ const main = async () => {
     console.log('periods', periods, 'outstanding', sum?.[0]?.outstandingBalance || 0)
     if ((sum?.[0]?.outstandingBalance || 0) < 1) {
         console.log('nothing to do')
+        process.exit(0)
+    }
+    if ((sum?.[0]?.outstandingBalance || 0) > balance) {
+        console.log('not enough balance: need', (sum?.[0]?.outstandingBalance || 0), 'has', balance)
         process.exit(0)
     }
     process.exit(0)
