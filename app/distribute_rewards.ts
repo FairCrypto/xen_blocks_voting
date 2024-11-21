@@ -51,8 +51,8 @@ const main = async () => {
         console.log('nothing to do')
         process.exit(0)
     }
-    if ((sum?.[0]?.outstandingBalance || 0) > balance) {
-        console.log('not enough balance: need', (sum?.[0]?.outstandingBalance || 0), 'has', balance)
+    if ((sum?.[0]?.outstandingBalance || 0) > (balance / LAMPORTS_PER_SOL)) {
+        console.log('not enough balance: need', (sum?.[0]?.outstandingBalance || 0), 'has', balance / LAMPORTS_PER_SOL)
         process.exit(0)
     }
     process.exit(0)
