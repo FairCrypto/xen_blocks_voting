@@ -130,6 +130,7 @@ const CREATE_VOTER_PAYOUTS_TABLE = `
             CREATE TABLE IF NOT EXISTS Voter_Payouts (
                 ts DATETIMETZ DEFAULT CURRENT_TIMESTAMP,
                 voter VARCHAR(44),
+                last_period INTEGER DEFAULT 0,
                 amount INTEGER DEFAULT 0,
                 tx_hash VARCHAR(88),
                 PRIMARY KEY (voter, tx_hash)

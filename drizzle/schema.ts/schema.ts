@@ -44,18 +44,6 @@ export const votes = sqliteTable("Votes", {
 	}
 });
 
-export const voterPayouts = sqliteTable("Voter_Payouts", {
-	ts: numeric().default(sql`(CURRENT_TIMESTAMP)`),
-	voter: text({ length: 44 }),
-	amount: integer().default(0),
-	txHash: text("tx_hash", { length: 88 }),
-},
-(table) => {
-	return {
-		pk0: primaryKey({ columns: [table.voter, table.txHash], name: "Voter_Payouts_voter_tx_hash_pk"})
-	}
-});
-
 export const voterBalances = sqliteTable("Voter_Balances", {
 	updatedTs: numeric("updated_ts").default(sql`(CURRENT_TIMESTAMP)`),
 	lastPeriod: integer("last_period").default(0),
@@ -85,6 +73,19 @@ export const rewardDistributions = sqliteTable("Reward_Distributions", {
 (table) => {
 	return {
 		pk0: primaryKey({ columns: [table.periodNumber, table.voter], name: "Reward_Distributions_period_number_voter_pk"})
+	}
+});
+
+export const voterPayouts = sqliteTable("Voter_Payouts", {
+	ts: numeric().default(sql`(CURRENT_TIMESTAMP)`),
+	voter: text({ length: 44 }),
+	lastPeriod: integer("last_period").default(0),
+	amount: integer().default(0),
+	txHash: text("tx_hash", { length: 88 }),
+},
+(table) => {
+	return {
+		pk0: primaryKey({ columns: [table.voter, table.txHash], name: "Voter_Payouts_voter_tx_hash_pk"})
 	}
 });
 

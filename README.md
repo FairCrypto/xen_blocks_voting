@@ -42,3 +42,11 @@ After the tests are complete, the script prints out stats info about block-votin
 ## TODOs
 
 - make global auto-incrementing counter for BlockId
+
+## DB
+
+### Generate / Update schema files from DB
+
+```
+npx drizzle-kit introspect --out ./drizzle/schema.ts --url="./.db" --dialect sqlite
+```
