@@ -9,7 +9,7 @@ module.exports = {
             // instances: 4,
             env: {
                 NODE_ENV: "production",
-                ANCHOR_WALLET: "/mnt/ledger/build/.config/solana/id.json",
+                ANCHOR_WALLET: "/home/ubuntu/.config/solana/voters_id.json",
                 ANCHOR_PROVIDER_URL: "https://xolana-devnet.xen.network"
             }
         },
