@@ -299,7 +299,7 @@ app.get('/schema', (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-    res.status(200);
+    res.sendStatus(200);
 });
 
 // Serve ReDoc documentation
