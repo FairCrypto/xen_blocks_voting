@@ -298,6 +298,10 @@ app.get('/schema', (req, res) => {
     res.sendFile(schemaPath);
 });
 
+app.get('/health', (req, res) => {
+    res.status(200);
+});
+
 // Serve ReDoc documentation
 app.get('/docs', redoc({
     title: 'API Docs',
