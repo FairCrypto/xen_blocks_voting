@@ -66,11 +66,12 @@ process.on("SIGINT", closeServer);
 process.on("SIGABRT", closeServer);
 
 let currentBlock = 0;
+const timeoutMs = Number(process.env.TIMEOUT_MS || '5000') || 5_000;
 
 // oasGenerator.handleResponses(app, {});
 
 // Endpoint to append data and initialize PDA if needed
-app.post('/', withTimeout(async (req, res) => {
+app.post('/', async (req, res) => {
     const {first_block_id, final_hash, pubkey}: {
         first_block_id: string,
         final_hash: string,
@@ -88,10 +89,19 @@ app.post('/', withTimeout(async (req, res) => {
     const blockId = Number(first_block_id);
 
     try {
-        await addVote(Date.now(), blockId, final_hash, pubkey)
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error(`Route handler timeout ${timeoutMs}ms`)), timeoutMs)
+        );
+
+        // Run the handler and race it against the timeout
+        await Promise.race([addVote(Date.now(), blockId, final_hash, pubkey), timeoutPromise])
         console.log(`fill block: ${blockId}, hash: ${final_hash}, voter: ${pubkey}`)
 
     } catch (err) {
+        if (err.message.startsWith("Route handler timeout")) {
+            console.error(`Error: Timeout ${timeoutMs}ms`)
+            process.exit(1)
+        }
         // blacklist.add(pubkey);
         console.error(
             'error', currentBlock - blockId,
@@ -99,7 +109,7 @@ app.post('/', withTimeout(async (req, res) => {
         );
         res.status(500).json({error: "Failed to add vote", details: err.toString()});
     }
-}, 5_000));
+});
 
 // Endpoint to fetch and display data
 
