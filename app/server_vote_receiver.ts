@@ -39,7 +39,7 @@ const schemaPath = path.resolve('.', 'static', 'openapi-schema.json');
 const app = express();
 app.use(bodyParser.json());
 // Global error handler to catch timeout errors
-app.use((err: any, _req: any, res: any) => {
+app.use((err: any, _req: any, res: any, _next: any) => {
     console.error(err.message);
     if (!res.headersSent) {
         res.status(500).send({error: err.message});
