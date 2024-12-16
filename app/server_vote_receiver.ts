@@ -1,5 +1,5 @@
 import path from "node:path";
-import express from 'express';
+import express, {RequestHandler} from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import {initDB, closeDB, addVote} from "../db/db";
@@ -16,15 +16,38 @@ import redoc from 'redoc-express'
 import {drizzle} from 'drizzle-orm/libsql';
 
 // import oasGenerator from 'express-oas-generator'
-
 dotenv.config();
 
+function withTimeout(handler: RequestHandler, timeoutMs: number) {
+    return (req: any, res: any, next: any) => {
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error(`Route handler timeout ${timeoutMs}ms`)), timeoutMs)
+        );
+
+        // Run the handler and race it against the timeout
+        Promise.race([handler(req, res, next), timeoutPromise])
+            .then(() => {
+                if (!res.headersSent) next();
+            })
+            .catch(err => next(err));
+    };
+}
 
 const db = drizzle(process.env.DB_FILE_NAME!);
 const schemaPath = path.resolve('.', 'static', 'openapi-schema.json');
 
 const app = express();
 app.use(bodyParser.json());
+// Global error handler to catch timeout errors
+app.use((err: any, _req: any, res: any) => {
+    console.error(err.message);
+    if (!res.headersSent) {
+        res.status(500).send({error: err.message});
+    }
+    // Optionally force the app to fail (exit the process)
+    process.exit(1);
+});
+
 
 initDB()
     .then(() => console.log('db initialized'))
@@ -47,7 +70,7 @@ let currentBlock = 0;
 // oasGenerator.handleResponses(app, {});
 
 // Endpoint to append data and initialize PDA if needed
-app.post('/', async (req, res) => {
+app.post('/', withTimeout(async (req, res) => {
     const {first_block_id, final_hash, pubkey}: {
         first_block_id: string,
         final_hash: string,
@@ -76,7 +99,7 @@ app.post('/', async (req, res) => {
         );
         res.status(500).json({error: "Failed to add vote", details: err.toString()});
     }
-});
+}, 5_000));
 
 // Endpoint to fetch and display data
 
@@ -228,7 +251,7 @@ app.get('/voters', async (req, res) => {
         const grouped = groupBy(data
             .filter((e) => !!e.Reward_Distributions)
             .map((e) => {
-                const {voter, periodNumber, reward, distributed, ...rest} = e.Reward_Distributions;
+                const {voter, periodNumber, reward, distributed} = e.Reward_Distributions;
                 return {periodNumber, reward, distributed, voter}
             }), 'voter')
         res.status(200).json({count, voters: grouped})
