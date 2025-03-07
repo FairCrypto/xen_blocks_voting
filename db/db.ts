@@ -272,6 +272,7 @@ export const initDB = async (): Promise<any> => {
         db = sqliteDrizzle(sqlite);
     }
     if (!db) return Promise.reject(new Error('DB not available'))
+    console.log(db)
 
     try {
         // db.exec(CREATE_VOTER_CREDITS_TABLE); // old
