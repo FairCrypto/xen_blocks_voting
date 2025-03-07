@@ -2,7 +2,8 @@ import sqlite3 from 'sqlite3';
 import dotenv from 'dotenv';
 import postgres from "postgres";
 import Database from "better-sqlite3";
-import {drizzle} from "drizzle-orm/libsql";
+import {drizzle as sqliteDrizzle} from "drizzle-orm/libsql";
+import {drizzle as postgresDrizzle} from 'drizzle-orm/node-postgres';
 
 dotenv.config();
 
@@ -265,11 +266,10 @@ export const initDB = async (): Promise<any> => {
 
     if ((process.env.DB_LOCATION || '').startsWith("postgres")) {
         const sql = postgres(process.env.DB_LOCATION, {prepare: false});
-        // @ts-ignore
-        db = drizzle(sql);
+        db = postgresDrizzle(sql);
     } else {
         const sqlite = new Database(process.env.DB_LOCATION!);
-        db = drizzle(sqlite);
+        db = sqliteDrizzle(sqlite);
     }
     if (!db) return Promise.reject(new Error('DB not available'))
 
