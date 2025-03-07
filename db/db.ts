@@ -1,9 +1,8 @@
 import sqlite3 from 'sqlite3';
 import dotenv from 'dotenv';
-import postgres from "postgres";
 import Database from "better-sqlite3";
-import {drizzle as sqliteDrizzle} from "drizzle-orm/libsql";
-import {drizzle as postgresDrizzle} from 'drizzle-orm/node-postgres';
+import {drizzle as sqliteDrizzle, LibSQLDatabase} from "drizzle-orm/libsql";
+import {drizzle as postgresDrizzle, NodePgDatabase} from 'drizzle-orm/node-postgres';
 
 dotenv.config();
 
@@ -259,7 +258,7 @@ const GET_TOTAL_VOTES_BY_PERIOD = `
                 rp.period_number;
             `;
 
-let db;
+let db: NodePgDatabase | LibSQLDatabase;
 
 export const initDB = async (): Promise<any> => {
     if (db) return Promise.resolve(db);
@@ -276,13 +275,13 @@ export const initDB = async (): Promise<any> => {
     try {
         // db.exec(CREATE_VOTER_CREDITS_TABLE); // old
         // db.exec(CREATE_VOTERS_TABLE); // old
-        db.exec(CREATE_VOTES_TABLE);
-        db.exec(CREATE_VOTES_INDEXES);
-        db.exec(CREATE_REWARD_PERIODS_TABLE);
-        db.exec(CREATE_DISTRIBUTIONS_TABLE);
-        db.exec(CREATE_VOTER_BALANCES_TABLE);
-        db.exec(CREATE_VOTER_PAYOUTS_TABLE);
-        db.run('PRAGMA journal_mode = WAL;');
+        db.execute(CREATE_VOTES_TABLE);
+        db.execute(CREATE_VOTES_INDEXES);
+        db.execute(CREATE_REWARD_PERIODS_TABLE);
+        db.execute(CREATE_DISTRIBUTIONS_TABLE);
+        db.execute(CREATE_VOTER_BALANCES_TABLE);
+        db.execute(CREATE_VOTER_PAYOUTS_TABLE);
+        db.execute('PRAGMA journal_mode = WAL;');
         return Promise.resolve(db);
     } catch (e) {
         console.log(e)
