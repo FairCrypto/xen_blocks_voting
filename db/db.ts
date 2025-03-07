@@ -99,8 +99,8 @@ const CREATE_VOTES_TABLE = `
             );`;
 
 const CREATE_VOTES_INDEXES = `
-            CREATE INDEX idx_votes_voter ON Votes(voter);
-            CREATE INDEX idx_votes_voter_block_id ON Votes(voter, block_id DESC);
+            CREATE INDEX IF NOT EXISTS idx_votes_voter ON Votes(voter);
+            CREATE INDEX  IF NOT EXISTS idx_votes_voter_block_id ON Votes(voter, block_id DESC);
             `;
 
 const CREATE_REWARD_PERIODS_TABLE = `
