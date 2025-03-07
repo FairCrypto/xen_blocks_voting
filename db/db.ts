@@ -1,5 +1,8 @@
 import sqlite3 from 'sqlite3';
 import dotenv from 'dotenv';
+import postgres from "postgres";
+import Database from "better-sqlite3";
+import {drizzle} from "drizzle-orm/libsql";
 
 dotenv.config();
 
@@ -92,6 +95,11 @@ const CREATE_VOTES_TABLE = `
                 voter VARCHAR(44),
                 PRIMARY KEY (block_id, voter)
             );`;
+
+const CREATE_VOTES_INDEXES = `
+            CREATE INDEX idx_votes_voter ON Votes(voter);
+            CREATE INDEX idx_votes_voter_block_id ON Votes(voter, block_id DESC);
+            `;
 
 const CREATE_REWARD_PERIODS_TABLE = `
             CREATE TABLE IF NOT EXISTS Reward_Periods (
@@ -250,18 +258,26 @@ const GET_TOTAL_VOTES_BY_PERIOD = `
                 rp.period_number;
             `;
 
-let db: sqlite3.Database;
+let db;
 
-export const initDB = async (): Promise<sqlite3.Database> => {
+export const initDB = async (): Promise<any> => {
     if (db) return Promise.resolve(db);
 
-    db = new sqlite3.Database(process.env.DB_LOCATION);
+    if ((process.env.DB_LOCATION || '').startsWith("postgres")) {
+        const sql = postgres(process.env.DB_LOCATION, {prepare: false});
+        // @ts-ignore
+        db = drizzle(sql);
+    } else {
+        const sqlite = new Database(process.env.DB_LOCATION!);
+        db = drizzle(sqlite);
+    }
     if (!db) return Promise.reject(new Error('DB not available'))
 
     try {
         // db.exec(CREATE_VOTER_CREDITS_TABLE); // old
         // db.exec(CREATE_VOTERS_TABLE); // old
         db.exec(CREATE_VOTES_TABLE);
+        db.exec(CREATE_VOTES_INDEXES);
         db.exec(CREATE_REWARD_PERIODS_TABLE);
         db.exec(CREATE_DISTRIBUTIONS_TABLE);
         db.exec(CREATE_VOTER_BALANCES_TABLE);
@@ -475,3 +491,12 @@ export const closeDB = (cb: (e: Error | null) => void) => {
 }
 
 export default db
+
+
+const main = async () => {
+    console.log('initializing db...')
+    await initDB();
+    console.log('db initialized')
+}
+
+main().catch(console.error)

@@ -14,7 +14,9 @@
     "express-oas-generator": "^1.0.46",
     "lodash": "^4.17.21",
     "redoc-express": "^2.1.0",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "postgres": "^3.4.5",
+    "better-sqlite3": "^11.8.1"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
