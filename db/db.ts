@@ -274,18 +274,18 @@ export const initDB = async (): Promise<any> => {
         db = sqliteDrizzle(sqlite);
     }
     if (!db) return Promise.reject(new Error('DB not available'))
-    console.log(db)
+    console.log('postgres: ', isPostgres)
 
     try {
         // db.exec(CREATE_VOTER_CREDITS_TABLE); // old
         // db.exec(CREATE_VOTERS_TABLE); // old
-        db.execute(sql`${CREATE_VOTES_TABLE}`);
-        db.execute(sql`${CREATE_VOTES_INDEXES}`);
-        db.execute(sql`${CREATE_REWARD_PERIODS_TABLE}`);
-        db.execute(sql`${CREATE_DISTRIBUTIONS_TABLE}`);
-        db.execute(sql`${CREATE_VOTER_BALANCES_TABLE}`);
-        db.execute(sql`${CREATE_VOTER_PAYOUTS_TABLE}`);
-        db.execute(sql`${'PRAGMA journal_mode = WAL;'}`);
+        db.execute(sql.raw(CREATE_VOTES_TABLE));
+        db.execute(sql.raw(CREATE_VOTES_INDEXES));
+        db.execute(sql.raw(CREATE_REWARD_PERIODS_TABLE));
+        db.execute(sql.raw(CREATE_DISTRIBUTIONS_TABLE));
+        db.execute(sql.raw(CREATE_VOTER_BALANCES_TABLE));
+        db.execute(sql.raw(CREATE_VOTER_PAYOUTS_TABLE));
+        db.execute(sql.raw('PRAGMA journal_mode = WAL;'));
         return Promise.resolve(db);
     } catch (e) {
         console.log(e)
