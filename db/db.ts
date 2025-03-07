@@ -4,6 +4,7 @@ import postgres from "postgres";
 import Database from "better-sqlite3";
 import {drizzle as sqliteDrizzle, LibSQLDatabase} from "drizzle-orm/libsql";
 import {drizzle as postgresDrizzle, NodePgDatabase} from 'drizzle-orm/node-postgres';
+import {sql} from "drizzle-orm";
 
 dotenv.config();
 
@@ -260,11 +261,12 @@ const GET_TOTAL_VOTES_BY_PERIOD = `
             `;
 
 let db: NodePgDatabase | LibSQLDatabase;
+const isPostgres = (process.env.DB_LOCATION || '').startsWith("postgres")
 
 export const initDB = async (): Promise<any> => {
     if (db) return Promise.resolve(db);
 
-    if ((process.env.DB_LOCATION || '').startsWith("postgres")) {
+    if (isPostgres) {
         const sql = postgres(process.env.DB_LOCATION, {prepare: false});
         db = postgresDrizzle(sql);
     } else {
@@ -277,13 +279,13 @@ export const initDB = async (): Promise<any> => {
     try {
         // db.exec(CREATE_VOTER_CREDITS_TABLE); // old
         // db.exec(CREATE_VOTERS_TABLE); // old
-        db.execute(CREATE_VOTES_TABLE);
-        db.execute(CREATE_VOTES_INDEXES);
-        db.execute(CREATE_REWARD_PERIODS_TABLE);
-        db.execute(CREATE_DISTRIBUTIONS_TABLE);
-        db.execute(CREATE_VOTER_BALANCES_TABLE);
-        db.execute(CREATE_VOTER_PAYOUTS_TABLE);
-        db.execute('PRAGMA journal_mode = WAL;');
+        db.execute(sql`${CREATE_VOTES_TABLE}`);
+        db.execute(sql`${CREATE_VOTES_INDEXES}`);
+        db.execute(sql`${CREATE_REWARD_PERIODS_TABLE}`);
+        db.execute(sql`${CREATE_DISTRIBUTIONS_TABLE}`);
+        db.execute(sql`${CREATE_VOTER_BALANCES_TABLE}`);
+        db.execute(sql`${CREATE_VOTER_PAYOUTS_TABLE}`);
+        db.execute(sql`${'PRAGMA journal_mode = WAL;'}`);
         return Promise.resolve(db);
     } catch (e) {
         console.log(e)
@@ -498,6 +500,7 @@ const main = async () => {
     console.log('initializing db...')
     await initDB();
     console.log('db initialized')
+    await closeDB(() => console.log('db closed'))
 }
 
 main().catch(console.error)
