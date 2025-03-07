@@ -490,7 +490,9 @@ export async function* fetchRewardPeriods() {
 export const closeDB = (cb: (e: Error | null) => void) => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
-    return db.close(cb);
+    if (isPostgres) {
+        return db.end(cb);
+    }
 }
 
 export default db
