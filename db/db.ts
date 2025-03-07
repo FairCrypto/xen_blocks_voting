@@ -263,6 +263,11 @@ const GET_TOTAL_VOTES_BY_PERIOD = `
 let db: NodePgDatabase | LibSQLDatabase;
 const isPostgres = (process.env.DB_LOCATION || '').startsWith("postgres")
 
+export const fmt = (sql: string, isPsql: boolean = isPostgres) => {
+    if (isPsql) return sql.replace(/DATETIMETZ/g, 'TIMESTAMPTZ')
+    return sql
+}
+
 export const initDB = async (): Promise<any> => {
     if (db) return Promise.resolve(db);
 
@@ -279,13 +284,13 @@ export const initDB = async (): Promise<any> => {
     try {
         // db.exec(CREATE_VOTER_CREDITS_TABLE); // old
         // db.exec(CREATE_VOTERS_TABLE); // old
-        db.execute(sql.raw(CREATE_VOTES_TABLE));
-        db.execute(sql.raw(CREATE_VOTES_INDEXES));
-        db.execute(sql.raw(CREATE_REWARD_PERIODS_TABLE));
-        db.execute(sql.raw(CREATE_DISTRIBUTIONS_TABLE));
-        db.execute(sql.raw(CREATE_VOTER_BALANCES_TABLE));
-        db.execute(sql.raw(CREATE_VOTER_PAYOUTS_TABLE));
-        db.execute(sql.raw('PRAGMA journal_mode = WAL;'));
+        db.execute(sql.raw(fmt(CREATE_VOTES_TABLE)));
+        db.execute(sql.raw(fmt(CREATE_VOTES_INDEXES)));
+        db.execute(sql.raw(fmt(CREATE_REWARD_PERIODS_TABLE)));
+        db.execute(sql.raw(fmt(CREATE_DISTRIBUTIONS_TABLE)));
+        db.execute(sql.raw(fmt(CREATE_VOTER_BALANCES_TABLE)));
+        db.execute(sql.raw(fmt(CREATE_VOTER_PAYOUTS_TABLE)));
+        db.execute(sql.raw(fmt('PRAGMA journal_mode = WAL;')));
         return Promise.resolve(db);
     } catch (e) {
         console.log(e)
@@ -491,7 +496,7 @@ export const closeDB = (cb: (e: Error | null) => void) => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
     if (isPostgres) {
-        return db.end(cb);
+        // return db.end(cb);
     }
 }
 
@@ -502,7 +507,7 @@ const main = async () => {
     console.log('initializing db...')
     await initDB();
     console.log('db initialized')
-    await closeDB(() => console.log('db closed'))
+    closeDB(() => console.log('db closed'))
 }
 
 main().catch(console.error)
