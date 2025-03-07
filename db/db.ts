@@ -1,5 +1,6 @@
 import sqlite3 from 'sqlite3';
 import dotenv from 'dotenv';
+import postgres from "postgres";
 import Database from "better-sqlite3";
 import {drizzle as sqliteDrizzle, LibSQLDatabase} from "drizzle-orm/libsql";
 import {drizzle as postgresDrizzle, NodePgDatabase} from 'drizzle-orm/node-postgres';
@@ -335,7 +336,7 @@ export const addVote = async (...params: unknown[]): Promise<sqlite3.Database> =
     const retries = 5;
     return new Promise((resolve, reject) => {
         const attempt = (retryCount: number) => {
-            db.run(UPSERT_VOTE, ...params, function (err: any, result: any) {
+            db.execute(UPSERT_VOTE, ...params, function (err: any, result: any) {
                 if (err) {
                     if (err.message.includes("database is locked") && retryCount > 0) {
                         console.log('db locked; retry', retries + 1 - retryCount);
@@ -359,7 +360,7 @@ export const backfillVote = async (...params: unknown[]): Promise<sqlite3.Databa
     const retries = 5;
     return new Promise((resolve, reject) => {
         const attempt = (retryCount: number) => {
-            db.run(UPSERT_BACKFILLED_VOTE, ...params, function (err: any, result: any) {
+            db.execute(UPSERT_BACKFILLED_VOTE, ...params, function (err: any, result: any) {
                 if (err) {
                     if (err.message.includes("database is locked") && retryCount > 0) {
                         setTimeout(() => attempt(retryCount - 1), delay);
@@ -378,19 +379,19 @@ export const backfillVote = async (...params: unknown[]): Promise<sqlite3.Databa
 export const insertPeriod = async (...params: unknown[]): Promise<sqlite3.Database> => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
-    return db.run(INSERT_PERIOD, ...params);
+    return db.execute(INSERT_PERIOD, ...params);
 }
 
 export const updatePeriod = async (...params: unknown[]): Promise<sqlite3.Database> => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
-    return db.run(UPDATE_PERIOD, ...params);
+    return db.execute(UPDATE_PERIOD, ...params);
 }
 
 export const upsertReward = async (...params: unknown[]): Promise<number> => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
-    return new Promise((resolve, reject) => db.run(UPSERT_REWARD, ...params, function (err: any) {
+    return new Promise((resolve, reject) => db.execute(UPSERT_REWARD, ...params, function (err: any) {
         if (err) reject(err);
         else resolve(this.changes);
     }));
@@ -399,7 +400,7 @@ export const upsertReward = async (...params: unknown[]): Promise<number> => {
 export const upsertVoterBalance = async (...params: unknown[]): Promise<number> => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
-    return new Promise((resolve, reject) => db.run(UPSERT_VOTER_ACCRUED_BALANCE, ...params, function (err: any) {
+    return new Promise((resolve, reject) => db.execute(UPSERT_VOTER_ACCRUED_BALANCE, ...params, function (err: any) {
         if (err) reject(err);
         else resolve(this.changes);
     }));
@@ -408,7 +409,7 @@ export const upsertVoterBalance = async (...params: unknown[]): Promise<number> 
 export const getLowerVote = async (...params: unknown[]): Promise<any> => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
-    return new Promise((resolve, reject) => db.get(GET_LOWER_VOTE, ...params, (err: any, rows: any[]) => {
+    return new Promise((resolve, reject) => db.execute(GET_LOWER_VOTE, ...params, (err: any, rows: any[]) => {
         if (err) reject(err);
         else resolve(rows);
     }));
@@ -417,7 +418,7 @@ export const getLowerVote = async (...params: unknown[]): Promise<any> => {
 export const getLastProcessedBlock = async (...params: unknown[]): Promise<any> => {
     if (!db) throw new Error('DB not initialized or unavailable');
 
-    return new Promise((resolve, reject) => db.get(GET_LAST_PROCESSED_BLOCK, ...params, (err: any, rows: any[]) => {
+    return new Promise((resolve, reject) => db.execute(GET_LAST_PROCESSED_BLOCK, ...params, (err: any, rows: any[]) => {
         if (err) reject(err);
         else resolve(rows);
     }));
