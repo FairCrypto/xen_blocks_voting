@@ -284,13 +284,13 @@ export const initDB = async (): Promise<any> => {
     try {
         // db.exec(CREATE_VOTER_CREDITS_TABLE); // old
         // db.exec(CREATE_VOTERS_TABLE); // old
-        db.execute(sql.raw(fmt(CREATE_VOTES_TABLE)));
-        db.execute(sql.raw(fmt(CREATE_VOTES_INDEXES)));
-        db.execute(sql.raw(fmt(CREATE_REWARD_PERIODS_TABLE)));
-        db.execute(sql.raw(fmt(CREATE_DISTRIBUTIONS_TABLE)));
-        db.execute(sql.raw(fmt(CREATE_VOTER_BALANCES_TABLE)));
-        db.execute(sql.raw(fmt(CREATE_VOTER_PAYOUTS_TABLE)));
-        db.execute(sql.raw(fmt('PRAGMA journal_mode = WAL;')));
+        await db.execute(sql.raw(fmt(CREATE_VOTES_TABLE)));
+        await db.execute(sql.raw(fmt(CREATE_VOTES_INDEXES)));
+        await db.execute(sql.raw(fmt(CREATE_REWARD_PERIODS_TABLE)));
+        await db.execute(sql.raw(fmt(CREATE_DISTRIBUTIONS_TABLE)));
+        await db.execute(sql.raw(fmt(CREATE_VOTER_BALANCES_TABLE)));
+        await db.execute(sql.raw(fmt(CREATE_VOTER_PAYOUTS_TABLE)));
+        await db.execute(sql.raw(fmt('PRAGMA journal_mode = WAL;')));
         return Promise.resolve(db);
     } catch (e) {
         console.log(e)
