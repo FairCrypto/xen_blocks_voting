@@ -264,7 +264,9 @@ let db: PostgresJsDatabase | LibSQLDatabase;
 const isPostgres = (process.env.DB_LOCATION || '').startsWith("postgres")
 
 export const fmt = (sql: string, isPsql: boolean = isPostgres) => {
-    if (isPsql) return sql.replace(/DATETIMETZ/g, 'TIMESTAMPTZ')
+    if (isPsql) return sql
+        .replace(/DATETIMETZ/g, 'TIMESTAMPTZ')
+        .replace(/AUTOINCREMENT/g, 'SERIAL')
     return sql
 }
 
