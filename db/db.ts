@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import postgres from "postgres";
 import Database from "better-sqlite3";
 import {drizzle as sqliteDrizzle, LibSQLDatabase} from "drizzle-orm/libsql";
-import {drizzle as postgresDrizzle, NodePgDatabase} from 'drizzle-orm/node-postgres';
+import {drizzle as postgresDrizzle, PostgresJsDatabase} from 'drizzle-orm/postgres-js';
 import {sql} from "drizzle-orm";
 
 dotenv.config();
@@ -260,7 +260,7 @@ const GET_TOTAL_VOTES_BY_PERIOD = `
                 rp.period_number;
             `;
 
-let db: NodePgDatabase | LibSQLDatabase;
+let db: PostgresJsDatabase | LibSQLDatabase;
 const isPostgres = (process.env.DB_LOCATION || '').startsWith("postgres")
 
 export const fmt = (sql: string, isPsql: boolean = isPostgres) => {
