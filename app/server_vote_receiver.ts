@@ -1,9 +1,9 @@
 import path from "node:path";
-import express, {RequestHandler} from 'express';
+import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import {initDB, closeDB, addVote} from "../db/db";
-import {and, asc, desc, eq} from 'drizzle-orm';
+import {and, asc, desc, eq, sql} from 'drizzle-orm';
 import {
     votes,
     rewardDistributions,
@@ -243,6 +243,31 @@ app.get('/voters', async (req, res) => {
                 return {periodNumber, reward, distributed, voter}
             }), 'voter')
         res.status(200).json({count, voters: grouped})
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({error: "Failed to fetch data", details: err.toString()});
+    }
+})
+
+app.get('/voters/stats', async (req, res) => {
+    try {
+        const {from, limit} = req.query;
+        const fromNumber = Number(from) || 0;
+        const limitNumber = Number(limit) || 100;
+        const count = await db.$count(db.selectDistinct({voter: votes.voter}).from(votes));
+        const voters = await db
+            .select({
+                voter: votes.voter,
+                totalVotes: sql`COUNT(DISTINCT ${votes.blockId})`.as("total_votes"),
+                lastBlock: sql`MAX(${votes.blockId})`.as("last_block")
+            })
+            .from(votes)
+            .groupBy(votes.voter)
+            .orderBy(sql`COUNT(DISTINCT ${votes.blockId}) DESC`) // Order by totalVotes DESC
+            .limit(limitNumber)
+            .offset(fromNumber);
+
+        res.status(200).json({count, voters})
     } catch (err) {
         console.log(err)
         res.status(500).json({error: "Failed to fetch data", details: err.toString()});
