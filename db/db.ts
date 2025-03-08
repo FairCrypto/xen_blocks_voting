@@ -271,7 +271,7 @@ export const fmt = (sql: string, isPsql: boolean = isPostgres) => {
     return sql
 }
 
-export const initDB = async (migrate: boolean): Promise<any> => {
+export const initDB = async (migrate?: boolean = false): Promise<any> => {
     if (db) return Promise.resolve(db);
 
     if (isPostgres) {

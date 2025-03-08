@@ -1,7 +1,4 @@
 {
-  "exclude": [
-    "node_modules/**"
-  ],
   "compilerOptions": {
     "types": [
       "mocha",
@@ -15,6 +12,7 @@
     ],
     "module": "commonjs",
     "target": "es6",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }
