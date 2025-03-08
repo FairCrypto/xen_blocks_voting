@@ -60,7 +60,7 @@ export const rewardPeriods = pgTable("Reward_Periods", {
     endTs: numeric("end_ts"),
     startBlockId: integer("start_block_id"),
     endBlockId: integer("end_block_id"),
-    periodNumber: integer("period_number").primaryKey({autoIncrement: true}),
+    periodNumber: integer("period_number").primaryKey(),
     budget: integer().default(0),
     allocated: integer().default(0),
 });
