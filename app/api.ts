@@ -24,6 +24,12 @@ const schemaPath = path.resolve('.', 'static', 'openapi-schema.json');
 
 const app = express();
 app.use(bodyParser.json());
+
+app.use((req, _, next) => {
+    console.log(new Date().toISOString(), req.path)
+    next();
+})
+
 // Global error handler to catch timeout errors
 app.use((err: any, _req: any, res: any, _next: any) => {
     console.error(err.message);
