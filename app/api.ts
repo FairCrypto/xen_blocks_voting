@@ -201,6 +201,7 @@ app.get('/voters', async (req, res) => {
             .select()
             .from(distinctVoters)
             .leftJoin(rewardDistributions, eq(distinctVoters.voter, rewardDistributions.voter))
+            .as('voters_info')
         const grouped = groupBy(data
             .filter((e) => !!e.Reward_Distributions)
             .map((e) => {
@@ -233,7 +234,7 @@ app.get('/voters/stats', async (req, res) => {
                 ORDER BY COUNT(DISTINCT ${votes.blockId}) DESC
                 LIMIT ${limitNumber} OFFSET ${fromNumber}) AS vote_counts
             `
-            );
+            ).as('voters_stats');
 
         res.status(200).json({count, voters})
     } catch (err) {
