@@ -271,7 +271,7 @@ export const fmt = (sql: string, isPsql: boolean = isPostgres) => {
     return sql
 }
 
-export const initDB = async (): Promise<any> => {
+export const initDB = async (migrate: boolean): Promise<any> => {
     if (db) return Promise.resolve(db);
 
     if (isPostgres) {
@@ -285,15 +285,17 @@ export const initDB = async (): Promise<any> => {
     console.log('postgres: ', isPostgres)
 
     try {
-        // db.exec(CREATE_VOTER_CREDITS_TABLE); // old
-        // db.exec(CREATE_VOTERS_TABLE); // old
-        await db.execute(sql.raw(fmt(CREATE_VOTES_TABLE)));
-        await db.execute(sql.raw(fmt(CREATE_VOTES_INDEXES)));
-        await db.execute(sql.raw(fmt(CREATE_REWARD_PERIODS_TABLE)));
-        await db.execute(sql.raw(fmt(CREATE_DISTRIBUTIONS_TABLE)));
-        await db.execute(sql.raw(fmt(CREATE_VOTER_BALANCES_TABLE)));
-        await db.execute(sql.raw(fmt(CREATE_VOTER_PAYOUTS_TABLE)));
-        if (!isPostgres) await db.execute(sql.raw(fmt('PRAGMA journal_mode = WAL;')));
+        if (migrate) {
+            // db.exec(CREATE_VOTER_CREDITS_TABLE); // old
+            // db.exec(CREATE_VOTERS_TABLE); // old
+            await db.execute(sql.raw(fmt(CREATE_VOTES_TABLE)));
+            await db.execute(sql.raw(fmt(CREATE_VOTES_INDEXES)));
+            await db.execute(sql.raw(fmt(CREATE_REWARD_PERIODS_TABLE)));
+            await db.execute(sql.raw(fmt(CREATE_DISTRIBUTIONS_TABLE)));
+            await db.execute(sql.raw(fmt(CREATE_VOTER_BALANCES_TABLE)));
+            await db.execute(sql.raw(fmt(CREATE_VOTER_PAYOUTS_TABLE)));
+            if (!isPostgres) await db.execute(sql.raw(fmt('PRAGMA journal_mode = WAL;')));
+        }
         return Promise.resolve(db);
     } catch (e) {
         console.log(e)
