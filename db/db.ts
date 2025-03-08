@@ -260,7 +260,7 @@ const GET_TOTAL_VOTES_BY_PERIOD = `
                 rp.period_number;
             `;
 
-let db: PostgresJsDatabase | LibSQLDatabase;
+let db: PostgresJsDatabase | LibSQLDatabase | any;
 const isPostgres = (process.env.DB_LOCATION || '').startsWith("postgres")
 
 export const fmt = (sql: string, isPsql: boolean = isPostgres) => {
@@ -276,7 +276,7 @@ export const initDB = async (): Promise<any> => {
 
     if (isPostgres) {
         const sql = postgres(process.env.DB_LOCATION, {prepare: false});
-        db = postgresDrizzle(sql);
+        db = postgresDrizzle(sql as any);
     } else {
         const sqlite = new Database(process.env.DB_LOCATION!);
         db = sqliteDrizzle(sqlite);
@@ -293,7 +293,7 @@ export const initDB = async (): Promise<any> => {
         await db.execute(sql.raw(fmt(CREATE_DISTRIBUTIONS_TABLE)));
         await db.execute(sql.raw(fmt(CREATE_VOTER_BALANCES_TABLE)));
         await db.execute(sql.raw(fmt(CREATE_VOTER_PAYOUTS_TABLE)));
-        await db.execute(sql.raw(fmt('PRAGMA journal_mode = WAL;')));
+        if (!isPostgres) await db.execute(sql.raw(fmt('PRAGMA journal_mode = WAL;')));
         return Promise.resolve(db);
     } catch (e) {
         console.log(e)

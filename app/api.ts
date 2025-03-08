@@ -2,7 +2,7 @@ import path from "node:path";
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import {initDB, closeDB, addVote} from "../db/db";
+import {initDB, closeDB} from "../db/db";
 import {and, asc, desc, eq, sql} from 'drizzle-orm';
 import {
     votes,
@@ -13,12 +13,12 @@ import {
 } from '../drizzle/schema.ts/schema';
 import {groupBy} from 'lodash'
 import redoc from 'redoc-express'
-import {drizzle} from 'drizzle-orm/libsql';
 
 // import oasGenerator from 'express-oas-generator'
 dotenv.config();
 
-const db = drizzle(process.env.DB_FILE_NAME!);
+let db: any;
+
 const schemaPath = path.resolve('.', 'static', 'openapi-schema.json');
 
 const app = express();
@@ -35,7 +35,10 @@ app.use((err: any, _req: any, res: any, _next: any) => {
 
 
 initDB()
-    .then(() => console.log('db initialized'))
+    .then((newDb) => {
+        db = newDb
+        console.log('db initialized')
+    })
     .catch(e => {
         console.error(e);
         process.exit(1)
@@ -313,8 +316,8 @@ app.get('/docs', redoc({
 }));
 
 // oasGenerator.handleRequests();
-
 const PORT = Number(process.env.API_SERVER_PORT || '') || 5555;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
