@@ -22,16 +22,17 @@ module.exports = {
             interpreter_args: "--max-old-space-size=512 --expose-gc",
             env: {
                 NODE_ENV: "production",
-                DB_LOCATION: './.db',
+                DB_LOCATION: process.env.DB_LOCATION || './.db',
                 ANCHOR_PROVIDER_URL: "https://xolana-devnet.xen.network"
             }
         },
+        /*
         {
             name: "create_periods",
             script: "./app/create_periods.js",
             env: {
                 NODE_ENV: "production",
-                DB_LOCATION: './.db',
+                DB_LOCATION: process.env.DB_LOCATION || './.db',
             }
         },
         {
@@ -39,8 +40,10 @@ module.exports = {
             script: "./app/allocate_rewards.js",
             env: {
                 NODE_ENV: "production",
-                DB_LOCATION: './.db',
+                DB_LOCATION: process.env.DB_LOCATION || './.db',
             }
         },
+
+         */
     ]
 };
