@@ -222,8 +222,7 @@ app.get('/voters/stats', async (req, res) => {
         const limitNumber = Number(limit) || 100;
         const count = await db.$count(db.selectDistinct({voter: votes.voter}).from(votes));
         const voters = await db
-            .select()
-            .from(
+            .execute(
                 sql`
                 (SELECT 
                     ${votes.voter} AS voter, 
@@ -234,7 +233,7 @@ app.get('/voters/stats', async (req, res) => {
                 ORDER BY COUNT(DISTINCT ${votes.blockId}) DESC
                 LIMIT ${limitNumber} OFFSET ${fromNumber}) AS vote_counts
             `
-            ).as('voters_stats');
+            );
 
         res.status(200).json({count, voters})
     } catch (err) {
