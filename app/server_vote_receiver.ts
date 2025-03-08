@@ -3,23 +3,23 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import {initDB, closeDB, addVote} from "../db/db";
-import {and, asc, desc, eq, sql} from 'drizzle-orm';
-import {
-    votes,
-    rewardDistributions,
-    rewardPeriods,
-    voterBalances,
-    voterPayouts
-} from '../drizzle/schema_sqlite.ts/schema';
-import {groupBy} from 'lodash'
-import redoc from 'redoc-express'
-import {drizzle} from 'drizzle-orm/libsql';
+import * as dbInstance from '../db/db'
+import {votes} from "../drizzle/schema_psql.ts/schema";
 
-// import oasGenerator from 'express-oas-generator'
 dotenv.config();
 
-const db = drizzle(process.env.DB_FILE_NAME!);
-const schemaPath = path.resolve('.', 'static', 'openapi-schema.json');
+let db = dbInstance.default;
+
+initDB()
+    .then((newDb) => {
+        db = newDb
+        console.log('db initialized')
+    })
+    .catch(e => {
+        console.error(e);
+        process.exit(1)
+    });
+
 
 const app = express();
 app.use(bodyParser.json());
@@ -75,8 +75,16 @@ app.post('/', async (req, res) => {
     try {
 
         // Run the handler and race it against the timeout
-        await addVote(Date.now(), blockId, final_hash, pubkey),
-            console.log(`fill block: ${blockId}, hash: ${final_hash}, voter: ${pubkey}`);
+        // await addVote(Date.now(), blockId, final_hash, pubkey),
+        //     console.log(`fill block: ${blockId}, hash: ${final_hash}, voter: ${pubkey}`);
+        
+        await db.insert(votes).values({
+            ts: Math.round(Date.now() / 1000),
+            finalHash: final_hash,
+            blockId,
+            voter: pubkey
+        })
+        console.log(`fill block: ${blockId}, hash: ${final_hash}, voter: ${pubkey}`);
         return res.sendStatus(200)
 
     } catch (err) {
