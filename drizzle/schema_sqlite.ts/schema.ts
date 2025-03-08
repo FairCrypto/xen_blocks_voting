@@ -24,14 +24,14 @@ export const voterCredits = sqliteTable("Voter_Credits", {
 
 export const voters = sqliteTable("Voters", {
     ts: numeric().default(sql`(CURRENT_TIMESTAMP)`),
-    voter: text('voter', {length: '44'}).primaryKey(),
+    voter: text('voter', {length: 44}).primaryKey(),
     totalVotes: integer("total_votes").default(1),
     lastBlockId: integer("last_block_id"),
     lastBackfilledBlockId: integer("last_backfilled_block_id"),
 });
 
 export const names = sqliteTable("Names", {
-    pubkey: text('pubkey', {length: '44'}).primaryKey(),
+    pubkey: text('pubkey', {length: 44}).primaryKey(),
     name: text(),
 });
 
@@ -39,7 +39,7 @@ export const votes = sqliteTable("Votes", {
         ts: numeric(),
         finalHash: text("final_hash", {length: 64}),
         blockId: integer("block_id"),
-        voter: text('voter', {length: '44'}),
+        voter: text('voter', {length: 44}),
     },
     (table) => {
         return {
@@ -50,7 +50,7 @@ export const votes = sqliteTable("Votes", {
 export const voterBalances = sqliteTable("Voter_Balances", {
     updatedTs: numeric("updated_ts").default(sql`(CURRENT_TIMESTAMP)`),
     lastPeriod: integer("last_period").default(0),
-    voter: text('voter', {length: '44'}).primaryKey(),
+    voter: text('voter', {length: 44}).primaryKey(),
     accruedRewards: integer("accrued_rewards").default(0),
     paidRewards: integer("paid_rewards").default(0),
 });
@@ -69,7 +69,7 @@ export const rewardDistributions = sqliteTable("Reward_Distributions", {
         createdTs: numeric("created_ts").default(sql`(CURRENT_TIMESTAMP)`),
         updatedTs: numeric("updated_ts"),
         periodNumber: integer("period_number"),
-        voter: text('voter', {length: '44'}),
+        voter: text('voter', {length: 44}),
         reward: integer().default(0),
         distributed: integer().default(0),
     },
@@ -84,10 +84,10 @@ export const rewardDistributions = sqliteTable("Reward_Distributions", {
 
 export const voterPayouts = sqliteTable("Voter_Payouts", {
         ts: numeric().default(sql`(CURRENT_TIMESTAMP)`),
-        voter: text('voter', {length: '44'}),
+        voter: text('voter', {length: 44}),
         lastPeriod: integer("last_period").default(0),
         amount: integer().default(0),
-        txHash: text("tx_hash", {length: '88'}),
+        txHash: text("tx_hash", {length: 88}),
     },
     (table) => {
         return {
