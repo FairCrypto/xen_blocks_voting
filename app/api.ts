@@ -3,6 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import {initDB, closeDB} from "../db/db";
+import db from '../db/db'
 import {and, asc, desc, eq, sql} from 'drizzle-orm';
 import {
     votes,
@@ -16,8 +17,6 @@ import redoc from 'redoc-express'
 
 // import oasGenerator from 'express-oas-generator'
 dotenv.config();
-
-let db: any;
 
 const schemaPath = path.resolve('.', 'static', 'openapi-schema.json');
 
@@ -35,8 +34,7 @@ app.use((err: any, _req: any, res: any, _next: any) => {
 
 
 initDB()
-    .then((newDb) => {
-        db = newDb
+    .then(() => {
         console.log('db initialized')
     })
     .catch(e => {
