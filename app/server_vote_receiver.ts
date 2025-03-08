@@ -77,9 +77,9 @@ app.post('/', async (req, res) => {
         // Run the handler and race it against the timeout
         // await addVote(Date.now(), blockId, final_hash, pubkey),
         //     console.log(`fill block: ${blockId}, hash: ${final_hash}, voter: ${pubkey}`);
-        
+
         await db.insert(votes).values({
-            ts: Math.round(Date.now() / 1000),
+            ts: new Date().toISOString(),
             finalHash: final_hash,
             blockId,
             voter: pubkey
