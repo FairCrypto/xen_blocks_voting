@@ -1,0 +1,446 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "6",
+  "dialect": "sqlite",
+  "tables": {
+    "Voter_Credits": {
+      "name": "Voter_Credits",
+      "columns": {
+        "ts": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "ts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "period": {
+          "autoincrement": false,
+          "name": "period",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user": {
+          "autoincrement": false,
+          "name": "user",
+          "type": "text(44)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "voter": {
+          "autoincrement": false,
+          "name": "voter",
+          "type": "text(44)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "pda": {
+          "autoincrement": false,
+          "name": "pda",
+          "type": "text(44)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_id": {
+          "autoincrement": false,
+          "name": "block_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prev_block_id": {
+          "autoincrement": false,
+          "name": "prev_block_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "final_hash": {
+          "autoincrement": false,
+          "name": "final_hash",
+          "type": "text(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "credit": {
+          "autoincrement": false,
+          "name": "credit",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "debit": {
+          "autoincrement": false,
+          "name": "debit",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "Voter_Credits_period_user_voter_pda_final_hash_credit_pk": {
+          "columns": [
+            "period",
+            "user",
+            "voter",
+            "pda",
+            "final_hash",
+            "credit"
+          ],
+          "name": "Voter_Credits_period_user_voter_pda_final_hash_credit_pk"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Voters": {
+      "name": "Voters",
+      "columns": {
+        "ts": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "ts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "voter": {
+          "autoincrement": false,
+          "name": "voter",
+          "type": "text(44)",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "total_votes": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "total_votes",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_block_id": {
+          "autoincrement": false,
+          "name": "last_block_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_backfilled_block_id": {
+          "autoincrement": false,
+          "name": "last_backfilled_block_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Names": {
+      "name": "Names",
+      "columns": {
+        "pubkey": {
+          "autoincrement": false,
+          "name": "pubkey",
+          "type": "text(44)",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Votes": {
+      "name": "Votes",
+      "columns": {
+        "ts": {
+          "autoincrement": false,
+          "name": "ts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "final_hash": {
+          "autoincrement": false,
+          "name": "final_hash",
+          "type": "text(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "block_id": {
+          "autoincrement": false,
+          "name": "block_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "voter": {
+          "autoincrement": false,
+          "name": "voter",
+          "type": "text(44)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "Votes_block_id_voter_pk": {
+          "columns": [
+            "block_id",
+            "voter"
+          ],
+          "name": "Votes_block_id_voter_pk"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Voter_Payouts": {
+      "name": "Voter_Payouts",
+      "columns": {
+        "ts": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "ts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "voter": {
+          "autoincrement": false,
+          "name": "voter",
+          "type": "text(44)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "amount": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tx_hash": {
+          "autoincrement": false,
+          "name": "tx_hash",
+          "type": "text(88)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "Voter_Payouts_voter_tx_hash_pk": {
+          "columns": [
+            "voter",
+            "tx_hash"
+          ],
+          "name": "Voter_Payouts_voter_tx_hash_pk"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Voter_Balances": {
+      "name": "Voter_Balances",
+      "columns": {
+        "updated_ts": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "updated_ts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_period": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "last_period",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "voter": {
+          "autoincrement": false,
+          "name": "voter",
+          "type": "text(44)",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "accrued_rewards": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "accrued_rewards",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "paid_rewards": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "paid_rewards",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Reward_Periods": {
+      "name": "Reward_Periods",
+      "columns": {
+        "start_ts": {
+          "autoincrement": false,
+          "name": "start_ts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_ts": {
+          "autoincrement": false,
+          "name": "end_ts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "start_block_id": {
+          "autoincrement": false,
+          "name": "start_block_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_block_id": {
+          "autoincrement": false,
+          "name": "end_block_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "period_number": {
+          "autoincrement": true,
+          "name": "period_number",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": false
+        },
+        "budget": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "budget",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "allocated": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "allocated",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "Reward_Distributions": {
+      "name": "Reward_Distributions",
+      "columns": {
+        "created_ts": {
+          "default": "(CURRENT_TIMESTAMP)",
+          "autoincrement": false,
+          "name": "created_ts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_ts": {
+          "autoincrement": false,
+          "name": "updated_ts",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "period_number": {
+          "autoincrement": false,
+          "name": "period_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "voter": {
+          "autoincrement": false,
+          "name": "voter",
+          "type": "text(44)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "reward": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "reward",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "distributed": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "distributed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "Reward_Distributions_period_number_voter_pk": {
+          "columns": [
+            "period_number",
+            "voter"
+          ],
+          "name": "Reward_Distributions_period_number_voter_pk"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

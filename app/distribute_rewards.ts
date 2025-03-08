@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import {drizzle} from "drizzle-orm/libsql";
-import {rewardPeriods, voterBalances, voterPayouts} from "../drizzle/schema.ts/schema";
+import {rewardPeriods, voterBalances, voterPayouts} from "../drizzle/schema_sqlite.ts/schema";
 import {eq, gt, sql} from "drizzle-orm";
 import {initDB} from "../db/db";
 import {Connection, LAMPORTS_PER_SOL, SystemProgram, Transaction} from "@solana/web3.js";

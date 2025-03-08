@@ -10,7 +10,7 @@ import {
     rewardPeriods,
     voterBalances,
     voterPayouts
-} from '../drizzle/schema.ts/schema';
+} from '../drizzle/schema_sqlite.ts/schema';
 import {groupBy} from 'lodash'
 import redoc from 'redoc-express'
 import {drizzle} from 'drizzle-orm/libsql';
