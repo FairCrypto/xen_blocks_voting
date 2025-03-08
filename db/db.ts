@@ -279,7 +279,7 @@ export const initDB = async (): Promise<any> => {
         db = postgresDrizzle(sql as any);
     } else {
         const sqlite = new Database(process.env.DB_LOCATION!);
-        db = sqliteDrizzle(sqlite);
+        db = sqliteDrizzle(sqlite as any);
     }
     if (!db) return Promise.reject(new Error('DB not available'))
     console.log('postgres: ', isPostgres)
