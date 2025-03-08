@@ -1,3 +1,6 @@
+const dotenv = require("dotenv");
+dotenv.config()
+
 module.exports = {
     apps: [
         {
@@ -8,7 +11,7 @@ module.exports = {
             // instances: 4,
             env: {
                 NODE_ENV: "production",
-                DB_LOCATION: './.db',
+                DB_LOCATION: process.env.DB_LOCATION || './.db',
                 ANCHOR_WALLET: "/home/ubuntu/.config/solana/voters_id.json",
                 ANCHOR_PROVIDER_URL: "https://xolana-devnet.xen.network"
             }
