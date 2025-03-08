@@ -190,7 +190,7 @@ app.get('/voters', async (req, res) => {
         const {from, limit} = req.query;
         const fromNumber = Number(from) || 0;
         const limitNumber = Number(limit) || 100;
-        const count = await db.$count(db.selectDistinct({voter: votes.voter}).from(votes));
+        const count = await db.$count(db.selectDistinct({voter: votes.voter}).from(votes).as('count'));
         const distinctVoters = db
             .select({voter: votes.voter})
             .from(votes)
@@ -220,7 +220,7 @@ app.get('/voters/stats', async (req, res) => {
         const {from, limit} = req.query;
         const fromNumber = Number(from) || 0;
         const limitNumber = Number(limit) || 100;
-        const count = await db.$count(db.selectDistinct({voter: votes.voter}).from(votes));
+        const count = await db.$count(db.selectDistinct({voter: votes.voter}).from(votes).as('count'));
         const voters = await db
             .execute(
                 sql`
