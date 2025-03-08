@@ -201,7 +201,6 @@ app.get('/voters', async (req, res) => {
             .select()
             .from(distinctVoters)
             .leftJoin(rewardDistributions, eq(distinctVoters.voter, rewardDistributions.voter))
-            .as('voters_info')
         const grouped = groupBy(data
             .filter((e) => !!e.Reward_Distributions)
             .map((e) => {
