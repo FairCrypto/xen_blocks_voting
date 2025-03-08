@@ -1,7 +1,7 @@
 import {pgTable, AnyPgColumn, primaryKey, numeric, integer, text, varchar} from "drizzle-orm/pg-core"
 import {sql} from "drizzle-orm"
 
-export const voterCredits = pgTable("Voter_Credits", {
+export const voterCredits = pgTable("voter_vredits", {
         ts: numeric().default(sql`(CURRENT_TIMESTAMP)`),
         period: integer(),
         user: varchar({length: 44}),
@@ -22,7 +22,7 @@ export const voterCredits = pgTable("Voter_Credits", {
         }
     });
 
-export const voters = pgTable("Voters", {
+export const voters = pgTable("voters", {
     ts: numeric().default(sql`(CURRENT_TIMESTAMP)`),
     voter: varchar({length: 44}).primaryKey(),
     totalVotes: integer("total_votes").default(1),
@@ -30,12 +30,12 @@ export const voters = pgTable("Voters", {
     lastBackfilledBlockId: integer("last_backfilled_block_id"),
 });
 
-export const names = pgTable("Names", {
+export const names = pgTable("names", {
     pubkey: varchar({length: 44}).primaryKey(),
     name: text(),
 });
 
-export const votes = pgTable("Votes", {
+export const votes = pgTable("votes", {
         ts: numeric(),
         finalHash: varchar("final_hash", {length: 64}),
         blockId: integer("block_id"),
@@ -47,7 +47,7 @@ export const votes = pgTable("Votes", {
         }
     });
 
-export const voterBalances = pgTable("Voter_Balances", {
+export const voterBalances = pgTable("voter_balances", {
     updatedTs: numeric("updated_ts").default(sql`(CURRENT_TIMESTAMP)`),
     lastPeriod: integer("last_period").default(0),
     voter: varchar({length: 44}).primaryKey(),
@@ -55,7 +55,7 @@ export const voterBalances = pgTable("Voter_Balances", {
     paidRewards: integer("paid_rewards").default(0),
 });
 
-export const rewardPeriods = pgTable("Reward_Periods", {
+export const rewardPeriods = pgTable("reward_periods", {
     startTs: numeric("start_ts"),
     endTs: numeric("end_ts"),
     startBlockId: integer("start_block_id"),
@@ -65,7 +65,7 @@ export const rewardPeriods = pgTable("Reward_Periods", {
     allocated: integer().default(0),
 });
 
-export const rewardDistributions = pgTable("Reward_Distributions", {
+export const rewardDistributions = pgTable("reward_distributions", {
         createdTs: numeric("created_ts").default(sql`(CURRENT_TIMESTAMP)`),
         updatedTs: numeric("updated_ts"),
         periodNumber: integer("period_number"),
@@ -82,7 +82,7 @@ export const rewardDistributions = pgTable("Reward_Distributions", {
         }
     });
 
-export const voterPayouts = pgTable("Voter_Payouts", {
+export const voterPayouts = pgTable("voter_payouts", {
         ts: numeric().default(sql`(CURRENT_TIMESTAMP)`),
         voter: varchar({length: 44}),
         lastPeriod: integer("last_period").default(0),
