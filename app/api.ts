@@ -117,7 +117,7 @@ app.get('/votes/last_block', async (_req, res) => {
             .from(votes).orderBy(desc(votes.blockId)).limit(1);
         res.status(200).json({blockId: data?.[0]?.blockId});
     } catch (err) {
-        console.log(err)
+        console.log(err, db)
         res.status(500).json({error: "Failed to fetch data", details: err.toString()});
     }
 })
