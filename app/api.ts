@@ -230,7 +230,7 @@ app.get('/voters/stats', async (req, res) => {
                 FROM ${votes}
                 GROUP BY ${votes.voter}
                 ORDER BY COUNT(DISTINCT ${votes.blockId}) DESC
-                LIMIT ${limitNumber} OFFSET ${fromNumber}) AS vote_counts
+                LIMIT ${limitNumber} OFFSET ${fromNumber})
             `
             );
 
