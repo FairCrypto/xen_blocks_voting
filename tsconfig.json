@@ -1,6 +1,7 @@
 {
   "exclude": [
-    "tests"
+    "tests",
+    "fetch.ts"
   ],
   "compilerOptions": {
     "types": [
