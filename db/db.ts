@@ -266,6 +266,7 @@ const isPostgres = (process.env.DB_LOCATION || '').startsWith("postgres")
 export const fmt = (sql: string, isPsql: boolean = isPostgres) => {
     if (isPsql) return sql
         .replace(/DATETIMETZ/g, 'TIMESTAMPTZ')
+        .replace(/DATETIME/g, 'TIMESTAMP')
         .replace(/INTEGER PRIMARY KEY AUTOINCREMENT/g, 'SERIAL PRIMARY KEY')
     return sql
 }
