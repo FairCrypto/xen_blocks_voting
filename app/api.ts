@@ -184,7 +184,7 @@ app.get('/periods/:period', async (req, res) => {
             })
             .from(rewardPeriods)
             .where(eq(rewardPeriods.periodNumber, periodNumber));
-        res.status(405).json({period: data});
+        res.status(200).json({period: data});
     } catch (err) {
         console.log(err)
         res.status(500).json({error: "Failed to fetch data", details: err.toString()});
