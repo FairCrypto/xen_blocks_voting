@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import {AnchorProvider, Program, setProvider, Wallet, web3, workspace} from "@coral-xyz/anchor";
-import type {GrowSpace} from '../target/types/grow_space_prod';
+import type {GrowSpace} from '../target/types/grow_space';
 import {PublicKey} from "@solana/web3.js";
 import {BN} from "bn.js";
 import dotenv from "dotenv";
-import {initDB, backfillVote, getLowerVote} from "../db/db";
+import {initDB} from "../db/db";
 import {votes} from "../drizzle/schema_psql.ts/schema";
 import * as dbInstance from '../db/db'
 import {asc, desc} from "drizzle-orm";
