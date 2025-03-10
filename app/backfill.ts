@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 import {initDB, backfillVote, getLowerVote} from "../db/db";
 import {votes} from "../drizzle/schema_psql.ts/schema";
 import * as dbInstance from '../db/db'
-import {desc} from "drizzle-orm";
+import {asc, desc} from "drizzle-orm";
 
 dotenv.config();
 
@@ -30,12 +30,11 @@ async function main() {
 
     const lowerVote = await db.select({
         blockId: votes.blockId,
-    }).from(votes).orderBy(desc(votes.blockId)).limit(1);
+    }).from(votes).orderBy(asc(votes.blockId)).limit(1);
 
-    console.log(lowerVote)
     console.log('got from DB', lowerVote?.[0]?.blockId, ', param', from);
 
-    let blockId = new BN(from || lowerVote?.block_id);
+    let blockId = new BN(from || lowerVote?.[0]?.blockId);
     // let blockId = new BN(26539701);
     console.log('starting from', blockId.toNumber());
     // 1 reward period ~~ 864 blocks
