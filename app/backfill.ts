@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import {AnchorProvider, Program, setProvider, Wallet, web3, workspace} from "@coral-xyz/anchor";
-import type {GrowSpace} from '../target/types/grow_space';
+import type {GrowSpace} from '../target/types/grow_space_prod';
 import {PublicKey} from "@solana/web3.js";
 import {BN} from "bn.js";
 import dotenv from "dotenv";
