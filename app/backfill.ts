@@ -50,6 +50,9 @@ async function main() {
         try {
             const state = await program.account.pdaAccount.fetch(pda);
             const finalHash = Buffer.from(state.blockIds?.[0]?.finalHashes?.[0].finalHash).toString('hex');
+            console.log((state.blockIds?.[0]?.finalHashes?.[0].finalHash))
+            console.log(Buffer.from(state.blockIds?.[0]?.finalHashes?.[0].finalHash))
+            break;
             let updated = 0;
             let skipped = 0;
             for await (const pubkey of state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys) {
