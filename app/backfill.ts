@@ -47,6 +47,7 @@ async function main() {
             [Buffer.from("pda_account"), blockId.toArrayLike(Buffer, "le", 8)],
             program.programId
         );
+        console.log('pda', pda.toBase58())
         try {
             const state = await program.account.pdaAccount.fetch(pda);
             const finalHash = Buffer.from(state.blockIds?.[0]?.finalHashes?.[0].finalHash).toString('hex');
