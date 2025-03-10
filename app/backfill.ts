@@ -47,14 +47,9 @@ async function main() {
             [Buffer.from("pda_account"), blockId.toArrayLike(Buffer, "le", 8)],
             program.programId
         );
-        console.log('pda', pda.toBase58())
         try {
             const state = await program.account.pdaAccount.fetch(pda);
-            console.log(JSON.stringify(state))
             const finalHash = Buffer.from(state.blockIds?.[0]?.finalHashes?.[0].finalHash).toString('hex');
-            console.log((state.blockIds?.[0]?.finalHashes?.[0].finalHash))
-            console.log(Buffer.from(state.blockIds?.[0]?.finalHashes?.[0].finalHash))
-            break;
             let updated = 0;
             let skipped = 0;
             for await (const pubkey of state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys) {
