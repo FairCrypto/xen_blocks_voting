@@ -33,7 +33,7 @@ async function main() {
     }).from(votes).orderBy(desc(votes.blockId)).limit(1);
 
     console.log(lowerVote)
-    console.log('got from DB', lowerVote?.block_id, ', param', from);
+    console.log('got from DB', lowerVote?.[0]?.blockId, ', param', from);
 
     let blockId = new BN(from || lowerVote?.block_id);
     // let blockId = new BN(26539701);
