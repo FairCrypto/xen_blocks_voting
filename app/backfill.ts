@@ -20,7 +20,7 @@ async function main() {
     const provider = AnchorProvider.env();
     setProvider(provider);
 
-    const program = workspace.GrowSpace as Program<GrowSpace>;
+    const program = workspace.GrowSpaceProd as Program<GrowSpace>;
 
     console.log('Program ID', program.programId.toBase58());
     console.log('Payer', provider.wallet.publicKey.toBase58());
