@@ -2,7 +2,7 @@ import path from "node:path";
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import {initDB, closeDB, addVote} from "../db/db";
+import {initDB, closeDB} from "../db/db";
 import * as dbInstance from '../db/db'
 import {votes} from "../drizzle/schema_psql.ts/schema";
 

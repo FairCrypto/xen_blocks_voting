@@ -6,8 +6,20 @@ import {PublicKey} from "@solana/web3.js";
 import {BN} from "bn.js";
 import dotenv from "dotenv";
 import {initDB, backfillVote, getLowerVote} from "../db/db";
+import {votes} from "../drizzle/schema_psql.ts/schema";
+import * as dbInstance from '../db/db'
+import {desc} from "drizzle-orm";
 
 dotenv.config();
+
+let db = dbInstance.default;
+
+initDB()
+    .then(() => console.log('db initialized'))
+    .catch(e => {
+        console.error(e);
+        process.exit(1)
+    });
 
 async function main() {
     const [, , from] = process.argv;
@@ -22,7 +34,10 @@ async function main() {
 
     await initDB().then(() => console.log('db initialized'));
 
-    const lowerVote = await getLowerVote();
+    const lowerVote = await db.select({
+        blockId: votes.blockId,
+    }).from(votes).orderBy(desc(votes.blockId)).limit(1);
+
     console.log('got from DB', lowerVote?.block_id, ', param', from);
 
     let blockId = new BN(from || lowerVote?.block_id);
@@ -41,9 +56,19 @@ async function main() {
             let updated = 0;
             let skipped = 0;
             for await (const pubkey of state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys) {
-                const res = await backfillVote(blockId.toNumber(), finalHash, pubkey.toBase58())
-                if (res) updated++
-                else skipped++
+                //const res = await backfillVote(blockId.toNumber(), finalHash, pubkey.toBase58())
+                try {
+                    await db.insert(votes).values({
+                        ts: new Date().toISOString(),
+                        finalHash,
+                        blockId: blockId.toNumber(),
+                        voter: pubkey.toBase58()
+                    })
+                    updated++
+                } catch (e) {
+                    console.log(e)
+                    skipped++;
+                }
             }
             console.log(`fill block=${blockId.toNumber()}, hash=${finalHash}, votes=${state.blockIds?.[0]?.finalHashes?.[0]?.pubkeys.length}, updated=${updated}, skipped=${skipped}`);
         } catch (e) {
