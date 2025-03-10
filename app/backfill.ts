@@ -35,6 +35,9 @@ async function main() {
     console.log('got from DB', lowerVote?.[0]?.blockId, ', param', from);
 
     let blockId = new BN(from || lowerVote?.[0]?.blockId);
+    if (blockId.toNumber() > 100) {
+        blockId = blockId.sub(new BN(100));
+    }
     // let blockId = new BN(26539701);
     console.log('starting from', blockId.toNumber());
     // 1 reward period ~~ 864 blocks
