@@ -14,13 +14,6 @@ dotenv.config();
 
 let db = dbInstance.default;
 
-initDB()
-    .then(() => console.log('db initialized'))
-    .catch(e => {
-        console.error(e);
-        process.exit(1)
-    });
-
 async function main() {
     const [, , from] = process.argv;
 
@@ -32,7 +25,7 @@ async function main() {
     console.log('Program ID', program.programId.toBase58());
     console.log('Payer', provider.wallet.publicKey.toBase58());
 
-    await initDB().then(() => console.log('db initialized'));
+    db = await initDB().then(() => console.log('db initialized'));
 
     const lowerVote = await db.select({
         blockId: votes.blockId,
