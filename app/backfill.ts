@@ -50,7 +50,7 @@ async function main() {
         console.log('pda', pda.toBase58())
         try {
             const state = await program.account.pdaAccount.fetch(pda);
-            console.log(state)
+            console.log(JSON.stringify(state))
             const finalHash = Buffer.from(state.blockIds?.[0]?.finalHashes?.[0].finalHash).toString('hex');
             console.log((state.blockIds?.[0]?.finalHashes?.[0].finalHash))
             console.log(Buffer.from(state.blockIds?.[0]?.finalHashes?.[0].finalHash))
