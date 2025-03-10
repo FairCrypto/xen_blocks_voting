@@ -25,7 +25,8 @@ async function main() {
     console.log('Program ID', program.programId.toBase58());
     console.log('Payer', provider.wallet.publicKey.toBase58());
 
-    db = await initDB().then(() => console.log('db initialized'));
+    db = await initDB();
+    console.log('db initialized')
 
     const lowerVote = await db.select({
         blockId: votes.blockId,
