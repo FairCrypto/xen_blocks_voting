@@ -257,7 +257,7 @@ app.get('/voters/stats', async (req, res) => {
             .execute(
                 sql`
                 SELECT * FROM voters_stats ORDER BY total_votes DESC
-                LIMIT ${limitNumber} OFFSET ${fromNumber})
+                LIMIT ${limitNumber} OFFSET ${fromNumber}
             `
             );
 
