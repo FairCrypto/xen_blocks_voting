@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import {initDB, closeDB} from "../db/db";
 import * as dbInstance from '../db/db'
-import {and, asc, desc, eq, sql} from 'drizzle-orm';
+import {and, asc, desc, eq, sql, count} from 'drizzle-orm';
 import {
     votes,
     rewardDistributions,
@@ -250,10 +250,10 @@ app.get('/voters/stats', async (req, res) => {
 app.get('/voter/:pubkey/votes', async (req, res) => {
     const {pubkey} = req.params;
     try {
-        const count = await db.$count(db.selectDistinct({voter: votes.voter})
-            .from(votes).where(eq(votes.voter, pubkey)).as('count'));
-        
-        res.status(200).json(count)
+        const result = await db.select({count: count()})
+            .from(votes)
+            .where(eq(votes.voter, pubkey)).as('count');
+        res.status(200).json(result)
     } catch (err) {
         console.log(err)
         res.status(500).json({error: "Failed to fetch data", details: err.toString()});
