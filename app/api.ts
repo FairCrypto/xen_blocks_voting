@@ -247,6 +247,19 @@ app.get('/voters/stats', async (req, res) => {
     }
 })
 
+app.get('/voter/:pubkey/votes', async (req, res) => {
+    const {pubkey} = req.params;
+    try {
+        const count = await db.$count(db.selectDistinct({voter: votes.voter})
+            .from(votes).where(eq(votes.voter, pubkey)).as('count'));
+        
+        res.status(200).json(count)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({error: "Failed to fetch data", details: err.toString()});
+    }
+});
+
 app.get('/voter/:pubkey', async (req, res) => {
     const {pubkey} = req.params;
     try {
