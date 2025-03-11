@@ -250,9 +250,10 @@ app.get('/voters/stats', async (req, res) => {
 app.get('/voter/:pubkey/votes', async (req, res) => {
     const {pubkey} = req.params;
     try {
-        const result = await db.select({count: count()})
+        const result = await db.select({votes: count()})
             .from(votes)
-            .where(eq(votes.voter, pubkey)).as('count');
+            .where(eq(votes.voter, pubkey));
+        console.log(result)
         res.status(200).json(result)
     } catch (err) {
         console.log(err)
