@@ -220,7 +220,7 @@ app.get('/voters', async (req, res) => {
     }
 })
 
-app.get('/voters/stats', async (req, res) => {
+app.get('/voters/stats/old', async (req, res) => {
     try {
         const {from, limit} = req.query;
         const fromNumber = Number(from) || 0;
@@ -236,6 +236,27 @@ app.get('/voters/stats', async (req, res) => {
                 FROM ${votes}
                 GROUP BY ${votes.voter}
                 ORDER BY COUNT(DISTINCT ${votes.blockId}) DESC
+                LIMIT ${limitNumber} OFFSET ${fromNumber})
+            `
+            );
+
+        res.status(200).json({count, voters})
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({error: "Failed to fetch data", details: err.toString()});
+    }
+})
+
+app.get('/voters/stats', async (req, res) => {
+    try {
+        const {from, limit} = req.query;
+        const fromNumber = Number(from) || 0;
+        const limitNumber = Number(limit) || 100;
+        const count = await db.$count(db.selectDistinct({voter: votes.voter}).from(votes).as('count'));
+        const voters = await db
+            .execute(
+                sql`
+                SELECT * FROM voters_stats ORDER BY total_votes DESC
                 LIMIT ${limitNumber} OFFSET ${fromNumber})
             `
             );
