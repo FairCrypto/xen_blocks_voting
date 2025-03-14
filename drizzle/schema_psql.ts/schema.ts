@@ -1,5 +1,16 @@
-import {pgTable, AnyPgColumn, primaryKey, numeric, integer, text, varchar} from "drizzle-orm/pg-core"
+import {
+    pgTable,
+    AnyPgColumn,
+    primaryKey,
+    numeric,
+    integer,
+    text,
+    varchar,
+    pgMaterializedView
+} from "drizzle-orm/pg-core"
 import {sql} from "drizzle-orm"
+import postgres from "postgres";
+import column = postgres.toPascal.column;
 
 export const voterCredits = pgTable("voter_vredits", {
         ts: numeric().default(sql`(CURRENT_TIMESTAMP)`),
@@ -46,6 +57,12 @@ export const votes = pgTable("votes", {
             pk0: primaryKey({columns: [table.blockId, table.voter], name: "Votes_block_id_voter_pk"})
         }
     });
+
+export const votesStats = pgMaterializedView("votes_stats", {
+    voter: varchar({length: 44}),
+    totalVotes: integer("total_votes"),
+    lastBlock: integer("last_block")
+})
 
 export const voterBalances = pgTable("voter_balances", {
     updatedTs: numeric("updated_ts").default(sql`(CURRENT_TIMESTAMP)`),
