@@ -7,7 +7,7 @@ import * as dbInstance from '../db/db'
 import {and, asc, desc, eq, sql, count} from 'drizzle-orm';
 import {
     votes,
-    votesStats,
+    votersStats,
     rewardDistributions,
     rewardPeriods,
     voterBalances,
@@ -253,7 +253,7 @@ app.get('/voters/stats', async (req, res) => {
         const {from, limit} = req.query;
         const fromNumber = Number(from) || 0;
         const limitNumber = Number(limit) || 100;
-        const count = await db.$count(db.select().from(votesStats).as('count'));
+        const count = await db.$count(db.select().from(votersStats).as('count'));
         const voters = await db
             .execute(
                 sql`

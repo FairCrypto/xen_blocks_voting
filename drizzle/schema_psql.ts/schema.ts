@@ -58,7 +58,7 @@ export const votes = pgTable("votes", {
         }
     });
 
-export const votesStats = pgMaterializedView("votes_stats", {
+export const votersStats = pgMaterializedView("voters_stats", {
     voter: varchar({length: 44}),
     totalVotes: integer("total_votes"),
     lastBlock: integer("last_block")
